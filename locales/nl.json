@@ -1,0 +1,15 @@
+{
+  "widgets": {
+    "timer": {
+      "hours": "uur",
+      "minutes": "min",
+      "seconds": "sec",
+      "addTimer": "+ Timer toevoegen"
+    },
+    "stopwatch": {
+      "lap": "Ronde",
+      "noLaps": "Druk op ronde om tijden vast te leggen",
+      "addStopwatch": "+ Stopwatch toevoegen"
+    }
+  }
+}

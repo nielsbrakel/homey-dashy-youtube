@@ -1,0 +1,62 @@
+{
+  "name": {
+    "en": "Train Departures",
+    "nl": "Treinen Vertrekken"
+  },
+  "description": {
+    "en": "Next departing trains from NS station",
+    "nl": "Volgende vertrekkende treinen van NS station"
+  },
+  "height": 300,
+  "settings": [
+    {
+      "id": "station",
+      "type": "text",
+      "label": {
+        "en": "Station (e.g., Amsterdam CS)",
+        "nl": "Station (bijv. Amsterdam CS)"
+      },
+      "value": "Amsterdam CS"
+    },
+    {
+      "id": "maxDepartures",
+      "type": "number",
+      "label": {
+        "en": "Show Departures",
+        "nl": "Toon Vertrekken"
+      },
+      "min": 1,
+      "max": 10,
+      "value": 5
+    },
+    {
+      "id": "showPlatform",
+      "type": "checkbox",
+      "label": {
+        "en": "Show Platform",
+        "nl": "Toon Perron"
+      },
+      "value": true
+    },
+    {
+      "id": "showDelay",
+      "type": "checkbox",
+      "label": {
+        "en": "Show Delay",
+        "nl": "Toon Vertraging"
+      },
+      "value": true
+    },
+    {
+      "id": "refreshInterval",
+      "type": "number",
+      "label": {
+        "en": "Refresh Interval (seconds)",
+        "nl": "Vernieuwingsinterval (seconden)"
+      },
+      "min": 30,
+      "max": 300,
+      "value": 60
+    }
+  ]
+}

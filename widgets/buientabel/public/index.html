@@ -1,0 +1,168 @@
+<html>
+  <head>
+    <style>
+      .buientabel-container {
+        display: flex;
+        flex-direction: column;
+        gap: var(--widget-su-3);
+        padding: var(--widget-su-3);
+        height: 100%;
+      }
+
+      .buientabel-graph {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        gap: var(--widget-su-1);
+        height: 150px;
+        padding: var(--widget-su-2) 0;
+        border-bottom: 1px solid var(--homey-line-color-light);
+      }
+
+      .buientabel-bar {
+        flex: 1;
+        background-color: var(--homey-color-blue-500);
+        border-radius: 2px 2px 0 0;
+        min-height: 4px;
+        transition: height 0.2s ease;
+        position: relative;
+      }
+
+      .buientabel-bar:hover {
+        background-color: var(--homey-color-blue-600);
+      }
+
+      .buientabel-bar-label {
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 10px;
+        color: var(--homey-text-color-secondary);
+        white-space: nowrap;
+      }
+
+      .buientabel-legend {
+        display: flex;
+        justify-content: space-between;
+        font-size: var(--homey-font-size-small);
+        color: var(--homey-text-color-secondary);
+      }
+
+      .buientabel-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 150px;
+        color: var(--homey-text-color-secondary);
+      }
+
+      .buientabel-error {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 150px;
+        color: var(--homey-text-color-danger);
+        text-align: center;
+        padding: var(--widget-su-2);
+      }
+    </style>
+  </head>
+
+  <body class="homey-widget">
+    <div class="buientabel-container">
+      <div id="buientabel-content" class="buientabel-loading">
+        Loading forecast...
+      </div>
+      <div class="buientabel-legend">
+        <span>Rain chance (mm/h)</span>
+        <button style="padding: var(--widget-su-1) var(--widget-su-2); border: 1px solid var(--homey-line-color); border-radius: 2px; background: var(--homey-color-mono-100); cursor: pointer; font-size: 11px;" id="refresh-btn">🔄</button>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      let currentSettings = {};
+      let forecastData = [];
+
+      function generateMockForecast(hoursAhead) {
+        const data = [];
+        const now = new Date();
+        
+        for (let i = 0; i < hoursAhead; i++) {
+          const time = new Date(now.getTime() + i * 3600000);
+          data.push({
+            hour: time.getHours(),
+            chance: Math.random() * 100,
+            mm: Math.random() * 5,
+          });
+        }
+        
+        return data;
+      }
+
+      function render() {
+        const content = document.getElementById('buientabel-content');
+        const maxChance = Math.max(...forecastData.map(d => d.chance), 1);
+
+        if (currentSettings.graphStyle === 'bars') {
+          const graph = document.createElement('div');
+          graph.className = 'buientabel-graph';
+
+          forecastData.forEach((data) => {
+            const bar = document.createElement('div');
+            bar.className = 'buientabel-bar';
+            bar.style.height = `${(data.chance / maxChance) * 100}%`;
+            
+            const label = document.createElement('div');
+            label.className = 'buientabel-bar-label';
+            label.textContent = `${data.hour}h`;
+            bar.appendChild(label);
+
+            bar.title = `${Math.round(data.chance)}% - ${data.mm.toFixed(1)}mm`;
+            graph.appendChild(bar);
+          });
+
+          content.className = '';
+          content.innerHTML = '';
+          content.appendChild(graph);
+        } else {
+          content.textContent = 'Line chart coming soon';
+        }
+      }
+
+      function fetchForecast() {
+        const content = document.getElementById('buientabel-content');
+        
+        try {
+          content.className = 'buientabel-loading';
+          content.textContent = 'Loading forecast...';
+
+          forecastData = generateMockForecast(currentSettings.hoursAhead || 6);
+          render();
+        } catch (err) {
+          console.error('Forecast fetch error:', err);
+          content.className = 'buientabel-error';
+          content.textContent = 'Unable to load forecast. Please try again.';
+        }
+      }
+
+      function setupControls() {
+        const refreshBtn = document.getElementById('refresh-btn');
+        refreshBtn.onclick = () => fetchForecast();
+      }
+
+      function onHomeyReady(Homey) {
+        currentSettings = Homey.getSettings();
+
+        fetchForecast();
+        setupControls();
+        Homey.ready();
+
+        Homey.on('settings', (newSettings) => {
+          currentSettings = newSettings;
+          fetchForecast();
+        });
+      }
+    </script>
+  </body>
+</html>

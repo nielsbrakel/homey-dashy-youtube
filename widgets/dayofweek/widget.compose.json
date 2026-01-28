@@ -1,0 +1,72 @@
+{
+  "name": {
+    "en": "Day of Week",
+    "nl": "Dag van de Week"
+  },
+  "description": {
+    "en": "Show current day of the week with block layout",
+    "nl": "Toon de huidige dag van de week met bloklay-out"
+  },
+  "height": 100,
+  "settings": [
+    {
+      "id": "layout",
+      "type": "dropdown",
+      "label": {
+        "en": "Layout",
+        "nl": "Layout"
+      },
+      "value": "blocks",
+      "values": [
+        {
+          "id": "blocks",
+          "label": {
+            "en": "Block Layout",
+            "nl": "Bloklay-out"
+          }
+        },
+        {
+          "id": "text",
+          "label": {
+            "en": "Text",
+            "nl": "Tekst"
+          }
+        }
+      ]
+    },
+    {
+      "id": "format",
+      "type": "dropdown",
+      "label": {
+        "en": "Format",
+        "nl": "Format"
+      },
+      "value": "short",
+      "values": [
+        {
+          "id": "short",
+          "label": {
+            "en": "Short (Mon)",
+            "nl": "Kort (ma)"
+          }
+        },
+        {
+          "id": "long",
+          "label": {
+            "en": "Long (Monday)",
+            "nl": "Lang (maandag)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "uppercase",
+      "type": "checkbox",
+      "label": {
+        "en": "Uppercase",
+        "nl": "Hoofdletters"
+      },
+      "value": false
+    }
+  ]
+}

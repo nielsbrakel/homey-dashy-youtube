@@ -1,0 +1,95 @@
+{
+  "name": {
+    "en": "Date",
+    "nl": "Datum"
+  },
+  "description": {
+    "en": "Show today's date with customizable format",
+    "nl": "Toon de datum van vandaag met aanpasbaar format"
+  },
+  "height": 80,
+  "settings": [
+    {
+      "id": "dateFormat",
+      "type": "dropdown",
+      "label": {
+        "en": "Date Format",
+        "nl": "Datumformat"
+      },
+      "value": "long",
+      "values": [
+        {
+          "id": "short",
+          "label": {
+            "en": "Short (1/4/26)",
+            "nl": "Kort (1-4-26)"
+          }
+        },
+        {
+          "id": "medium",
+          "label": {
+            "en": "Medium (Jan 4, 2026)",
+            "nl": "Gemiddeld (4 jan. 2026)"
+          }
+        },
+        {
+          "id": "long",
+          "label": {
+            "en": "Long (January 4, 2026)",
+            "nl": "Lang (4 januari 2026)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "showWeekday",
+      "type": "checkbox",
+      "label": {
+        "en": "Show Weekday",
+        "nl": "Toon Weekdag"
+      },
+      "value": true
+    },
+    {
+      "id": "alignment",
+      "type": "dropdown",
+      "label": {
+        "en": "Text Alignment",
+        "nl": "Tekstuitlijning"
+      },
+      "value": "center",
+      "values": [
+        {
+          "id": "left",
+          "label": {
+            "en": "Left",
+            "nl": "Links"
+          }
+        },
+        {
+          "id": "center",
+          "label": {
+            "en": "Center",
+            "nl": "Midden"
+          }
+        },
+        {
+          "id": "right",
+          "label": {
+            "en": "Right",
+            "nl": "Rechts"
+          }
+        }
+      ]
+    },
+    {
+      "id": "uppercase",
+      "type": "checkbox",
+      "label": {
+        "en": "Uppercase",
+        "nl": "Hoofdletters"
+      },
+      "value": false
+    }
+  ]
+}

@@ -1,0 +1,446 @@
+{
+  "name": {
+    "en": "DateTime Pro",
+    "nl": "DatumTijd Pro"
+  },
+  "description": {
+    "en": "Advanced customizable date and time display with independent element layouts",
+    "nl": "Geavanceerde aanpasbare datum- en tijdweergave met onafhankelijke element-layouts"
+  },
+  "height": 120,
+  "settings": [
+    {
+      "id": "locale",
+      "type": "dropdown",
+      "label": {
+        "en": "Language/Locale",
+        "nl": "Taal/Locale"
+      },
+      "value": "en-US",
+      "values": [
+        {
+          "id": "en-US",
+          "label": {
+            "en": "English (US)",
+            "nl": "Engels (VS)"
+          }
+        },
+        {
+          "id": "en-GB",
+          "label": {
+            "en": "English (UK)",
+            "nl": "Engels (VK)"
+          }
+        },
+        {
+          "id": "nl-NL",
+          "label": {
+            "en": "Dutch (Netherlands)",
+            "nl": "Nederlands (Nederland)"
+          }
+        },
+        {
+          "id": "de-DE",
+          "label": {
+            "en": "German (Germany)",
+            "nl": "Duits (Duitsland)"
+          }
+        },
+        {
+          "id": "fr-FR",
+          "label": {
+            "en": "French (France)",
+            "nl": "Frans (Frankrijk)"
+          }
+        },
+        {
+          "id": "es-ES",
+          "label": {
+            "en": "Spanish (Spain)",
+            "nl": "Spaans (Spanje)"
+          }
+        },
+        {
+          "id": "it-IT",
+          "label": {
+            "en": "Italian (Italy)",
+            "nl": "Italiaans (Italië)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mainLayout",
+      "type": "dropdown",
+      "label": {
+        "en": "Main Layout",
+        "nl": "Hoofdlay-out"
+      },
+      "value": "vertical",
+      "values": [
+        {
+          "id": "vertical",
+          "label": {
+            "en": "Vertical Stack",
+            "nl": "Verticale stapel"
+          }
+        },
+        {
+          "id": "horizontal",
+          "label": {
+            "en": "Horizontal Row",
+            "nl": "Horizontale rij"
+          }
+        },
+        {
+          "id": "card",
+          "label": {
+            "en": "Card (Time prominent)",
+            "nl": "Kaart (Tijd prominent)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "alignment",
+      "type": "dropdown",
+      "label": {
+        "en": "Text Alignment",
+        "nl": "Tekstuitlijning"
+      },
+      "value": "center",
+      "values": [
+        {
+          "id": "left",
+          "label": {
+            "en": "Left",
+            "nl": "Links"
+          }
+        },
+        {
+          "id": "center",
+          "label": {
+            "en": "Center",
+            "nl": "Midden"
+          }
+        },
+        {
+          "id": "right",
+          "label": {
+            "en": "Right",
+            "nl": "Rechts"
+          }
+        }
+      ]
+    },
+    {
+      "id": "globalFontSize",
+      "type": "dropdown",
+      "label": {
+        "en": "Global Text Size",
+        "nl": "Globale tekstgrootte"
+      },
+      "value": "medium",
+      "values": [
+        {
+          "id": "small",
+          "label": {
+            "en": "Small",
+            "nl": "Klein"
+          }
+        },
+        {
+          "id": "medium",
+          "label": {
+            "en": "Medium",
+            "nl": "Gemiddeld"
+          }
+        },
+        {
+          "id": "large",
+          "label": {
+            "en": "Large",
+            "nl": "Groot"
+          }
+        },
+        {
+          "id": "xlarge",
+          "label": {
+            "en": "Extra Large",
+            "nl": "Extra Groot"
+          }
+        }
+      ]
+    },
+    {
+      "id": "showTime",
+      "type": "checkbox",
+      "label": {
+        "en": "Show Time",
+        "nl": "Toon Tijd"
+      },
+      "value": true
+    },
+    {
+      "id": "timeLayout",
+      "type": "dropdown",
+      "label": {
+        "en": "Time Layout",
+        "nl": "Tijd Layout"
+      },
+      "value": "digital",
+      "values": [
+        {
+          "id": "digital",
+          "label": {
+            "en": "Digital (HH:MM)",
+            "nl": "Digitaal (HH:MM)"
+          }
+        },
+        {
+          "id": "digital-ampm",
+          "label": {
+            "en": "Digital with AM/PM",
+            "nl": "Digitaal met AM/PM"
+          }
+        },
+        {
+          "id": "digital-seconds",
+          "label": {
+            "en": "Digital with Seconds",
+            "nl": "Digitaal met Seconden"
+          }
+        },
+        {
+          "id": "compact",
+          "label": {
+            "en": "Compact (small)",
+            "nl": "Compact (klein)"
+          }
+        },
+        {
+          "id": "highlighted",
+          "label": {
+            "en": "Highlighted (bold large)",
+            "nl": "Gemarkeerd (vet groot)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "timeBlinkColon",
+      "type": "checkbox",
+      "label": {
+        "en": "Blinking Colon",
+        "nl": "Knipperende Dubbele Punt"
+      },
+      "value": false
+    },
+    {
+      "id": "showDate",
+      "type": "checkbox",
+      "label": {
+        "en": "Show Date",
+        "nl": "Toon Datum"
+      },
+      "value": true
+    },
+    {
+      "id": "dateLayout",
+      "type": "dropdown",
+      "label": {
+        "en": "Date Layout",
+        "nl": "Datum Layout"
+      },
+      "value": "standard",
+      "values": [
+        {
+          "id": "standard",
+          "label": {
+            "en": "Standard (January 4, 2026)",
+            "nl": "Standaard (4 januari 2026)"
+          }
+        },
+        {
+          "id": "short",
+          "label": {
+            "en": "Short (1/4/26)",
+            "nl": "Kort (1-4-26)"
+          }
+        },
+        {
+          "id": "medium",
+          "label": {
+            "en": "Medium (Jan 4, 2026)",
+            "nl": "Gemiddeld (4 jan. 2026)"
+          }
+        },
+        {
+          "id": "verbose",
+          "label": {
+            "en": "Verbose (Monday, January 4, 2026)",
+            "nl": "Uitgebreid (maandag, 4 januari 2026)"
+          }
+        },
+        {
+          "id": "stacked",
+          "label": {
+            "en": "Stacked (Month / Day / Year)",
+            "nl": "Gestapeld (Maand / Dag / Jaar)"
+          }
+        },
+        {
+          "id": "minimal",
+          "label": {
+            "en": "Minimal (4 Jan)",
+            "nl": "Minimaal (4 Jan)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dateShowWeekday",
+      "type": "checkbox",
+      "label": {
+        "en": "Include Weekday in Date",
+        "nl": "Voeg Weekdag toe aan Datum"
+      },
+      "value": true
+    },
+    {
+      "id": "showDayOfWeek",
+      "type": "checkbox",
+      "label": {
+        "en": "Show Day of Week",
+        "nl": "Toon Dag van de Week"
+      },
+      "value": true
+    },
+    {
+      "id": "dayLayout",
+      "type": "dropdown",
+      "label": {
+        "en": "Day of Week Layout",
+        "nl": "Dag van Week Layout"
+      },
+      "value": "blocks-row",
+      "values": [
+        {
+          "id": "blocks-row",
+          "label": {
+            "en": "Blocks - Single Row (M T W T F S S)",
+            "nl": "Blokken - Enkele Rij (M D W D V Z Z)"
+          }
+        },
+        {
+          "id": "blocks-2row",
+          "label": {
+            "en": "Blocks - Two Rows",
+            "nl": "Blokken - Twee Rijen"
+          }
+        },
+        {
+          "id": "blocks-large",
+          "label": {
+            "en": "Blocks - Large (with background)",
+            "nl": "Blokken - Groot (met achtergrond)"
+          }
+        },
+        {
+          "id": "text-short",
+          "label": {
+            "en": "Text - Short (Mon)",
+            "nl": "Tekst - Kort (ma)"
+          }
+        },
+        {
+          "id": "text-long",
+          "label": {
+            "en": "Text - Long (Monday)",
+            "nl": "Tekst - Lang (maandag)"
+          }
+        },
+        {
+          "id": "badge",
+          "label": {
+            "en": "Badge Style",
+            "nl": "Badge-stijl"
+          }
+        },
+        {
+          "id": "pill",
+          "label": {
+            "en": "Pill Style (rounded)",
+            "nl": "Pil-stijl (afgerond)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dayBlockSize",
+      "type": "dropdown",
+      "label": {
+        "en": "Day Block Size",
+        "nl": "Grootte Dagblok"
+      },
+      "value": "medium",
+      "values": [
+        {
+          "id": "small",
+          "label": {
+            "en": "Small (24px)",
+            "nl": "Klein (24px)"
+          }
+        },
+        {
+          "id": "medium",
+          "label": {
+            "en": "Medium (32px)",
+            "nl": "Gemiddeld (32px)"
+          }
+        },
+        {
+          "id": "large",
+          "label": {
+            "en": "Large (48px)",
+            "nl": "Groot (48px)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "hourFormat",
+      "type": "dropdown",
+      "label": {
+        "en": "Hour Format",
+        "nl": "Uurformaat"
+      },
+      "value": "24",
+      "values": [
+        {
+          "id": "24",
+          "label": {
+            "en": "24-hour",
+            "nl": "24-uur"
+          }
+        },
+        {
+          "id": "12",
+          "label": {
+            "en": "12-hour (AM/PM)",
+            "nl": "12-uur (AM/PM)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "uppercase",
+      "type": "checkbox",
+      "label": {
+        "en": "Uppercase All Text",
+        "nl": "Alles in Hoofdletters"
+      },
+      "value": false
+    }
+  ]
+}

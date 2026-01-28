@@ -1,0 +1,52 @@
+{
+  "name": {
+    "en": "Stopwatch",
+    "nl": "Stopwatch"
+  },
+  "description": {
+    "en": "Stopwatch with lap timing",
+    "nl": "Stopwatch met rondetijden"
+  },
+  "height": 200,
+  "transparent": true,
+  "settings": [
+    {
+      "id": "showMilliseconds",
+      "type": "checkbox",
+      "label": {
+        "en": "Show milliseconds",
+        "nl": "Toon milliseconden"
+      },
+      "value": true
+    },
+    {
+      "id": "showLaps",
+      "type": "checkbox",
+      "label": {
+        "en": "Show lap times",
+        "nl": "Toon rondetijden"
+      },
+      "value": false
+    },
+    {
+      "id": "allowAddingStopwatches",
+      "type": "checkbox",
+      "label": {
+        "en": "Allow adding stopwatches",
+        "nl": "Stopwatches toevoegen toestaan"
+      },
+      "value": false
+    },
+    {
+      "id": "maxStopwatches",
+      "type": "number",
+      "label": {
+        "en": "Maximum stopwatches",
+        "nl": "Maximaal aantal stopwatches"
+      },
+      "min": 1,
+      "max": 5,
+      "value": 3
+    }
+  ]
+}

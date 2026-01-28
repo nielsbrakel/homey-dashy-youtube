@@ -1,0 +1,127 @@
+<html>
+  <head>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .date-widget {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+
+      .date-display {
+        color: var(--homey-text-color);
+        font-size: 36px;
+        font-weight: var(--homey-font-weight-bold);
+        line-height: 1.2;
+        margin: 0;
+        padding: 0;
+      }
+
+      .date-display.left {
+        align-self: flex-start;
+        padding: var(--widget-su-3) 0 var(--widget-su-3) var(--widget-su-3);
+        width: 100%;
+        text-align: left;
+      }
+
+      .date-display.center {
+        text-align: center;
+      }
+
+      .date-display.right {
+        align-self: flex-end;
+        padding: var(--widget-su-3) var(--widget-su-3) var(--widget-su-3) 0;
+        width: 100%;
+        text-align: right;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="date-widget">
+      <div class="date-display center" id="date-display">Loading...</div>
+    </div>
+
+    <script type="text/javascript">
+      let currentSettings = {};
+      let refreshTimer;
+
+      function updateDisplay() {
+        const display = document.getElementById('date-display');
+        const now = new Date();
+
+        let dateString = '';
+
+        if (currentSettings.showWeekday) {
+          const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(now);
+          dateString += weekday + ', ';
+        }
+
+        const options = {
+          year: 'numeric',
+        };
+
+        if (currentSettings.dateFormat === 'short') {
+          options.month = 'numeric';
+          options.day = 'numeric';
+        } else if (currentSettings.dateFormat === 'medium') {
+          options.month = 'short';
+          options.day = 'numeric';
+        } else {
+          options.month = 'long';
+          options.day = 'numeric';
+        }
+
+        dateString += new Intl.DateTimeFormat('en-US', options).format(now);
+        display.textContent = currentSettings.uppercase ? dateString.toUpperCase() : dateString;
+      }
+
+      function scheduleRefreshAtMidnight() {
+        if (refreshTimer) clearTimeout(refreshTimer);
+        
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+
+        const msUntilMidnight = tomorrow.getTime() - now.getTime();
+        refreshTimer = setTimeout(() => {
+          updateDisplay();
+          scheduleRefreshAtMidnight();
+        }, msUntilMidnight);
+      }
+
+      function render() {
+        const display = document.getElementById('date-display');
+        display.className = `date-display ${currentSettings.alignment || 'center'}`;
+        updateDisplay();
+        scheduleRefreshAtMidnight();
+      }
+
+      async function onHomeyReady(Homey) {
+        currentSettings = Homey.getSettings();
+        render();
+        Homey.ready();
+
+        Homey.on('settings', (newSettings) => {
+          currentSettings = newSettings;
+          render();
+        });
+
+        window.addEventListener('beforeunload', () => {
+          if (refreshTimer) clearTimeout(refreshTimer);
+        });
+      }
+    </script>
+  </body>
+</html>

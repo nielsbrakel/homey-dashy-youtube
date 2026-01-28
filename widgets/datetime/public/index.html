@@ -1,0 +1,356 @@
+<html>
+  <head>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .datetime-widget {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .datetime-widget.left { justify-content: flex-start; padding-left: var(--widget-su-3); }
+      .datetime-widget.right { justify-content: flex-end; padding-right: var(--widget-su-3); }
+
+      /* Main Layout Containers */
+      .datetime-vertical { display: flex; flex-direction: column; gap: var(--widget-su-2); align-items: center; }
+      .datetime-horizontal { display: flex; flex-direction: row; gap: var(--widget-su-3); align-items: center; flex-wrap: wrap; }
+      .datetime-card { display: flex; flex-direction: column; gap: var(--widget-su-2); align-items: center; padding: var(--widget-su-2); }
+
+      /* Time Element Styles */
+      .datetime-time { font-family: 'Courier New', monospace; font-weight: bold; letter-spacing: 0.05em; color: var(--homey-text-color); margin: 0; padding: 0; }
+      .datetime-time--digital { font-size: 42px; line-height: 1.2; }
+      .datetime-time--digital-ampm { font-size: 36px; line-height: 1.2; }
+      .datetime-time--digital-seconds { font-size: 36px; line-height: 1.2; }
+      .datetime-time--compact { font-size: 24px; line-height: 1.1; }
+      .datetime-time--highlighted { font-size: 56px; line-height: 1.2; background: linear-gradient(135deg, var(--homey-color-blue-500), var(--homey-color-blue-600)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+      /* Date Element Styles */
+      .datetime-date { color: var(--homey-text-color); font-weight: bold; margin: 0; padding: 0; line-height: 1.3; }
+      .datetime-date--standard { font-size: 18px; }
+      .datetime-date--short { font-size: 16px; }
+      .datetime-date--medium { font-size: 18px; }
+      .datetime-date--verbose { font-size: 14px; }
+      .datetime-date--stacked { font-size: 16px; text-align: center; }
+      .datetime-date--minimal { font-size: 16px; }
+
+      .datetime-date-stacked-parts { display: flex; flex-direction: column; gap: 2px; }
+      .datetime-date-stacked-part { font-size: 14px; }
+
+      /* Day of Week Styles */
+      .datetime-day-text { color: var(--homey-text-color); font-weight: bold; margin: 0; padding: 0; line-height: 1.2; }
+      .datetime-day-text--short { font-size: 18px; }
+      .datetime-day-text--long { font-size: 20px; }
+
+      .datetime-day-blocks { display: flex; gap: 4px; }
+      .datetime-day-blocks--2row { flex-wrap: wrap; width: fit-content; }
+      
+      .datetime-day-block { display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; color: var(--homey-text-color-secondary); background-color: var(--homey-color-mono-200); border: 1px solid var(--homey-line-color-light); transition: all 0.3s; }
+      .datetime-day-block--small { width: 22px; height: 22px; font-size: 9px; }
+      .datetime-day-block--medium { width: 32px; height: 32px; font-size: 11px; }
+      .datetime-day-block--large { width: 48px; height: 48px; font-size: 14px; }
+      .datetime-day-block.active { background-color: var(--homey-color-blue-500); color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+      .datetime-day-badge { display: inline-block; padding: 4px 12px; background-color: var(--homey-color-mono-200); border-radius: 4px; font-size: 14px; font-weight: bold; color: var(--homey-text-color); }
+      .datetime-day-badge.active { background-color: var(--homey-color-blue-500); color: white; }
+
+      .datetime-day-pill { display: inline-block; padding: 6px 16px; background-color: var(--homey-color-mono-200); border-radius: 20px; font-size: 14px; font-weight: bold; color: var(--homey-text-color); }
+      .datetime-day-pill.active { background-color: var(--homey-color-blue-500); color: white; }
+
+      .datetime-colon-blink { animation: colonBlink 1s ease-in-out infinite; }
+      @keyframes colonBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0.2; } }
+
+      /* Font size multipliers */
+      .datetime-font--small { transform: scale(0.75); transform-origin: top center; }
+      .datetime-font--medium { transform: scale(1); }
+      .datetime-font--large { transform: scale(1.25); transform-origin: top center; }
+      .datetime-font--xlarge { transform: scale(1.5); transform-origin: top center; }
+    </style>
+  </head>
+
+  <body>
+    <div class="datetime-widget" id="datetime-widget"></div>
+
+    <script type="text/javascript">
+      let currentSettings = {};
+      let updateTimer;
+      let refreshTimer;
+
+      const daysOfWeek = [
+        { short: 'Mo', long: 'Monday', letter: 'M', label: 'Mon' },
+        { short: 'Tu', long: 'Tuesday', letter: 'T', label: 'Tue' },
+        { short: 'We', long: 'Wednesday', letter: 'W', label: 'Wed' },
+        { short: 'Th', long: 'Thursday', letter: 'T', label: 'Thu' },
+        { short: 'Fr', long: 'Friday', letter: 'F', label: 'Fri' },
+        { short: 'Sa', long: 'Saturday', letter: 'S', label: 'Sat' },
+        { short: 'Su', long: 'Sunday', letter: 'S', label: 'Sun' },
+      ];
+
+      function formatTime(date) {
+        const options = {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: currentSettings.hourFormat === '12',
+        };
+
+        if (currentSettings.timeLayout === 'digital-seconds') {
+          options.second = '2-digit';
+        }
+
+        return new Intl.DateTimeFormat(currentSettings.locale || 'en-US', options).format(date);
+      }
+
+      function getTimeElement() {
+        const time = document.createElement('div');
+        const timeStr = formatTime(new Date());
+        time.className = `datetime-time datetime-time--${currentSettings.timeLayout || 'digital'} datetime-font--${currentSettings.globalFontSize || 'medium'}`;
+        time.textContent = timeStr;
+
+        if (currentSettings.timeBlinkColon) {
+          time.classList.add('datetime-colon-blink');
+        }
+
+        return time;
+      }
+
+      function formatDate(date) {
+        const layout = currentSettings.dateLayout || 'standard';
+        const options = { year: 'numeric' };
+
+        if (layout === 'short') {
+          options.month = 'numeric';
+          options.day = 'numeric';
+        } else if (layout === 'medium' || layout === 'minimal') {
+          options.month = 'short';
+          options.day = 'numeric';
+        } else {
+          options.month = 'long';
+          options.day = 'numeric';
+        }
+
+        let dateString = '';
+
+        if (currentSettings.dateShowWeekday && layout !== 'stacked') {
+          const weekday = new Intl.DateTimeFormat(currentSettings.locale || 'en-US', { weekday: 'long' }).format(date);
+          dateString += weekday + ', ';
+        }
+
+        dateString += new Intl.DateTimeFormat(currentSettings.locale || 'en-US', options).format(date);
+        return currentSettings.uppercase ? dateString.toUpperCase() : dateString;
+      }
+
+      function getDateElement() {
+        const date = document.createElement('div');
+        const layout = currentSettings.dateLayout || 'standard';
+
+        if (layout === 'stacked') {
+          const parts = new Date();
+          const month = new Intl.DateTimeFormat(currentSettings.locale || 'en-US', { month: 'long' }).format(parts);
+          const day = parts.getDate();
+          const year = parts.getFullYear();
+
+          const container = document.createElement('div');
+          container.className = 'datetime-date-stacked-parts';
+
+          const monthEl = document.createElement('div');
+          monthEl.className = 'datetime-date-stacked-part';
+          monthEl.textContent = currentSettings.uppercase ? month.toUpperCase() : month;
+
+          const dayEl = document.createElement('div');
+          dayEl.className = 'datetime-date-stacked-part';
+          dayEl.textContent = day;
+
+          const yearEl = document.createElement('div');
+          yearEl.className = 'datetime-date-stacked-part';
+          yearEl.textContent = year;
+
+          container.appendChild(monthEl);
+          container.appendChild(dayEl);
+          container.appendChild(yearEl);
+          return container;
+        }
+
+        date.className = `datetime-date datetime-date--${layout} datetime-font--${currentSettings.globalFontSize || 'medium'}`;
+        date.textContent = formatDate(new Date());
+        return date;
+      }
+
+      function getCurrentDayIndex() {
+        const now = new Date();
+        const day = now.getDay();
+        return day === 0 ? 6 : day - 1;
+      }
+
+      function getDayBlocks() {
+        const currentDay = getCurrentDayIndex();
+        const container = document.createElement('div');
+        const layout = currentSettings.dayLayout || 'blocks-row';
+        const sizeClass = currentSettings.dayBlockSize || 'medium';
+
+        if (layout === 'blocks-2row') {
+          container.className = `datetime-day-blocks datetime-day-blocks--2row`;
+          container.style.width = 'fit-content';
+        } else {
+          container.className = 'datetime-day-blocks';
+        }
+
+        daysOfWeek.forEach((day, index) => {
+          const block = document.createElement('div');
+          block.className = `datetime-day-block datetime-day-block--${sizeClass}`;
+          if (index === currentDay) block.classList.add('active');
+          block.textContent = day.letter;
+          container.appendChild(block);
+        });
+
+        return container;
+      }
+
+      function getDayText() {
+        const now = new Date();
+        const day = document.createElement('div');
+        const layout = currentSettings.dayLayout || 'blocks-row';
+        const format = layout === 'text-long' ? 'long' : 'short';
+        const options = { weekday: format };
+        let dayStr = new Intl.DateTimeFormat(currentSettings.locale || 'en-US', options).format(now);
+        dayStr = currentSettings.uppercase ? dayStr.toUpperCase() : dayStr;
+        day.className = `datetime-day-text datetime-day-text--${format} datetime-font--${currentSettings.globalFontSize || 'medium'}`;
+        day.textContent = dayStr;
+        return day;
+      }
+
+      function getDayBadge() {
+        const now = new Date();
+        const currentDay = getCurrentDayIndex();
+        const badge = document.createElement('div');
+        const layout = currentSettings.dayLayout;
+        const baseClass = layout === 'pill' ? 'datetime-day-pill' : 'datetime-day-badge';
+        const day = daysOfWeek[currentDay];
+
+        badge.className = `${baseClass} active datetime-font--${currentSettings.globalFontSize || 'medium'}`;
+        const text = day.long;
+        badge.textContent = currentSettings.uppercase ? text.toUpperCase() : text;
+        return badge;
+      }
+
+      function getDayElement() {
+        const layout = currentSettings.dayLayout || 'blocks-row';
+
+        if (layout === 'blocks-row' || layout === 'blocks-2row' || layout === 'blocks-large') {
+          return getDayBlocks();
+        } else if (layout === 'text-short') {
+          return getDayText();
+        } else if (layout === 'text-long') {
+          return getDayText();
+        } else if (layout === 'badge' || layout === 'pill') {
+          return getDayBadge();
+        }
+
+        return getDayBlocks();
+      }
+
+      function render() {
+        const widget = document.getElementById('datetime-widget');
+        widget.className = `datetime-widget ${currentSettings.alignment || 'center'}`;
+
+        const mainLayout = currentSettings.mainLayout || 'vertical';
+        const container = document.createElement('div');
+        container.className = `datetime-${mainLayout}`;
+        container.style.width = '100%';
+        container.style.height = '100%';
+
+        if (currentSettings.showTime) {
+          container.appendChild(getTimeElement());
+        }
+
+        if (currentSettings.showDate) {
+          container.appendChild(getDateElement());
+        }
+
+        if (currentSettings.showDayOfWeek) {
+          container.appendChild(getDayElement());
+        }
+
+        widget.innerHTML = '';
+        widget.appendChild(container);
+      }
+
+      function calculateHeight() {
+        let height = 40;
+        const layout = currentSettings.mainLayout || 'vertical';
+        const fontSize = currentSettings.globalFontSize || 'medium';
+        const fontMultiplier = { small: 0.75, medium: 1, large: 1.25, xlarge: 1.5 };
+        const multiplier = fontMultiplier[fontSize] || 1;
+
+        const itemHeights = {
+          time: 50 * multiplier,
+          date: 30 * multiplier,
+          day: currentSettings.dayLayout?.startsWith('blocks') ? 40 * multiplier : 30 * multiplier,
+        };
+
+        const itemsShown = [
+          currentSettings.showTime && itemHeights.time,
+          currentSettings.showDate && itemHeights.date,
+          currentSettings.showDayOfWeek && itemHeights.day,
+        ].filter(Boolean).length;
+
+        if (layout === 'vertical') {
+          height += [currentSettings.showTime && itemHeights.time, currentSettings.showDate && itemHeights.date, currentSettings.showDayOfWeek && itemHeights.day].filter(Boolean).reduce((a, b) => a + b, 0) + (itemsShown - 1) * 15;
+        } else if (layout === 'horizontal') {
+          height += Math.max(itemHeights.time || 0, itemHeights.date || 0, itemHeights.day || 0) + 20;
+        } else {
+          height += [currentSettings.showTime && itemHeights.time, currentSettings.showDate && itemHeights.date, currentSettings.showDayOfWeek && itemHeights.day].filter(Boolean).reduce((a, b) => a + b, 0) + (itemsShown - 1) * 15;
+        }
+
+        return Math.min(300, Math.max(60, height));
+      }
+
+      function startUpdateLoop() {
+        if (updateTimer) clearInterval(updateTimer);
+        updateTimer = setInterval(render, 1000);
+      }
+
+      function scheduleRefreshAtMidnight() {
+        if (refreshTimer) clearTimeout(refreshTimer);
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        const msUntilMidnight = tomorrow.getTime() - now.getTime();
+        refreshTimer = setTimeout(() => {
+          render();
+          scheduleRefreshAtMidnight();
+        }, msUntilMidnight);
+      }
+
+      async function onHomeyReady(Homey) {
+        currentSettings = Homey.getSettings();
+        render();
+        startUpdateLoop();
+        scheduleRefreshAtMidnight();
+        const height = calculateHeight();
+        Homey.ready({ height });
+
+        Homey.on('settings', (newSettings) => {
+          currentSettings = newSettings;
+          render();
+          const newHeight = calculateHeight();
+          Homey.ready({ height: newHeight });
+        });
+
+        window.addEventListener('beforeunload', () => {
+          if (updateTimer) clearInterval(updateTimer);
+          if (refreshTimer) clearTimeout(refreshTimer);
+        });
+      }
+    </script>
+  </body>
+</html>

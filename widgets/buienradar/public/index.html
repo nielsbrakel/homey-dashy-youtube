@@ -1,0 +1,117 @@
+<html>
+  <head>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .buienradar-container {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .buienradar-container iframe {
+        border: none;
+        display: block;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="buienradar-container" class="buienradar-container"></div>
+
+    <script type="text/javascript">
+      let currentSettings = {};
+
+      function mapSizeToPixels(sizeId) {
+        const sizeMap = {
+          '1': { width: 120, height: 200 },
+          '2a': { width: 256, height: 256 },
+          '2b': { width: 330, height: 330 },
+          '3': { width: 550, height: 512 }
+        };
+        return sizeMap[sizeId] || { width: 256, height: 406 };
+      }
+
+      function mapZoomLevelToValue(zoomLevel) {
+        const zoomMap = {
+          'land': '1',
+          'provincia': '2',
+          'regio': '3',
+          'stad': '4'
+        };
+        return zoomMap[zoomLevel] || '2';
+      }
+
+      function buildIframeUrl() {
+        const gadgetType = currentSettings.gadgetType || 'radarfivedays';
+        
+        if (gadgetType === 'radarfivedays') {
+          return 'https://gadgets.buienradar.nl/gadget/radarfivedays';
+        } else if (gadgetType === 'zoommap') {
+          const baseUrl = 'https://gadgets.buienradar.nl/gadget/zoommap/';
+          const postcode = currentSettings.postcode || '3991VT';
+          const zoomValue = mapZoomLevelToValue(currentSettings.zoomLevel);
+          const size = currentSettings.mapSize || '2b';
+          const timePeriod = currentSettings.timePeriod || '0';
+          const overname = currentSettings.showName ? '2' : '0';
+          
+          const params = new URLSearchParams();
+          params.append('naam', postcode);
+          params.append('zoom', zoomValue);
+          params.append('size', size);
+          params.append('voor', timePeriod);
+          params.append('overname', overname);
+          
+          return `${baseUrl}?${params.toString()}`;
+        }
+      }
+
+      function getIframeSize() {
+        const gadgetType = currentSettings.gadgetType || 'radarfivedays';
+        
+        if (gadgetType === 'radarfivedays') {
+          return { width: 256, height: 406 };
+        } else if (gadgetType === 'zoommap') {
+          return mapSizeToPixels(currentSettings.mapSize);
+        }
+        return { width: 256, height: 406 };
+      }
+
+      function render() {
+        const content = document.getElementById('buienradar-container');
+        const iframeUrl = buildIframeUrl();
+        const size = getIframeSize();
+      
+        const iframe = document.createElement('iframe');
+        iframe.src = iframeUrl;
+        iframe.setAttribute('noresize', 'true');
+        iframe.setAttribute('scrolling', 'NO');
+        iframe.setAttribute('hspace', '0');
+        iframe.setAttribute('vspace', '0');
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('marginheight', '0');
+        iframe.setAttribute('marginwidth', '0');
+        iframe.setAttribute('width', String(size.width));
+        iframe.setAttribute('height', String(size.height));
+        
+        content.innerHTML = '';
+        content.appendChild(iframe);
+      }
+
+      async function onHomeyReady(Homey) {
+        currentSettings = Homey.getSettings();
+        render();
+        Homey.ready();
+      }
+    </script>
+  </body>
+</html>

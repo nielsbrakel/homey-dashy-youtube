@@ -1,0 +1,15 @@
+{
+  "widgets": {
+    "timer": {
+      "hours": "hours",
+      "minutes": "min",
+      "seconds": "sec",
+      "addTimer": "+ Add Timer"
+    },
+    "stopwatch": {
+      "lap": "Lap",
+      "noLaps": "Press lap to record times",
+      "addStopwatch": "+ Add Stopwatch"
+    }
+  }
+}

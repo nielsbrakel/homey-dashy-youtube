@@ -1,0 +1,58 @@
+{
+  "name": {
+    "en": "Rain Forecast",
+    "nl": "Regenvoorspelling"
+  },
+  "description": {
+    "en": "Hourly rain forecast graph",
+    "nl": "Uurlijkse regenvoorspellingsgrafiek"
+  },
+  "height": 250,
+  "settings": [
+    {
+      "id": "hoursAhead",
+      "type": "number",
+      "label": {
+        "en": "Hours Ahead",
+        "nl": "Uren Vooruit"
+      },
+      "min": 1,
+      "max": 24,
+      "value": 6
+    },
+    {
+      "id": "graphStyle",
+      "type": "dropdown",
+      "label": {
+        "en": "Graph Style",
+        "nl": "Grafieken Stijl"
+      },
+      "value": "bars",
+      "values": [
+        {
+          "id": "bars",
+          "label": {
+            "en": "Bars",
+            "nl": "Staven"
+          }
+        },
+        {
+          "id": "line",
+          "label": {
+            "en": "Line",
+            "nl": "Lijn"
+          }
+        }
+      ]
+    },
+    {
+      "id": "postcode",
+      "type": "text",
+      "label": {
+        "en": "Postcode (e.g., 1000 AA)",
+        "nl": "Postcode (bijv. 1000 AA)"
+      },
+      "value": "1000 AA"
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+<html>
+  <head>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .dayofweek-widget {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+
+      .dayofweek-blocks {
+        display: flex;
+        gap: var(--widget-su-2);
+        padding: var(--widget-su-2);
+      }
+
+      .dayofweek-block {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 4px;
+        font-weight: var(--homey-font-weight-bold);
+        font-size: 11px;
+        color: var(--homey-text-color-secondary);
+        background-color: var(--homey-color-mono-200);
+        border: 1px solid var(--homey-line-color-light);
+        transition: all 0.3s ease;
+      }
+
+      .dayofweek-block.active {
+        background-color: var(--homey-color-blue-500);
+        color: white;
+        font-weight: var(--homey-font-weight-bold);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .dayofweek-text {
+        text-align: center;
+        color: var(--homey-text-color);
+      }
+
+      .dayofweek-text--short {
+        font-size: 24px;
+        font-weight: var(--homey-font-weight-bold);
+      }
+
+      .dayofweek-text--long {
+        font-size: 28px;
+        font-weight: var(--homey-font-weight-bold);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="dayofweek-widget">
+      <div id="dayofweek-display"></div>
+    </div>
+
+    <script type="text/javascript">
+      let currentSettings = {};
+      let refreshTimer;
+
+      const days = [
+        { short: 'Mo', long: 'Monday' },
+        { short: 'Tu', long: 'Tuesday' },
+        { short: 'We', long: 'Wednesday' },
+        { short: 'Th', long: 'Thursday' },
+        { short: 'Fr', long: 'Friday' },
+        { short: 'Sa', long: 'Saturday' },
+        { short: 'Su', long: 'Sunday' },
+      ];
+
+      function renderBlockLayout() {
+        const display = document.getElementById('dayofweek-display');
+        const now = new Date();
+        const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, ...
+        const adjustedDay = currentDay === 0 ? 6 : currentDay - 1; // Convert to 0 = Monday
+
+        const container = document.createElement('div');
+        container.className = 'dayofweek-blocks';
+
+        days.forEach((day, index) => {
+          const block = document.createElement('div');
+          block.className = 'dayofweek-block';
+          if (index === adjustedDay) {
+            block.classList.add('active');
+          }
+          const label = currentSettings.format === 'long' ? day.long.substring(0, 1).toUpperCase() : day.short.toUpperCase();
+          block.textContent = label;
+          container.appendChild(block);
+        });
+
+        display.innerHTML = '';
+        display.appendChild(container);
+      }
+
+      function renderTextLayout() {
+        const display = document.getElementById('dayofweek-display');
+        const now = new Date();
+
+        const options = {
+          weekday: currentSettings.format || 'long',
+        };
+
+        let dayString = new Intl.DateTimeFormat('en-US', options).format(now);
+        dayString = currentSettings.uppercase ? dayString.toUpperCase() : dayString;
+
+        const textDiv = document.createElement('div');
+        textDiv.className = `dayofweek-text dayofweek-text--${currentSettings.format || 'long'}`;
+        textDiv.textContent = dayString;
+
+        display.innerHTML = '';
+        display.appendChild(textDiv);
+      }
+
+      function updateDisplay() {
+        if (currentSettings.layout === 'blocks') {
+          renderBlockLayout();
+        } else {
+          renderTextLayout();
+        }
+      }
+
+      function scheduleRefreshAtMidnight() {
+        if (refreshTimer) clearTimeout(refreshTimer);
+        
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+
+        const msUntilMidnight = tomorrow.getTime() - now.getTime();
+        refreshTimer = setTimeout(() => {
+          updateDisplay();
+          scheduleRefreshAtMidnight();
+        }, msUntilMidnight);
+      }
+
+      function render() {
+        updateDisplay();
+        scheduleRefreshAtMidnight();
+      }
+
+      async function onHomeyReady(Homey) {
+        currentSettings = Homey.getSettings();
+        render();
+        Homey.ready();
+
+        Homey.on('settings', (newSettings) => {
+          currentSettings = newSettings;
+          render();
+        });
+
+        window.addEventListener('beforeunload', () => {
+          if (refreshTimer) clearTimeout(refreshTimer);
+        });
+      }
+    </script>
+  </body>
+</html>
