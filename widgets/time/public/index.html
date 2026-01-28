@@ -1,1113 +1,1427 @@
+<!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Reset & Base */
-    html, body {
+    /* ========================
+       RESET & BASE
+       ======================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    html, body {
       width: 100%;
       height: 100%;
       overflow: hidden;
     }
 
-    .time-widget {
+    .widget {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       width: 100%;
       height: 100%;
-      box-sizing: border-box;
+      padding: 8px;
     }
 
-    .time-widget.bg-solid {
+    .widget.bg-solid {
       background: var(--homey-background-color);
       border-radius: var(--homey-border-radius-default);
     }
 
     /* ========================
-       SIZE CONFIG (CSS Variables)
+       SIZE VARIABLES
        ======================== */
     .size-small {
-      --text-size: 28px;
-      --flip-width: 24px;
-      --flip-height: 36px;
-      --flip-font: 26px;
-      --flip-gap: 3px;
-      --group-gap: 2px;
-      --separator-size: 20px;
+      --time-size: 28px;
+      --date-size-sm: 11px;
+      --date-size-md: 14px;
+      --date-size-lg: 28px;
+      --flip-w: 22px;
+      --flip-h: 32px;
+      --flip-font: 22px;
       --dot-size: 4px;
-      --dot-gap: 1px;
-      --colon-gap: 8px;
-      --widget-padding: var(--homey-su-2);
+      --analog-size: 60px;
+      --gap: 2px;
     }
 
     .size-medium {
-      --text-size: 40px;
-      --flip-width: 36px;
-      --flip-height: 52px;
-      --flip-font: 38px;
-      --flip-gap: 6px;
-      --group-gap: 3px;
-      --separator-size: 32px;
+      --time-size: 42px;
+      --date-size-sm: 14px;
+      --date-size-md: 18px;
+      --date-size-lg: 42px;
+      --flip-w: 32px;
+      --flip-h: 46px;
+      --flip-font: 32px;
       --dot-size: 6px;
-      --dot-gap: 2px;
-      --colon-gap: 12px;
-      --widget-padding: var(--homey-su-3);
+      --analog-size: 80px;
+      --gap: 4px;
     }
 
     .size-large {
-      --text-size: 52px;
-      --flip-width: 44px;
-      --flip-height: 64px;
-      --flip-font: 48px;
-      --flip-gap: 8px;
-      --group-gap: 3px;
-      --separator-size: 40px;
+      --time-size: 56px;
+      --date-size-sm: 18px;
+      --date-size-md: 24px;
+      --date-size-lg: 56px;
+      --flip-w: 42px;
+      --flip-h: 60px;
+      --flip-font: 42px;
       --dot-size: 8px;
-      --dot-gap: 2px;
-      --colon-gap: 16px;
-      --widget-padding: var(--homey-su-4);
+      --analog-size: 100px;
+      --gap: 6px;
     }
 
     /* ========================
-       COLOR VARIANTS
+       COLOR VARIABLES
        ======================== */
-    .color-default { --clock-color: var(--homey-text-color); --clock-accent: var(--homey-color-blue-500); }
-    .color-blue { --clock-color: var(--homey-color-blue-500); --clock-accent: var(--homey-color-blue-500); }
-    .color-green { --clock-color: var(--homey-color-green-500); --clock-accent: var(--homey-color-green-500); }
-    .color-orange { --clock-color: var(--homey-color-orange-500); --clock-accent: var(--homey-color-orange-500); }
-    .color-red { --clock-color: var(--homey-color-red-500); --clock-accent: var(--homey-color-red-500); }
-    .color-cyan { --clock-color: #00bcd4; --clock-accent: #00bcd4; }
-    .color-purple { --clock-color: #9c27b0; --clock-accent: #9c27b0; }
-    .color-pink { --clock-color: #e91e63; --clock-accent: #e91e63; }
-    .color-amber { --clock-color: #ffc107; --clock-accent: #ffc107; }
-    .color-gradient { --clock-color: var(--homey-text-color); --clock-accent: var(--homey-color-blue-500); }
+    .color-default { --color: var(--homey-text-color); --accent: var(--homey-text-color); }
+    .color-blue { --color: var(--homey-color-blue-500); --accent: var(--homey-color-blue-500); }
+    .color-green { --color: var(--homey-color-green-500); --accent: var(--homey-color-green-500); }
+    .color-orange { --color: var(--homey-color-orange-500); --accent: var(--homey-color-orange-500); }
+    .color-red { --color: var(--homey-color-red-500); --accent: var(--homey-color-red-500); }
+    .color-cyan { --color: #00bcd4; --accent: #00bcd4; }
+    .color-purple { --color: #9c27b0; --accent: #9c27b0; }
+    .color-pink { --color: #e91e63; --accent: #e91e63; }
+    .color-amber { --color: #ffc107; --accent: #ffc107; }
+    .color-gradient { --color: var(--homey-text-color); --accent: var(--homey-color-blue-500); }
 
-    /* Gradient color effect (applied to text) */
-    .color-gradient .time-display {
-      background: linear-gradient(90deg, 
-        #667eea 0%, 
-        #ff6b6b 25%, 
-        #feca57 50%, 
-        #48dbfb 75%, 
-        #667eea 100%);
-      background-size: 200% 100%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: gradientShift 15s linear infinite;
+    /* ========================
+       ALIGNMENT
+       ======================== */
+    .align-left { align-items: flex-start; text-align: left; }
+    .align-center { align-items: center; text-align: center; }
+    .align-right { align-items: flex-end; text-align: right; }
+
+    /* ========================
+       LAYOUT CONTAINER
+       ======================== */
+    .display-container {
+      display: flex;
+      flex-direction: column;
+      align-items: inherit;
+      gap: var(--gap);
+    }
+
+    .display-container.layout-stacked { flex-direction: column; }
+    .display-container.layout-stacked-reverse { flex-direction: column-reverse; }
+    .display-container.layout-inline,
+    .display-container.layout-inline-separator,
+    .display-container.layout-inline-dot { 
+      flex-direction: row; 
+      gap: 12px;
+      align-items: center;
+    }
+    .display-container.layout-compact {
+      flex-direction: column;
+      gap: 0;
+    }
+    .layout-compact .date-text {
+      font-size: var(--date-size-sm) !important;
+      opacity: 0.6 !important;
+    }
+
+    .layout-separator {
+      opacity: 0.4;
+      font-weight: 300;
     }
 
     /* ========================
-       FONT STYLES (apply to standard variant)
+       BASE TEXT STYLES
        ======================== */
-    
-    /* FONT: DIGITAL (Default) */
-    .font-digital .time-display {
-      font-family: 'Courier New', 'Monaco', monospace;
-      font-weight: var(--homey-font-weight-bold);
-      letter-spacing: 0.05em;
-      color: var(--clock-color);
-      font-size: var(--text-size);
-      line-height: 1;
+    .time-text, .date-text {
+      line-height: 1.1;
+      white-space: nowrap;
     }
 
-    /* FONT: MINIMAL */
-    .font-minimal .time-display {
+    .time-text {
+      font-size: var(--time-size);
+      color: var(--color);
+    }
+
+    .date-text {
+      color: var(--color);
+      opacity: 0.75;
+    }
+
+    .date-size-small .date-text { font-size: var(--date-size-sm); }
+    .date-size-medium .date-text { font-size: var(--date-size-md); }
+    .date-size-large .date-text { font-size: var(--date-size-lg); opacity: 1; }
+
+    /* Date only mode - always full size */
+    .mode-date .date-text {
+      font-size: var(--time-size);
+      opacity: 1;
+    }
+
+    /* ========================
+       STYLE: MODERN (default)
+       ======================== */
+    .style-modern .time-text,
+    .style-modern .date-text {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    /* ========================
+       STYLE: MINIMAL
+       ======================== */
+    .style-minimal .time-text,
+    .style-minimal .date-text {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-weight: 200;
-      letter-spacing: -0.02em;
-      color: var(--clock-color);
-      font-size: var(--text-size);
-      line-height: 1;
+      letter-spacing: -0.01em;
     }
 
-    /* FONT: BOLD */
-    .font-bold .time-display {
+    /* ========================
+       STYLE: BOLD
+       ======================== */
+    .style-bold .time-text,
+    .style-bold .date-text {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-weight: 900;
       letter-spacing: -0.03em;
-      color: var(--clock-color);
-      font-size: var(--text-size);
-      line-height: 1;
       text-transform: uppercase;
     }
 
-    /* FONT: NEON */
-    .font-neon .time-display {
-      font-family: 'Courier New', monospace;
+    /* ========================
+       STYLE: DIGITAL
+       ======================== */
+    .style-digital .time-text,
+    .style-digital .date-text {
+      font-family: 'Courier New', 'Monaco', 'Consolas', monospace;
       font-weight: bold;
-      color: var(--clock-accent);
-      font-size: var(--text-size);
-      line-height: 1;
-      text-shadow: 
-        0 0 5px var(--clock-accent),
-        0 0 10px var(--clock-accent),
-        0 0 20px var(--clock-accent),
-        0 0 40px var(--clock-accent);
-    }
-
-    /* FONT: OUTLINE */
-    .font-outline .time-display {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-weight: 900;
-      font-size: var(--text-size);
-      line-height: 1;
-      color: transparent;
-      -webkit-text-stroke: 1.5px var(--clock-color);
       letter-spacing: 0.05em;
-      paint-order: stroke fill;
-    }
-
-    /* FONT: TYPEWRITER */
-    .font-typewriter .time-display {
-      font-family: 'American Typewriter', 'Courier New', monospace;
-      font-weight: normal;
-      color: var(--clock-color);
-      font-size: var(--text-size);
-      line-height: 1;
-      letter-spacing: 0.15em;
     }
 
     /* ========================
-       VARIANT: SEGMENT (7-segment LED)
+       STYLE: RETRO LCD
        ======================== */
-    .variant-segment {
-      background: #1a1a1a !important;
+    .style-retro {
+      background: linear-gradient(180deg, #9ebe7a 0%, #8fb368 100%) !important;
       border-radius: var(--homey-border-radius-default);
     }
 
-    .variant-segment .time-display {
+    .style-retro .time-text,
+    .style-retro .date-text {
       font-family: 'Courier New', monospace;
       font-weight: bold;
-      color: var(--clock-accent);
-      font-size: var(--text-size);
-      line-height: 1;
-      letter-spacing: 0.1em;
-    }
-
-    .variant-segment .segment-ghost {
-      opacity: 0.15;
-      position: absolute;
-      color: var(--clock-accent);
-    }
-
-    .variant-segment .segment-container {
-      position: relative;
-      display: inline-block;
-    }
-
-    /* Gradient animation keyframes */
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 200% 50%; }
+      letter-spacing: 0.08em;
+      color: #2d5016 !important;
+      opacity: 1 !important;
     }
 
     /* ========================
-       VARIANT: FLIP CLOCK (Simplified Split-Flap)
+       STYLE: NEON
        ======================== */
-    .variant-flip .flip-clock {
-      display: flex;
-      align-items: center;
-      gap: var(--flip-gap);
-    }
-
-    .flip-clock .separator {
-      font-size: var(--separator-size);
+    .style-neon .time-text,
+    .style-neon .date-text {
+      font-family: 'Courier New', monospace;
       font-weight: bold;
-      color: var(--clock-color);
-      opacity: 0.6;
-      line-height: 1;
-      padding: 0 2px;
+      color: var(--accent) !important;
+      text-shadow: 
+        0 0 5px var(--accent),
+        0 0 10px var(--accent),
+        0 0 20px var(--accent),
+        0 0 40px var(--accent);
+      opacity: 1 !important;
     }
 
-    .flip-clock .separator.blink {
+    /* ========================
+       STYLE: OUTLINE
+       ======================== */
+    .style-outline .time-text,
+    .style-outline .date-text {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-weight: 900;
+      color: transparent !important;
+      -webkit-text-stroke: 2px var(--color);
+      letter-spacing: 0.02em;
+      opacity: 1 !important;
+    }
+
+    .style-outline .date-text {
+      -webkit-text-stroke-width: 1.5px;
+    }
+
+    /* ========================
+       STYLE: SHADOW
+       ======================== */
+    .style-shadow .time-text,
+    .style-shadow .date-text {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-weight: 700;
+      text-shadow: 4px 4px 0 var(--homey-color-mono-300);
+    }
+
+    /* ========================
+       STYLE: ELEGANT
+       ======================== */
+    .style-elegant .time-text,
+    .style-elegant .date-text {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: 0.03em;
+    }
+
+    /* ========================
+       GRADIENT TEXT
+       ======================== */
+    .color-gradient .time-text,
+    .color-gradient .date-text {
+      background: linear-gradient(
+        90deg,
+        #ff6b6b,
+        #feca57,
+        #48dbfb,
+        #ff9ff3,
+        #54a0ff,
+        #5f27cd,
+        #ff6b6b
+      );
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: smoothGradient 8s linear infinite;
+    }
+
+    @keyframes smoothGradient {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    /* ========================
+       BLINKING COLON
+       ======================== */
+    .blink-separator .colon-char {
       animation: colonBlink 1s ease-in-out infinite;
     }
 
     @keyframes colonBlink {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 0.2; }
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.15; }
+    }
+
+    .color-gradient.blink-separator .colon-char {
+      animation: colonBlinkGradient 1s ease-in-out infinite;
+    }
+
+    @keyframes colonBlinkGradient {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.15; }
+    }
+
+    /* ========================
+       STYLE: FLIP CLOCK
+       ======================== */
+    .flip-clock {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .flip-group {
       display: flex;
-      gap: var(--group-gap);
+      gap: 2px;
       background: var(--homey-color-mono-200);
-      border-radius: var(--homey-border-radius-small);
+      border-radius: 4px;
       padding: 2px;
     }
 
     .flip-card {
       position: relative;
-      width: var(--flip-width);
-      height: var(--flip-height);
-      font-size: var(--flip-font);
-      perspective: 1000px;
+      width: var(--flip-w);
+      height: var(--flip-h);
+      border-radius: 3px;
+      perspective: 300px;
     }
 
-    .flip-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Top half - shows upper part of digit */
-    .flip-card .top {
+    .flip-card .flip-face {
       position: absolute;
       width: 100%;
       height: 50%;
+      left: 0;
+      overflow: hidden;
+      backface-visibility: hidden;
+    }
+
+    .flip-card .flip-top {
       top: 0;
-      left: 0;
       background: linear-gradient(180deg, var(--homey-color-mono-100) 0%, var(--homey-color-mono-150) 100%);
-      border-radius: var(--homey-border-radius-small) var(--homey-border-radius-small) 0 0;
-      overflow: hidden;
-      z-index: 1;
+      border-bottom: 1px solid var(--homey-color-mono-300);
+      border-radius: 3px 3px 0 0;
+      z-index: 2;
     }
 
-    .flip-card .top::after {
-      content: '';
-      position: absolute;
+    .flip-card .flip-bottom {
       bottom: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: var(--homey-color-mono-300);
-    }
-
-    /* Bottom half - shows lower part of digit */
-    .flip-card .bottom {
-      position: absolute;
-      width: 100%;
-      height: 50%;
-      bottom: 0;
-      left: 0;
       background: linear-gradient(180deg, var(--homey-color-mono-150) 0%, var(--homey-color-mono-200) 100%);
-      border-radius: 0 0 var(--homey-border-radius-small) var(--homey-border-radius-small);
-      overflow: hidden;
+      border-radius: 0 0 3px 3px;
       z-index: 1;
     }
 
-    /* Digit text positioning */
-    .flip-card .digit {
+    .flip-card .flip-digit {
       position: absolute;
       width: 100%;
-      height: var(--flip-height);
+      height: calc(var(--flip-h));
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-weight: 700;
-      color: var(--clock-color);
+      font-size: var(--flip-font);
+      color: var(--color);
       line-height: 1;
     }
 
-    .flip-card .top .digit {
+    .flip-card .flip-top .flip-digit {
       top: 0;
     }
 
-    .flip-card .bottom .digit {
+    .flip-card .flip-bottom .flip-digit {
       bottom: 0;
     }
 
     /* Flip animation panels */
-    .flip-card .flip-top {
+    .flip-card .flip-top-back,
+    .flip-card .flip-bottom-back {
       position: absolute;
       width: 100%;
       height: 50%;
-      top: 0;
       left: 0;
-      background: linear-gradient(180deg, var(--homey-color-mono-100) 0%, var(--homey-color-mono-150) 100%);
-      border-radius: var(--homey-border-radius-small) var(--homey-border-radius-small) 0 0;
       overflow: hidden;
-      transform-origin: 50% 100%;
-      transform: rotateX(0deg);
+      backface-visibility: hidden;
       z-index: 3;
-      backface-visibility: hidden;
     }
 
-    .flip-card .flip-top::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: var(--homey-color-mono-300);
+    .flip-card .flip-top-back {
+      top: 0;
+      background: linear-gradient(180deg, var(--homey-color-mono-100) 0%, var(--homey-color-mono-150) 100%);
+      border-bottom: 1px solid var(--homey-color-mono-300);
+      border-radius: 3px 3px 0 0;
+      transform-origin: bottom center;
+      transform: rotateX(0deg);
     }
 
-    .flip-card .flip-bottom {
-      position: absolute;
-      width: 100%;
-      height: 50%;
+    .flip-card .flip-bottom-back {
       bottom: 0;
-      left: 0;
       background: linear-gradient(180deg, var(--homey-color-mono-150) 0%, var(--homey-color-mono-200) 100%);
-      border-radius: 0 0 var(--homey-border-radius-small) var(--homey-border-radius-small);
-      overflow: hidden;
-      transform-origin: 50% 0%;
+      border-radius: 0 0 3px 3px;
+      transform-origin: top center;
       transform: rotateX(90deg);
-      z-index: 2;
-      backface-visibility: hidden;
     }
 
-    /* Animations */
-    .flip-card.flipping .flip-top {
-      animation: flipTopDown 0.3s ease-in forwards;
+    .flip-card.flipping .flip-top-back {
+      animation: flipTop 0.3s ease-in forwards;
     }
 
-    .flip-card.flipping .flip-bottom {
-      animation: flipBottomUp 0.3s 0.3s ease-out forwards;
+    .flip-card.flipping .flip-bottom-back {
+      animation: flipBottom 0.3s 0.15s ease-out forwards;
     }
 
-    @keyframes flipTopDown {
+    @keyframes flipTop {
       0% { transform: rotateX(0deg); }
       100% { transform: rotateX(-90deg); }
     }
 
-    @keyframes flipBottomUp {
+    @keyframes flipBottom {
       0% { transform: rotateX(90deg); }
       100% { transform: rotateX(0deg); }
     }
 
-    /* Period indicator for flip clock */
-    .flip-clock .period {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: calc(var(--separator-size) * 0.6);
-      font-weight: 600;
-      color: var(--clock-color);
-      opacity: 0.7;
-      margin-left: 6px;
-      align-self: flex-end;
-      padding-bottom: 4px;
-    }
-
-    /* ========================
-       VARIANT: RETRO LCD
-       ======================== */
-    .variant-lcd {
-      background: linear-gradient(180deg, #9ebe7a 0%, #8fb368 100%) !important;
-      border-radius: var(--homey-border-radius-default);
-    }
-
-    .variant-lcd .time-display {
-      font-family: 'Courier New', monospace;
+    .flip-clock .flip-sep {
+      font-size: calc(var(--flip-font) * 0.8);
       font-weight: bold;
-      color: #2d5016;
-      font-size: var(--text-size);
-      line-height: 1;
-      letter-spacing: 0.1em;
+      color: var(--color);
+      opacity: 0.5;
+      padding: 0 2px;
     }
 
-    /* ========================
-       VARIANT: BINARY (bigger size)
-       ======================== */
-    .variant-binary .binary-display {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-family: 'Courier New', monospace;
-    }
-
-    .variant-binary .binary-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .variant-binary .binary-label {
-      font-size: 14px;
+    .flip-clock .flip-period {
+      font-size: calc(var(--flip-font) * 0.4);
       font-weight: 600;
-      color: var(--clock-color);
+      color: var(--color);
       opacity: 0.6;
-      width: 20px;
-      text-align: right;
-    }
-
-    .variant-binary .binary-bits {
-      display: flex;
-      gap: 6px;
-    }
-
-    .variant-binary .binary-bit {
-      width: calc(var(--dot-size) * 2.5);
-      height: calc(var(--dot-size) * 2.5);
-      border-radius: 3px;
-      background: var(--homey-color-mono-300);
-      opacity: 0.3;
-      transition: all 0.15s ease;
-    }
-
-    .variant-binary .binary-bit.active {
-      background: var(--clock-accent);
-      box-shadow: 0 0 8px var(--clock-accent);
-      opacity: 1;
-    }
-
-    .variant-binary .binary-separator {
-      width: 12px;
+      margin-left: 4px;
+      align-self: flex-end;
     }
 
     /* ========================
-       VARIANT: DOTS/MATRIX
+       STYLE: DOT MATRIX
        ======================== */
-    .variant-dots .dots-display {
+    .dots-display {
       display: flex;
       align-items: center;
-      gap: calc(var(--dot-gap) * 3);
+      gap: calc(var(--dot-size) * 1.5);
     }
 
-    .variant-dots .digit {
+    .dot-digit {
       display: grid;
       grid-template-columns: repeat(4, var(--dot-size));
       grid-template-rows: repeat(7, var(--dot-size));
-      gap: var(--dot-gap);
+      gap: calc(var(--dot-size) * 0.3);
     }
 
-    .variant-dots .dot {
+    .dot {
       width: var(--dot-size);
       height: var(--dot-size);
       border-radius: 50%;
       background: var(--homey-color-mono-300);
-      opacity: 0.35;
+      opacity: 0.25;
       transition: all 0.15s ease;
     }
 
-    .variant-dots .dot.active {
-      background: var(--clock-accent);
-      box-shadow: 0 0 4px var(--clock-accent);
+    .dot.on {
+      background: var(--accent);
       opacity: 1;
+      box-shadow: 0 0 calc(var(--dot-size) * 0.5) var(--accent);
     }
 
-    .variant-dots .colon {
+    .dot-colon {
       display: flex;
       flex-direction: column;
-      gap: var(--colon-gap);
-      padding: 0 2px;
+      gap: calc(var(--dot-size) * 2);
+      padding: 0 calc(var(--dot-size) * 0.5);
     }
 
-    .variant-dots .colon .dot {
-      background: var(--clock-accent);
-      box-shadow: 0 0 4px var(--clock-accent);
+    .dot-colon .dot {
+      background: var(--accent);
       opacity: 1;
+      box-shadow: 0 0 calc(var(--dot-size) * 0.5) var(--accent);
     }
 
     /* ========================
-       VARIANT: WORD CLOCK
+       ANALOG CLOCK STYLES - FIXED
        ======================== */
-    .variant-word .time-display {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-weight: 300;
-      color: var(--clock-color);
-      font-size: calc(var(--text-size) * 0.6);
-      line-height: 1.4;
-      text-align: center;
-    }
-
-    .variant-word .time-display .highlight {
-      font-weight: 600;
-      color: var(--clock-accent);
-    }
-
-    /* ========================
-       VARIANT: ANALOG (Simple CSS clock)
-       ======================== */
-    .variant-analog .analog-clock {
+    .analog-clock {
       position: relative;
+      width: var(--analog-size);
+      height: var(--analog-size);
       border-radius: 50%;
-      background: var(--homey-color-mono-100);
-      border: 3px solid var(--clock-color);
-      box-sizing: border-box;
+      flex-shrink: 0;
     }
 
-    .size-small .analog-clock { width: 50px; height: 50px; }
-    .size-medium .analog-clock { width: 70px; height: 70px; }
-    .size-large .analog-clock { width: 90px; height: 90px; }
-
-    .variant-analog .clock-face {
+    .analog-face {
       position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
+      top: 0;
+      left: 0;
     }
 
-    .variant-analog .hand {
+    /* ANALOG: CLASSIC */
+    .analog-classic {
+      background: var(--homey-color-mono-100);
+      border: 3px solid var(--color);
+    }
+
+    .analog-classic .analog-marker {
+      position: absolute;
+      width: 2px;
+      height: 6px;
+      background: var(--color);
+      left: 50%;
+      top: 6px;
+      margin-left: -1px;
+      transform-origin: center calc(var(--analog-size) / 2 - 6px);
+    }
+
+    /* ANALOG: MINIMAL */
+    .analog-minimal {
+      background: transparent;
+      border: 2px solid var(--color);
+    }
+
+    .analog-minimal .analog-marker {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--color);
+      border-radius: 50%;
+      left: 50%;
+      top: 8px;
+      margin-left: -2px;
+      transform-origin: center calc(var(--analog-size) / 2 - 8px);
+    }
+
+    /* ANALOG: ROMAN */
+    .analog-roman {
+      background: var(--homey-color-mono-100);
+      border: 3px solid var(--color);
+    }
+
+    .analog-roman .roman-numeral {
+      position: absolute;
+      font-family: 'Times New Roman', serif;
+      font-size: calc(var(--analog-size) * 0.11);
+      color: var(--color);
+      font-weight: bold;
+      text-align: center;
+      line-height: 1;
+    }
+
+    /* ANALOG: MODERN */
+    .analog-modern {
+      background: var(--homey-color-mono-100);
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+
+    .analog-modern .analog-marker {
       position: absolute;
       left: 50%;
-      bottom: 50%;
-      transform-origin: 50% 100%;
-      border-radius: 2px;
+      top: 6px;
+      margin-left: -1px;
+      transform-origin: center calc(var(--analog-size) / 2 - 6px);
     }
 
-    .variant-analog .hour-hand {
-      width: 4px;
-      height: 22%;
-      background: var(--clock-color);
-      margin-left: -2px;
+    .analog-modern .marker-hour {
+      width: 2px;
+      height: 6px;
+      background: var(--color);
+      opacity: 0.3;
     }
 
-    .variant-analog .minute-hand {
+    .analog-modern .marker-quarter {
       width: 3px;
-      height: 32%;
-      background: var(--clock-color);
+      height: 10px;
+      background: var(--color);
+      opacity: 0.8;
       margin-left: -1.5px;
     }
 
-    .variant-analog .second-hand {
+    /* ANALOG: VINTAGE */
+    .analog-vintage {
+      background: linear-gradient(180deg, #f5f0e6 0%, #e8dcc8 100%);
+      border: 4px solid #8b7355;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .analog-vintage .analog-marker {
+      position: absolute;
       width: 2px;
-      height: 38%;
-      background: var(--clock-accent);
+      height: 5px;
+      background: #5c4a32;
+      left: 50%;
+      top: 8px;
+      margin-left: -1px;
+      transform-origin: center calc(var(--analog-size) / 2 - 8px);
+    }
+
+    .analog-vintage .hand-hour,
+    .analog-vintage .hand-minute {
+      background: #3d2b1f !important;
+    }
+
+    .analog-vintage .hand-second {
+      background: #8b4513 !important;
+    }
+
+    /* ANALOG: SWISS RAILWAY */
+    .analog-swiss {
+      background: #fff;
+      border: 3px solid #333;
+    }
+
+    .analog-swiss .analog-marker {
+      position: absolute;
+      left: 50%;
+      top: 4px;
+      transform-origin: center calc(var(--analog-size) / 2 - 4px);
+    }
+
+    .analog-swiss .marker-hour {
+      width: 4px;
+      height: 10px;
+      background: #333;
+      border-radius: 1px;
+      margin-left: -2px;
+    }
+
+    .analog-swiss .marker-minute {
+      width: 2px;
+      height: 5px;
+      background: #333;
       margin-left: -1px;
     }
 
-    .variant-analog .center-dot {
+    .analog-swiss .hand-second {
+      background: #ff0000 !important;
+    }
+
+    .analog-swiss .hand-second::after {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      background: #ff0000;
+      border-radius: 50%;
+    }
+
+    /* ANALOG: HANDS */
+    .analog-hand {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      transform-origin: bottom center;
+      border-radius: 2px;
+    }
+
+    .hand-hour {
+      width: 4px;
+      height: calc(var(--analog-size) * 0.25);
+      background: var(--color);
+      margin-left: -2px;
+    }
+
+    .hand-minute {
+      width: 3px;
+      height: calc(var(--analog-size) * 0.35);
+      background: var(--color);
+      margin-left: -1.5px;
+    }
+
+    .hand-second {
+      width: 2px;
+      height: calc(var(--analog-size) * 0.38);
+      background: var(--accent);
+      margin-left: -1px;
+    }
+
+    .analog-center {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 8px;
       height: 8px;
-      background: var(--clock-color);
+      background: var(--color);
       border-radius: 50%;
       z-index: 10;
     }
 
-    /* Hour markers */
-    .variant-analog .hour-marker {
-      position: absolute;
-      width: 2px;
-      height: 6px;
-      background: var(--clock-color);
-      opacity: 0.5;
-      left: 50%;
-      margin-left: -1px;
-      transform-origin: 50% calc(var(--clock-size) / 2 - 3px);
+    .analog-swiss .analog-center {
+      background: #333;
     }
 
-    .size-small .hour-marker { transform-origin: 50% 22px; }
-    .size-medium .hour-marker { transform-origin: 50% 32px; }
-    .size-large .hour-marker { transform-origin: 50% 42px; }
+    .analog-vintage .analog-center {
+      background: #5c4a32;
+    }
 
     /* ========================
-       ALIGNMENT STYLES
+       HYBRID: ANALOG + DIGITAL
        ======================== */
-    .align-left {
-      align-items: flex-start;
-      padding-left: var(--widget-padding);
-    }
-
-    .align-center {
+    .hybrid-clock {
+      display: flex;
       align-items: center;
+      gap: 12px;
     }
 
-    .align-right {
-      align-items: flex-end;
-      padding-right: var(--widget-padding);
+    .hybrid-clock .time-text {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-weight: 600;
+      font-size: var(--time-size);
+      color: var(--color);
+    }
+
+    .hybrid-clock .analog-clock {
+      --analog-size: calc(var(--time-size) * 1.4);
+    }
+
+    /* Hybrid style for digital with analog seconds */
+    .style-hybrid .hybrid-clock .analog-clock {
+      border-width: 2px;
+    }
+
+    .style-hybrid .hybrid-clock .hand-second {
+      width: 2px;
+      height: calc(var(--analog-size) * 0.4);
+    }
+
+    .style-hybrid .hybrid-clock .analog-center {
+      width: 6px;
+      height: 6px;
+    }
+
+    /* Analog-Digital combo styles */
+    .style-analog-digital .hybrid-clock {
+      gap: 16px;
     }
   </style>
 </head>
 <body>
-  <div class="time-widget" id="widget">
+  <div class="widget" id="widget">
     <div id="display"></div>
   </div>
 
   <script>
-    // Dot matrix patterns for digits 0-9 (4x7 grid)
+    // ========================
+    // DATA
+    // ========================
     const DIGIT_PATTERNS = {
-      '0': [0,1,1,0, 1,0,0,1, 1,0,0,1, 1,0,0,1, 1,0,0,1, 1,0,0,1, 0,1,1,0],
-      '1': [0,0,1,0, 0,1,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,0, 0,1,1,1],
-      '2': [0,1,1,0, 1,0,0,1, 0,0,0,1, 0,0,1,0, 0,1,0,0, 1,0,0,0, 1,1,1,1],
-      '3': [0,1,1,0, 1,0,0,1, 0,0,0,1, 0,1,1,0, 0,0,0,1, 1,0,0,1, 0,1,1,0],
-      '4': [1,0,0,1, 1,0,0,1, 1,0,0,1, 1,1,1,1, 0,0,0,1, 0,0,0,1, 0,0,0,1],
-      '5': [1,1,1,1, 1,0,0,0, 1,0,0,0, 1,1,1,0, 0,0,0,1, 1,0,0,1, 0,1,1,0],
-      '6': [0,1,1,0, 1,0,0,0, 1,0,0,0, 1,1,1,0, 1,0,0,1, 1,0,0,1, 0,1,1,0],
-      '7': [1,1,1,1, 0,0,0,1, 0,0,1,0, 0,0,1,0, 0,1,0,0, 0,1,0,0, 0,1,0,0],
-      '8': [0,1,1,0, 1,0,0,1, 1,0,0,1, 0,1,1,0, 1,0,0,1, 1,0,0,1, 0,1,1,0],
-      '9': [0,1,1,0, 1,0,0,1, 1,0,0,1, 0,1,1,1, 0,0,0,1, 0,0,0,1, 0,1,1,0]
+      '0': [0,1,1,0,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,0,1,1,0],
+      '1': [0,0,1,0,0,1,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,1,1],
+      '2': [0,1,1,0,1,0,0,1,0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0,1,1,1,1],
+      '3': [0,1,1,0,1,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,1,0,0,1,0,1,1,0],
+      '4': [1,0,0,1,1,0,0,1,1,0,0,1,1,1,1,1,0,0,0,1,0,0,0,1,0,0,0,1],
+      '5': [1,1,1,1,1,0,0,0,1,0,0,0,1,1,1,0,0,0,0,1,1,0,0,1,0,1,1,0],
+      '6': [0,1,1,0,1,0,0,0,1,0,0,0,1,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0],
+      '7': [1,1,1,1,0,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,0],
+      '8': [0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,0],
+      '9': [0,1,1,0,1,0,0,1,1,0,0,1,0,1,1,1,0,0,0,1,0,0,0,1,0,1,1,0]
     };
 
-    // Word clock number words
-    const HOUR_WORDS = ['twelve', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
-    const MINUTE_WORDS = {
-      0: "o'clock",
-      5: 'five past',
-      10: 'ten past',
-      15: 'quarter past',
-      20: 'twenty past',
-      25: 'twenty-five past',
-      30: 'half past',
-      35: 'twenty-five to',
-      40: 'twenty to',
-      45: 'quarter to',
-      50: 'ten to',
-      55: 'five to'
-    };
+    const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const MONTHS_EN_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const DAYS_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const DAYS_EN_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
+    const MONTHS_NL = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+    const MONTHS_NL_SHORT = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+    const DAYS_NL = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+    const DAYS_NL_SHORT = ['zo','ma','di','wo','do','vr','za'];
+
+    const ROMAN = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
+
+    // ========================
+    // STATE
+    // ========================
+    let Homey;
     let settings = {};
+    let locale = 'en';
     let updateTimer;
-    let lastTime = {};
-    let flipInitialized = false;
+    let lastFlipValues = {};
 
+    // ========================
+    // HELPERS
+    // ========================
     const pad = n => String(n).padStart(2, '0');
 
-    function getTime() {
+    function getTimeData() {
       const now = new Date();
-      let hours = now.getHours();
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
+      let h = now.getHours();
+      const m = now.getMinutes();
+      const s = now.getSeconds();
       let period = '';
 
       if (settings.hourFormat === '12') {
-        period = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12 || 12;
+        period = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
       }
 
+      return { h, m, s, period, rawH: now.getHours() };
+    }
+
+    function formatTime(data) {
+      const colonClass = 'colon-char';
+      let str = `${pad(data.h)}<span class="${colonClass}">:</span>${pad(data.m)}`;
+      if (settings.showSeconds) str += `<span class="${colonClass}">:</span>${pad(data.s)}`;
+      if (data.period) str += ` ${data.period}`;
+      return str;
+    }
+
+    function formatTimeNoSeconds(data) {
+      const colonClass = 'colon-char';
+      let str = `${pad(data.h)}<span class="${colonClass}">:</span>${pad(data.m)}`;
+      if (data.period) str += ` ${data.period}`;
+      return str;
+    }
+
+    function getDateData() {
+      const now = new Date();
       return {
-        hours: pad(hours),
-        minutes: pad(minutes),
-        seconds: pad(seconds),
-        period,
-        rawHours: now.getHours(),
-        rawMinutes: minutes
+        day: now.getDate(),
+        month: now.getMonth(),
+        year: now.getFullYear(),
+        weekday: now.getDay(),
+        date: now
       };
     }
 
-    function renderDigital() {
-      const time = getTime();
-      const display = document.getElementById('display');
-      let timeStr = `${time.hours}:${time.minutes}`;
-      if (settings.showSeconds) timeStr += `:${time.seconds}`;
-      if (time.period) timeStr += ` ${time.period}`;
-      
-      display.innerHTML = `<div class="time-display">${timeStr}</div>`;
+    function formatDate(data) {
+      const isNL = locale === 'nl';
+      const months = isNL ? MONTHS_NL : MONTHS_EN;
+      const monthsShort = isNL ? MONTHS_NL_SHORT : MONTHS_EN_SHORT;
+      const days = isNL ? DAYS_NL : DAYS_EN;
+      const daysShort = isNL ? DAYS_NL_SHORT : DAYS_EN_SHORT;
+      const fmt = settings.dateFormat || 'weekday-short';
+
+      switch (fmt) {
+        case 'dmy': return `${pad(data.day)}/${pad(data.month + 1)}/${data.year}`;
+        case 'mdy': return `${pad(data.month + 1)}/${pad(data.day)}/${data.year}`;
+        case 'ymd': return `${data.year}-${pad(data.month + 1)}-${pad(data.day)}`;
+        case 'long': return isNL ? `${data.day} ${months[data.month]} ${data.year}` : `${months[data.month]} ${data.day}, ${data.year}`;
+        case 'short': return isNL ? `${data.day} ${monthsShort[data.month]} ${data.year}` : `${monthsShort[data.month]} ${data.day}, ${data.year}`;
+        case 'weekday-long': return isNL ? `${days[data.weekday]} ${data.day} ${months[data.month]}` : `${days[data.weekday]}, ${months[data.month]} ${data.day}`;
+        case 'weekday-short': return isNL ? `${daysShort[data.weekday]} ${data.day} ${monthsShort[data.month]}` : `${daysShort[data.weekday]}, ${monthsShort[data.month]} ${data.day}`;
+        case 'weekday-only': return days[data.weekday];
+        case 'day-month': return isNL ? `${data.day} ${months[data.month]}` : `${months[data.month]} ${data.day}`;
+        case 'relative': return getRelativeDate(data.date, isNL, days, monthsShort);
+        default: return `${pad(data.day)}/${pad(data.month + 1)}/${data.year}`;
+      }
     }
 
-    function renderSegment() {
-      const time = getTime();
-      const display = document.getElementById('display');
-      let timeStr = `${time.hours}:${time.minutes}`;
-      if (settings.showSeconds) timeStr += `:${time.seconds}`;
+    function getRelativeDate(date, isNL, days, monthsShort) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const compare = new Date(date);
+      compare.setHours(0, 0, 0, 0);
+      const diff = Math.round((compare - today) / 86400000);
+
+      if (diff === 0) return isNL ? 'Vandaag' : 'Today';
+      if (diff === 1) return isNL ? 'Morgen' : 'Tomorrow';
+      if (diff === -1) return isNL ? 'Gisteren' : 'Yesterday';
       
-      const ghostStr = '88:88' + (settings.showSeconds ? ':88' : '');
-      
-      display.innerHTML = `
-        <div class="segment-container">
-          <span class="segment-ghost">${ghostStr}</span>
-          <div class="time-display">${timeStr}${time.period ? ' ' + time.period : ''}</div>
-        </div>
-      `;
+      return isNL 
+        ? `${days[date.getDay()]} ${date.getDate()} ${monthsShort[date.getMonth()]}`
+        : `${days[date.getDay()]}, ${monthsShort[date.getMonth()]} ${date.getDate()}`;
     }
 
-    function renderLCD() {
-      const time = getTime();
-      const display = document.getElementById('display');
-      let timeStr = `${time.hours}:${time.minutes}`;
-      if (settings.showSeconds) timeStr += `:${time.seconds}`;
-      if (time.period) timeStr += ` ${time.period}`;
-      
-      display.innerHTML = `<div class="time-display">${timeStr}</div>`;
+    function getLayoutSeparator() {
+      const layout = settings.layout || 'stacked';
+      if (layout === 'inline-separator') return '<span class="layout-separator">|</span>';
+      if (layout === 'inline-dot') return '<span class="layout-separator">•</span>';
+      return '';
     }
 
-    // Flip clock functions
-    function createFlipCard(id, value) {
-      return `
-        <div class="flip-card" id="flip-${id}" data-value="${value}">
-          <div class="flip-card-inner">
-            <div class="top"><span class="digit">${value}</span></div>
-            <div class="bottom"><span class="digit">${value}</span></div>
-            <div class="flip-top"><span class="digit">${value}</span></div>
-            <div class="flip-bottom"><span class="digit">${value}</span></div>
+    // ========================
+    // RENDERERS
+    // ========================
+    function renderText() {
+      const display = document.getElementById('display');
+      const mode = settings.displayMode || 'time';
+      const layout = settings.layout || 'stacked';
+      const timeData = getTimeData();
+      const dateData = getDateData();
+
+      if (mode === 'time') {
+        display.innerHTML = `<div class="time-text">${formatTime(timeData)}</div>`;
+      } else if (mode === 'date') {
+        display.innerHTML = `<div class="date-text">${formatDate(dateData)}</div>`;
+      } else {
+        const sep = getLayoutSeparator();
+        display.innerHTML = `
+          <div class="display-container layout-${layout}">
+            <div class="time-text">${formatTime(timeData)}</div>
+            ${sep}
+            <div class="date-text">${formatDate(dateData)}</div>
           </div>
+        `;
+      }
+    }
+
+    function createFlipCard(id, currentVal, prevVal) {
+      const shouldFlip = prevVal !== undefined && prevVal !== currentVal;
+      return `
+        <div class="flip-card ${shouldFlip ? 'flipping' : ''}" data-flip-id="${id}">
+          <div class="flip-top flip-face"><span class="flip-digit">${currentVal}</span></div>
+          <div class="flip-bottom flip-face"><span class="flip-digit">${currentVal}</span></div>
+          ${shouldFlip ? `
+            <div class="flip-top-back flip-face"><span class="flip-digit">${prevVal}</span></div>
+            <div class="flip-bottom-back flip-face"><span class="flip-digit">${currentVal}</span></div>
+          ` : ''}
         </div>
       `;
     }
 
     function renderFlip() {
-      const time = getTime();
       const display = document.getElementById('display');
-      
-      let html = '<div class="flip-clock">';
-      html += '<div class="flip-group">';
-      html += createFlipCard('h1', time.hours[0]);
-      html += createFlipCard('h2', time.hours[1]);
-      html += '</div>';
-      html += '<span class="separator blink">:</span>';
-      html += '<div class="flip-group">';
-      html += createFlipCard('m1', time.minutes[0]);
-      html += createFlipCard('m2', time.minutes[1]);
-      html += '</div>';
-      
-      if (settings.showSeconds) {
-        html += '<span class="separator blink">:</span>';
-        html += '<div class="flip-group">';
-        html += createFlipCard('s1', time.seconds[0]);
-        html += createFlipCard('s2', time.seconds[1]);
-        html += '</div>';
-      }
-      
-      if (time.period) {
-        html += `<span class="period">${time.period}</span>`;
-      }
-      
-      html += '</div>';
-      display.innerHTML = html;
-      
-      lastTime = time;
-      flipInitialized = true;
-    }
+      const mode = settings.displayMode || 'time';
+      const layout = settings.layout || 'stacked';
+      const timeData = getTimeData();
+      const dateData = getDateData();
 
-    function updateFlip() {
-      const time = getTime();
-      
-      const flipCard = (id, newVal, oldVal) => {
-        if (newVal === oldVal) return;
-        
-        const card = document.getElementById(`flip-${id}`);
-        if (!card) return;
-        
-        // Get all digit elements
-        const topDigit = card.querySelector('.top .digit');
-        const bottomDigit = card.querySelector('.bottom .digit');
-        const flipTopDigit = card.querySelector('.flip-top .digit');
-        const flipBottomDigit = card.querySelector('.flip-bottom .digit');
-        
-        // Setup:
-        // - top shows current (old) value
-        // - bottom shows NEW value (will be revealed)
-        // - flip-top shows OLD value (will flip down and disappear)
-        // - flip-bottom shows NEW value (will flip up into view)
-        
-        bottomDigit.textContent = newVal;
-        flipTopDigit.textContent = oldVal;
-        flipBottomDigit.textContent = newVal;
-        
-        // Reset animation
-        card.classList.remove('flipping');
-        void card.offsetWidth; // Force reflow
-        card.classList.add('flipping');
-        
-        // After animation, update the static top to show new value
-        setTimeout(() => {
-          topDigit.textContent = newVal;
-          card.classList.remove('flipping');
-          card.dataset.value = newVal;
-        }, 600);
-      };
-      
-      flipCard('h1', time.hours[0], lastTime.hours?.[0] || time.hours[0]);
-      flipCard('h2', time.hours[1], lastTime.hours?.[1] || time.hours[1]);
-      flipCard('m1', time.minutes[0], lastTime.minutes?.[0] || time.minutes[0]);
-      flipCard('m2', time.minutes[1], lastTime.minutes?.[1] || time.minutes[1]);
-      
-      if (settings.showSeconds) {
-        flipCard('s1', time.seconds[0], lastTime.seconds?.[0] || time.seconds[0]);
-        flipCard('s2', time.seconds[1], lastTime.seconds?.[1] || time.seconds[1]);
+      if (mode === 'date') {
+        display.innerHTML = `<div class="date-text">${formatDate(dateData)}</div>`;
+        return;
       }
-      
-      // Update period if changed
-      const periodEl = document.querySelector('.flip-clock .period');
-      if (periodEl && time.period !== lastTime.period) {
-        periodEl.textContent = time.period;
-      }
-      
-      lastTime = time;
-    }
 
-    function createDotDigit(digit) {
-      const pattern = DIGIT_PATTERNS[digit] || DIGIT_PATTERNS['0'];
-      return `<div class="digit">${pattern.map(on => 
-        `<div class="dot${on ? ' active' : ''}"></div>`
-      ).join('')}</div>`;
+      const h = pad(timeData.h);
+      const m = pad(timeData.m);
+      const s = pad(timeData.s);
+
+      const currentValues = { h0: h[0], h1: h[1], m0: m[0], m1: m[1], s0: s[0], s1: s[1] };
+
+      let colonClass = settings.blinkSeparator ? 'flip-sep colon-char' : 'flip-sep';
+
+      let clock = `<div class="flip-clock">
+        <div class="flip-group">
+          ${createFlipCard('h0', currentValues.h0, lastFlipValues.h0)}
+          ${createFlipCard('h1', currentValues.h1, lastFlipValues.h1)}
+        </div>
+        <span class="${colonClass}">:</span>
+        <div class="flip-group">
+          ${createFlipCard('m0', currentValues.m0, lastFlipValues.m0)}
+          ${createFlipCard('m1', currentValues.m1, lastFlipValues.m1)}
+        </div>`;
+
+      if (settings.showSeconds) {
+        clock += `<span class="${colonClass}">:</span>
+          <div class="flip-group">
+            ${createFlipCard('s0', currentValues.s0, lastFlipValues.s0)}
+            ${createFlipCard('s1', currentValues.s1, lastFlipValues.s1)}
+          </div>`;
+      }
+
+      if (timeData.period) {
+        clock += `<span class="flip-period">${timeData.period}</span>`;
+      }
+
+      clock += '</div>';
+
+      if (mode === 'datetime') {
+        const sep = getLayoutSeparator();
+        display.innerHTML = `
+          <div class="display-container layout-${layout}">
+            ${clock}
+            ${sep}
+            <div class="date-text">${formatDate(dateData)}</div>
+          </div>
+        `;
+      } else {
+        display.innerHTML = clock;
+      }
+
+      // Store current values for next comparison
+      lastFlipValues = { ...currentValues };
+
+      // Remove flipping class after animation
+      setTimeout(() => {
+        document.querySelectorAll('.flip-card.flipping').forEach(el => {
+          el.classList.remove('flipping');
+          // Remove the animation panels
+          const topBack = el.querySelector('.flip-top-back');
+          const bottomBack = el.querySelector('.flip-bottom-back');
+          if (topBack) topBack.remove();
+          if (bottomBack) bottomBack.remove();
+        });
+      }, 500);
     }
 
     function renderDots() {
-      const time = getTime();
       const display = document.getElementById('display');
-      
-      let html = '<div class="dots-display">';
-      html += createDotDigit(time.hours[0]);
-      html += createDotDigit(time.hours[1]);
-      html += '<div class="colon"><div class="dot"></div><div class="dot"></div></div>';
-      html += createDotDigit(time.minutes[0]);
-      html += createDotDigit(time.minutes[1]);
-      
-      if (settings.showSeconds) {
-        html += '<div class="colon"><div class="dot"></div><div class="dot"></div></div>';
-        html += createDotDigit(time.seconds[0]);
-        html += createDotDigit(time.seconds[1]);
+      const mode = settings.displayMode || 'time';
+      const layout = settings.layout || 'stacked';
+      const timeData = getTimeData();
+      const dateData = getDateData();
+
+      if (mode === 'date') {
+        display.innerHTML = `<div class="date-text">${formatDate(dateData)}</div>`;
+        return;
       }
-      
-      html += '</div>';
-      display.innerHTML = html;
+
+      const createDigit = d => {
+        const p = DIGIT_PATTERNS[d] || DIGIT_PATTERNS['0'];
+        return `<div class="dot-digit">${p.map(v => `<div class="dot${v ? ' on' : ''}"></div>`).join('')}</div>`;
+      };
+
+      const h = pad(timeData.h);
+      const m = pad(timeData.m);
+      const s = pad(timeData.s);
+
+      let dots = `<div class="dots-display">
+        ${createDigit(h[0])}${createDigit(h[1])}
+        <div class="dot-colon"><div class="dot"></div><div class="dot"></div></div>
+        ${createDigit(m[0])}${createDigit(m[1])}`;
+
+      if (settings.showSeconds) {
+        dots += `<div class="dot-colon"><div class="dot"></div><div class="dot"></div></div>
+          ${createDigit(s[0])}${createDigit(s[1])}`;
+      }
+
+      dots += '</div>';
+
+      if (mode === 'datetime') {
+        const sep = getLayoutSeparator();
+        display.innerHTML = `
+          <div class="display-container layout-${layout}">
+            ${dots}
+            ${sep}
+            <div class="date-text">${formatDate(dateData)}</div>
+          </div>
+        `;
+      } else {
+        display.innerHTML = dots;
+      }
     }
 
     function updateDots() {
-      const time = getTime();
-      const display = document.getElementById('display');
-      const digits = display.querySelectorAll('.digit');
-      const allDigits = [time.hours[0], time.hours[1], time.minutes[0], time.minutes[1]];
-      
-      if (settings.showSeconds) {
-        allDigits.push(time.seconds[0], time.seconds[1]);
-      }
-      
-      digits.forEach((digitEl, i) => {
-        const pattern = DIGIT_PATTERNS[allDigits[i]] || DIGIT_PATTERNS['0'];
-        const dots = digitEl.querySelectorAll('.dot');
-        dots.forEach((dot, j) => {
-          dot.classList.toggle('active', pattern[j] === 1);
-        });
+      const timeData = getTimeData();
+      const h = pad(timeData.h);
+      const m = pad(timeData.m);
+      const s = pad(timeData.s);
+      const digits = [h[0], h[1], m[0], m[1]];
+      if (settings.showSeconds) digits.push(s[0], s[1]);
+
+      const els = document.querySelectorAll('.dot-digit');
+      els.forEach((el, i) => {
+        const pattern = DIGIT_PATTERNS[digits[i]] || DIGIT_PATTERNS['0'];
+        const dots = el.querySelectorAll('.dot');
+        dots.forEach((dot, j) => dot.classList.toggle('on', pattern[j] === 1));
       });
     }
 
-    function renderBinary() {
-      const time = getTime();
-      const display = document.getElementById('display');
-      
-      const toBinary = (num, bits) => {
-        return num.toString(2).padStart(bits, '0').split('').map(b => b === '1');
-      };
-      
-      const h = parseInt(time.hours);
-      const m = parseInt(time.minutes);
-      const s = parseInt(time.seconds);
-      
-      const createBinaryRow = (label, value, bits) => {
-        const binary = toBinary(value, bits);
-        return `
-          <div class="binary-row">
-            <span class="binary-label">${label}</span>
-            <div class="binary-bits">
-              ${binary.map(on => `<div class="binary-bit${on ? ' active' : ''}"></div>`).join('')}
-            </div>
-          </div>
-        `;
-      };
-      
-      let html = '<div class="binary-display">';
-      html += createBinaryRow('H', h, 5);
-      html += createBinaryRow('M', m, 6);
-      if (settings.showSeconds) {
-        html += createBinaryRow('S', s, 6);
-      }
-      html += '</div>';
-      
-      display.innerHTML = html;
-    }
+    function createAnalogClock(timeData, analogStyle, showSeconds) {
+      const h = timeData.rawH % 12;
+      const m = timeData.m;
+      const s = timeData.s;
 
-    function updateBinary() {
-      renderBinary();
-    }
+      const hDeg = h * 30 + m * 0.5;
+      const mDeg = m * 6;
+      const sDeg = s * 6;
 
-    function renderWord() {
-      const time = getTime();
-      const display = document.getElementById('display');
-      
-      let h = time.rawHours % 12;
-      const m = time.rawMinutes;
-      
-      // Round to nearest 5 minutes
-      const roundedMin = Math.round(m / 5) * 5;
-      
-      // Adjust hour for "to" phrases
-      let hourWord;
-      let minPhrase;
-      
-      if (roundedMin >= 35) {
-        hourWord = HOUR_WORDS[(h + 1) % 12 || 12];
-      } else {
-        hourWord = HOUR_WORDS[h || 12];
-      }
-      
-      minPhrase = MINUTE_WORDS[roundedMin % 60] || MINUTE_WORDS[0];
-      
-      // Capitalize first letter helper
-      const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-      
-      let text;
-      if (roundedMin === 0) {
-        text = `<span class="highlight">${capitalize(hourWord)}</span> ${minPhrase}`;
-      } else {
-        text = `${capitalize(minPhrase)} <span class="highlight">${hourWord}</span>`;
-      }
-      
-      display.innerHTML = `<div class="time-display">${text}</div>`;
-    }
-
-    function renderAnalog() {
-      const time = getTime();
-      const display = document.getElementById('display');
-      
-      const h = time.rawHours % 12;
-      const m = time.rawMinutes;
-      const s = parseInt(time.seconds);
-      
-      // Calculate hand rotations
-      const hourDeg = (h * 30) + (m * 0.5); // 30 deg per hour + 0.5 deg per minute
-      const minDeg = m * 6; // 6 deg per minute
-      const secDeg = s * 6; // 6 deg per second
-      
-      // Generate hour markers
       let markers = '';
-      for (let i = 0; i < 12; i++) {
-        markers += `<div class="hour-marker" style="transform: rotate(${i * 30}deg)"></div>`;
+
+      if (analogStyle === 'classic' || analogStyle === 'vintage') {
+        for (let i = 0; i < 12; i++) {
+          markers += `<div class="analog-marker" style="transform: rotate(${i * 30}deg)"></div>`;
+        }
+      } else if (analogStyle === 'minimal') {
+        for (let i = 0; i < 4; i++) {
+          markers += `<div class="analog-marker" style="transform: rotate(${i * 90}deg)"></div>`;
+        }
+      } else if (analogStyle === 'roman') {
+        for (let i = 0; i < 12; i++) {
+          const angle = (i * 30 - 90) * Math.PI / 180;
+          const r = 38;
+          const x = 50 + r * Math.cos(angle);
+          const y = 50 + r * Math.sin(angle);
+          markers += `<span class="roman-numeral" style="left:${x}%;top:${y}%;transform:translate(-50%,-50%)">${ROMAN[i]}</span>`;
+        }
+      } else if (analogStyle === 'modern') {
+        for (let i = 0; i < 12; i++) {
+          const isQuarter = i % 3 === 0;
+          markers += `<div class="analog-marker ${isQuarter ? 'marker-quarter' : 'marker-hour'}" style="transform: rotate(${i * 30}deg)"></div>`;
+        }
+      } else if (analogStyle === 'swiss') {
+        for (let i = 0; i < 60; i++) {
+          const isHour = i % 5 === 0;
+          markers += `<div class="analog-marker ${isHour ? 'marker-hour' : 'marker-minute'}" style="transform: rotate(${i * 6}deg)"></div>`;
+        }
       }
-      
-      let html = `
-        <div class="analog-clock">
-          <div class="clock-face">
+
+      return `
+        <div class="analog-clock analog-${analogStyle}">
+          <div class="analog-face">
             ${markers}
-            <div class="hand hour-hand" style="transform: rotate(${hourDeg}deg)"></div>
-            <div class="hand minute-hand" style="transform: rotate(${minDeg}deg)"></div>
-            ${settings.showSeconds ? `<div class="hand second-hand" style="transform: rotate(${secDeg}deg)"></div>` : ''}
-            <div class="center-dot"></div>
+            <div class="analog-hand hand-hour" style="transform: rotate(${hDeg}deg)"></div>
+            <div class="analog-hand hand-minute" style="transform: rotate(${mDeg}deg)"></div>
+            ${showSeconds ? `<div class="analog-hand hand-second" style="transform: rotate(${sDeg}deg)"></div>` : ''}
+            <div class="analog-center"></div>
           </div>
         </div>
       `;
-      
-      display.innerHTML = html;
+    }
+
+    function renderAnalog() {
+      const display = document.getElementById('display');
+      const mode = settings.displayMode || 'time';
+      const layout = settings.layout || 'stacked';
+      const analogStyle = settings.analogStyle || 'classic';
+      const timeData = getTimeData();
+      const dateData = getDateData();
+
+      if (mode === 'date') {
+        display.innerHTML = `<div class="date-text">${formatDate(dateData)}</div>`;
+        return;
+      }
+
+      const clock = createAnalogClock(timeData, analogStyle, settings.showSeconds);
+
+      if (mode === 'datetime') {
+        const sep = getLayoutSeparator();
+        display.innerHTML = `
+          <div class="display-container layout-${layout}">
+            ${clock}
+            ${sep}
+            <div class="date-text">${formatDate(dateData)}</div>
+          </div>
+        `;
+      } else {
+        display.innerHTML = clock;
+      }
     }
 
     function updateAnalog() {
-      const time = getTime();
-      const h = time.rawHours % 12;
-      const m = time.rawMinutes;
-      const s = parseInt(time.seconds);
-      
-      const hourDeg = (h * 30) + (m * 0.5);
-      const minDeg = m * 6;
-      const secDeg = s * 6;
-      
-      const hourHand = document.querySelector('.hour-hand');
-      const minHand = document.querySelector('.minute-hand');
-      const secHand = document.querySelector('.second-hand');
-      
-      if (hourHand) hourHand.style.transform = `rotate(${hourDeg}deg)`;
-      if (minHand) minHand.style.transform = `rotate(${minDeg}deg)`;
-      if (secHand) secHand.style.transform = `rotate(${secDeg}deg)`;
+      const timeData = getTimeData();
+      const h = timeData.rawH % 12;
+      const m = timeData.m;
+      const s = timeData.s;
+
+      const hHand = document.querySelector('.hand-hour');
+      const mHand = document.querySelector('.hand-minute');
+      const sHand = document.querySelector('.hand-second');
+
+      if (hHand) hHand.style.transform = `rotate(${h * 30 + m * 0.5}deg)`;
+      if (mHand) mHand.style.transform = `rotate(${m * 6}deg)`;
+      if (sHand) sHand.style.transform = `rotate(${s * 6}deg)`;
     }
 
-    // Height calculation based on variant and size
-    function calculateHeight(variant, size, showSeconds) {
-      const heights = {
-        standard:   { small: 48, medium: 64, large: 80 },
-        flip:       { small: 52, medium: 72, large: 88 },
-        dots:       { small: 72, medium: 92, large: 112 },
-        binary:     { small: 72, medium: 96, large: 120 },
-        word:       { small: 56, medium: 72, large: 88 },
-        analog:     { small: 70, medium: 90, large: 110 },
-        lcd:        { small: 60, medium: 80, large: 100 },
-        segment:    { small: 56, medium: 72, large: 92 }
-      };
-      
-      let height = heights[variant]?.[size] || heights.standard[size] || 64;
-      
-      // Add extra height for seconds in binary variant
-      if (variant === 'binary' && showSeconds) {
-        height += (size === 'small' ? 20 : size === 'large' ? 32 : 26);
+    function renderHybrid() {
+      const display = document.getElementById('display');
+      const mode = settings.displayMode || 'time';
+      const layout = settings.layout || 'stacked';
+      const analogStyle = settings.analogStyle || 'classic';
+      const timeData = getTimeData();
+      const dateData = getDateData();
+
+      if (mode === 'date') {
+        display.innerHTML = `<div class="date-text">${formatDate(dateData)}</div>`;
+        return;
       }
-      
-      return height;
+
+      // Create small analog clock for seconds only
+      const s = timeData.s;
+      const sDeg = s * 6;
+
+      const miniClock = `
+        <div class="analog-clock analog-minimal">
+          <div class="analog-face">
+            <div class="analog-hand hand-second" style="transform: rotate(${sDeg}deg)"></div>
+            <div class="analog-center"></div>
+          </div>
+        </div>
+      `;
+
+      const hybrid = `
+        <div class="hybrid-clock">
+          <div class="time-text">${formatTimeNoSeconds(timeData)}</div>
+          ${miniClock}
+        </div>
+      `;
+
+      if (mode === 'datetime') {
+        const sep = getLayoutSeparator();
+        display.innerHTML = `
+          <div class="display-container layout-${layout}">
+            ${hybrid}
+            ${sep}
+            <div class="date-text">${formatDate(dateData)}</div>
+          </div>
+        `;
+      } else {
+        display.innerHTML = hybrid;
+      }
     }
 
-    let Homey;
+    function updateHybrid() {
+      const timeData = getTimeData();
+      const s = timeData.s;
+      const m = timeData.m;
+      const h = timeData.h;
 
+      // Update digital time
+      const timeText = document.querySelector('.hybrid-clock .time-text');
+      if (timeText) {
+        timeText.innerHTML = formatTimeNoSeconds(timeData);
+      }
+
+      // Update analog seconds
+      const sHand = document.querySelector('.hand-second');
+      if (sHand) sHand.style.transform = `rotate(${s * 6}deg)`;
+    }
+
+    function renderAnalogDigital() {
+      const display = document.getElementById('display');
+      const mode = settings.displayMode || 'time';
+      const layout = settings.layout || 'stacked';
+      const analogStyle = settings.analogStyle || 'classic';
+      const timeData = getTimeData();
+      const dateData = getDateData();
+
+      if (mode === 'date') {
+        display.innerHTML = `<div class="date-text">${formatDate(dateData)}</div>`;
+        return;
+      }
+
+      // Create analog clock
+      const analogClock = createAnalogClock(timeData, analogStyle, settings.showSeconds);
+
+      // Digital time without seconds
+      const digitalTime = `<div class="time-text">${formatTimeNoSeconds(timeData)}</div>`;
+
+      const combo = `
+        <div class="hybrid-clock">
+          ${analogClock}
+          ${digitalTime}
+        </div>
+      `;
+
+      if (mode === 'datetime') {
+        const sep = getLayoutSeparator();
+        display.innerHTML = `
+          <div class="display-container layout-${layout}">
+            ${combo}
+            ${sep}
+            <div class="date-text">${formatDate(dateData)}</div>
+          </div>
+        `;
+      } else {
+        display.innerHTML = combo;
+      }
+    }
+
+    function updateAnalogDigital() {
+      const timeData = getTimeData();
+      const h = timeData.rawH % 12;
+      const m = timeData.m;
+      const s = timeData.s;
+
+      // Update analog hands
+      const hHand = document.querySelector('.hand-hour');
+      const mHand = document.querySelector('.hand-minute');
+      const sHand = document.querySelector('.hand-second');
+
+      if (hHand) hHand.style.transform = `rotate(${h * 30 + m * 0.5}deg)`;
+      if (mHand) mHand.style.transform = `rotate(${m * 6}deg)`;
+      if (sHand) sHand.style.transform = `rotate(${s * 6}deg)`;
+
+      // Update digital time
+      const timeText = document.querySelector('.hybrid-clock .time-text');
+      if (timeText) {
+        timeText.innerHTML = formatTimeNoSeconds(timeData);
+      }
+    }
+
+    // ========================
+    // HEIGHT CALCULATION
+    // ========================
+    function calcHeight() {
+      const style = settings.style || 'modern';
+      const size = settings.size || 'medium';
+      const mode = settings.displayMode || 'time';
+      const layout = settings.layout || 'stacked';
+
+      const base = { small: 44, medium: 58, large: 76 };
+      const special = {
+        flip: { small: 48, medium: 64, large: 80 },
+        dots: { small: 64, medium: 82, large: 104 },
+        analog: { small: 76, medium: 96, large: 120 },
+        hybrid: { small: 48, medium: 62, large: 80 },
+        'analog-digital': { small: 76, medium: 96, large: 120 }
+      };
+
+      let h = (special[style]?.[size]) || base[size];
+
+      const isInline = layout.startsWith('inline');
+      if (mode === 'datetime' && !isInline) {
+        const dateAdd = { small: 16, medium: 22, large: 28 };
+        if (layout === 'compact') {
+          h += dateAdd[size] * 0.6;
+        } else {
+          h += dateAdd[size];
+        }
+      }
+
+      return h;
+    }
+
+    // ========================
+    // MAIN RENDER
+    // ========================
     function render() {
       const widget = document.getElementById('widget');
-      const variant = settings.variant || 'standard';
-      const fontStyle = settings.fontStyle || 'digital';
+      const style = settings.style || 'modern';
       const size = settings.size || 'medium';
       const color = settings.color || 'default';
-      const isTransparent = settings.transparentBackground === true;
-      
-      // Build class list: variant for display type, font for text style, color, size, alignment
-      let classes = ['time-widget', `variant-${variant}`, `font-${fontStyle}`, `size-${size}`, `color-${color}`, `align-${settings.alignment || 'center'}`];
-      if (!isTransparent) classes.push('bg-solid');
-      
+      const mode = settings.displayMode || 'time';
+      const dateSize = settings.dateSize || 'small';
+      const align = settings.alignment || 'center';
+      const transparent = settings.transparentBackground === true;
+      const blinkColon = settings.blinkSeparator === true;
+
+      // Build classes
+      const classes = [
+        'widget',
+        `style-${style}`,
+        `size-${size}`,
+        `color-${color}`,
+        `mode-${mode}`,
+        `date-size-${dateSize}`,
+        `align-${align}`
+      ];
+
+      if (!transparent) classes.push('bg-solid');
+      if (blinkColon) classes.push('blink-separator');
+
       widget.className = classes.join(' ');
-      
-      // Calculate and set dynamic height
-      const height = calculateHeight(variant, size, settings.showSeconds);
+
+      // Set height
+      const height = calcHeight();
       Homey?.setHeight?.(height);
-      
-      // Reset flip state when re-rendering
-      flipInitialized = false;
-      lastTime = {};
-      
-      // Initial render based on variant
-      switch (variant) {
+
+      // Reset flip values when style changes
+      if (style !== 'flip') {
+        lastFlipValues = {};
+      }
+
+      // Render based on style
+      switch (style) {
         case 'flip':
           renderFlip();
           break;
         case 'dots':
           renderDots();
           break;
-        case 'lcd':
-          renderLCD();
-          break;
-        case 'segment':
-          renderSegment();
-          break;
-        case 'binary':
-          renderBinary();
-          break;
-        case 'word':
-          renderWord();
-          break;
         case 'analog':
           renderAnalog();
           break;
+        case 'hybrid':
+          renderHybrid();
+          break;
+        case 'analog-digital':
+          renderAnalogDigital();
+          break;
         default:
-          renderDigital();
+          renderText();
       }
-      
-      // Set up update interval
+
+      // Setup update timer
       if (updateTimer) clearInterval(updateTimer);
-      
+
       const updateFn = () => {
-        switch (variant) {
-          case 'flip':
-            updateFlip();
-            break;
-          case 'dots':
-            updateDots();
-            break;
-          case 'binary':
-            updateBinary();
-            break;
-          case 'analog':
-            updateAnalog();
-            break;
-          case 'word':
-            renderWord();
-            break;
-          case 'lcd':
-            renderLCD();
-            break;
-          case 'segment':
-            renderSegment();
-            break;
-          default:
-            renderDigital();
+        switch (style) {
+          case 'flip': renderFlip(); break;
+          case 'dots': updateDots(); break;
+          case 'analog': updateAnalog(); break;
+          case 'hybrid': updateHybrid(); break;
+          case 'analog-digital': updateAnalogDigital(); break;
+          default: renderText();
         }
       };
-      
+
       updateTimer = setInterval(updateFn, 1000);
     }
 
-    window.onHomeyReady = (homey) => {
+    // ========================
+    // INIT
+    // ========================
+    window.onHomeyReady = homey => {
       Homey = homey;
       settings = Homey.getSettings() || {};
+
+      try {
+        locale = Homey.getLanguage?.() || 'en';
+      } catch (e) {
+        locale = 'en';
+      }
+
       render();
-      
-      const variant = settings.variant || 'standard';
-      const size = settings.size || 'medium';
-      const height = calculateHeight(variant, size, settings.showSeconds);
+
+      const height = calcHeight();
       Homey.ready({ height });
 
-      Homey.on('settings', (newSettings) => {
+      Homey.on('settings', newSettings => {
         settings = newSettings;
         render();
       });

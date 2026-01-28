@@ -1033,97 +1033,62 @@
     },
     "time": {
       "name": {
-        "en": "Time",
-        "nl": "Tijd"
+        "en": "Time & Date",
+        "nl": "Tijd & Datum"
       },
       "description": {
-        "en": "Digital clock display with multiple styles",
-        "nl": "Digitale klokweergave met meerdere stijlen"
+        "en": "Customizable time and date display with multiple styles",
+        "nl": "Aanpasbare tijd- en datumweergave met meerdere stijlen"
       },
       "height": 64,
       "transparent": true,
       "settings": [
         {
-          "id": "variant",
+          "id": "displayMode",
           "type": "dropdown",
           "label": {
-            "en": "Variant",
-            "nl": "Variant"
+            "en": "Display",
+            "nl": "Weergave"
           },
-          "value": "standard",
+          "value": "time",
           "values": [
             {
-              "id": "standard",
+              "id": "time",
               "label": {
-                "en": "Standard",
-                "nl": "Standaard"
+                "en": "Time Only",
+                "nl": "Alleen Tijd"
               }
             },
             {
-              "id": "flip",
+              "id": "date",
               "label": {
-                "en": "Flip Clock",
-                "nl": "Flipklok"
+                "en": "Date Only",
+                "nl": "Alleen Datum"
               }
             },
             {
-              "id": "dots",
+              "id": "datetime",
               "label": {
-                "en": "Dot Matrix",
-                "nl": "Puntmatrix"
-              }
-            },
-            {
-              "id": "binary",
-              "label": {
-                "en": "Binary",
-                "nl": "Binair"
-              }
-            },
-            {
-              "id": "word",
-              "label": {
-                "en": "Word Clock",
-                "nl": "Woordklok"
-              }
-            },
-            {
-              "id": "analog",
-              "label": {
-                "en": "Analog",
-                "nl": "Analoog"
-              }
-            },
-            {
-              "id": "lcd",
-              "label": {
-                "en": "Retro LCD",
-                "nl": "Retro LCD"
-              }
-            },
-            {
-              "id": "segment",
-              "label": {
-                "en": "LED Segment",
-                "nl": "LED Segment"
+                "en": "Time & Date",
+                "nl": "Tijd & Datum"
               }
             }
           ]
         },
         {
-          "id": "fontStyle",
+          "id": "style",
           "type": "dropdown",
           "label": {
-            "en": "Font Style",
-            "nl": "Lettertype"
+            "en": "Style",
+            "nl": "Stijl"
           },
-          "value": "digital",
+          "value": "modern",
           "values": [
             {
-              "id": "digital",
+              "id": "modern",
               "label": {
-                "en": "Digital",
-                "nl": "Digitaal"
+                "en": "Modern",
+                "nl": "Modern"
               }
             },
             {
@@ -1141,6 +1106,20 @@
               }
             },
             {
+              "id": "digital",
+              "label": {
+                "en": "Digital",
+                "nl": "Digitaal"
+              }
+            },
+            {
+              "id": "retro",
+              "label": {
+                "en": "Retro LCD",
+                "nl": "Retro LCD"
+              }
+            },
+            {
               "id": "neon",
               "label": {
                 "en": "Neon Glow",
@@ -1155,10 +1134,105 @@
               }
             },
             {
-              "id": "typewriter",
+              "id": "shadow",
               "label": {
-                "en": "Typewriter",
-                "nl": "Typemachine"
+                "en": "Shadow",
+                "nl": "Schaduw"
+              }
+            },
+            {
+              "id": "elegant",
+              "label": {
+                "en": "Elegant",
+                "nl": "Elegant"
+              }
+            },
+            {
+              "id": "flip",
+              "label": {
+                "en": "Flip Clock",
+                "nl": "Flipklok"
+              }
+            },
+            {
+              "id": "dots",
+              "label": {
+                "en": "Dot Matrix",
+                "nl": "Puntmatrix"
+              }
+            },
+            {
+              "id": "analog",
+              "label": {
+                "en": "Analog Clock",
+                "nl": "Analoge Klok"
+              }
+            },
+            {
+              "id": "hybrid",
+              "label": {
+                "en": "Digital + Analog Seconds",
+                "nl": "Digitaal + Analoge Seconden"
+              }
+            },
+            {
+              "id": "analog-digital",
+              "label": {
+                "en": "Analog + Digital",
+                "nl": "Analoog + Digitaal"
+              }
+            }
+          ]
+        },
+        {
+          "id": "analogStyle",
+          "type": "dropdown",
+          "label": {
+            "en": "Analog Style",
+            "nl": "Analoge Stijl"
+          },
+          "value": "classic",
+          "values": [
+            {
+              "id": "classic",
+              "label": {
+                "en": "Classic",
+                "nl": "Klassiek"
+              }
+            },
+            {
+              "id": "minimal",
+              "label": {
+                "en": "Minimal",
+                "nl": "Minimalistisch"
+              }
+            },
+            {
+              "id": "roman",
+              "label": {
+                "en": "Roman Numerals",
+                "nl": "Romeinse Cijfers"
+              }
+            },
+            {
+              "id": "modern",
+              "label": {
+                "en": "Modern",
+                "nl": "Modern"
+              }
+            },
+            {
+              "id": "vintage",
+              "label": {
+                "en": "Vintage",
+                "nl": "Vintage"
+              }
+            },
+            {
+              "id": "swiss",
+              "label": {
+                "en": "Swiss Railway",
+                "nl": "Zwitserse Spoorwegen"
               }
             }
           ]
@@ -1177,13 +1251,6 @@
               "label": {
                 "en": "Default",
                 "nl": "Standaard"
-              }
-            },
-            {
-              "id": "gradient",
-              "label": {
-                "en": "Gradient",
-                "nl": "Gradiënt"
               }
             },
             {
@@ -1241,6 +1308,45 @@
                 "en": "Amber",
                 "nl": "Amber"
               }
+            },
+            {
+              "id": "gradient",
+              "label": {
+                "en": "Rainbow Gradient",
+                "nl": "Regenboog Gradiënt"
+              }
+            }
+          ]
+        },
+        {
+          "id": "size",
+          "type": "dropdown",
+          "label": {
+            "en": "Size",
+            "nl": "Grootte"
+          },
+          "value": "medium",
+          "values": [
+            {
+              "id": "small",
+              "label": {
+                "en": "Small",
+                "nl": "Klein"
+              }
+            },
+            {
+              "id": "medium",
+              "label": {
+                "en": "Medium",
+                "nl": "Gemiddeld"
+              }
+            },
+            {
+              "id": "large",
+              "label": {
+                "en": "Large",
+                "nl": "Groot"
+              }
             }
           ]
         },
@@ -1279,11 +1385,186 @@
           "value": false
         },
         {
+          "id": "blinkSeparator",
+          "type": "checkbox",
+          "label": {
+            "en": "Blinking Colon",
+            "nl": "Knipperende Dubbele Punt"
+          },
+          "value": false
+        },
+        {
+          "id": "dateFormat",
+          "type": "dropdown",
+          "label": {
+            "en": "Date Format",
+            "nl": "Datumformaat"
+          },
+          "value": "weekday-short",
+          "values": [
+            {
+              "id": "dmy",
+              "label": {
+                "en": "DD/MM/YYYY",
+                "nl": "DD/MM/JJJJ"
+              }
+            },
+            {
+              "id": "mdy",
+              "label": {
+                "en": "MM/DD/YYYY",
+                "nl": "MM/DD/JJJJ"
+              }
+            },
+            {
+              "id": "ymd",
+              "label": {
+                "en": "YYYY-MM-DD",
+                "nl": "JJJJ-MM-DD"
+              }
+            },
+            {
+              "id": "long",
+              "label": {
+                "en": "January 28, 2026",
+                "nl": "28 januari 2026"
+              }
+            },
+            {
+              "id": "short",
+              "label": {
+                "en": "Jan 28, 2026",
+                "nl": "28 jan 2026"
+              }
+            },
+            {
+              "id": "weekday-long",
+              "label": {
+                "en": "Wednesday, January 28",
+                "nl": "Woensdag 28 januari"
+              }
+            },
+            {
+              "id": "weekday-short",
+              "label": {
+                "en": "Wed, Jan 28",
+                "nl": "Wo 28 jan"
+              }
+            },
+            {
+              "id": "weekday-only",
+              "label": {
+                "en": "Wednesday",
+                "nl": "Woensdag"
+              }
+            },
+            {
+              "id": "day-month",
+              "label": {
+                "en": "28 January",
+                "nl": "28 januari"
+              }
+            },
+            {
+              "id": "relative",
+              "label": {
+                "en": "Today / Tomorrow",
+                "nl": "Vandaag / Morgen"
+              }
+            }
+          ]
+        },
+        {
+          "id": "layout",
+          "type": "dropdown",
+          "label": {
+            "en": "Layout (Time & Date)",
+            "nl": "Indeling (Tijd & Datum)"
+          },
+          "value": "stacked",
+          "values": [
+            {
+              "id": "stacked",
+              "label": {
+                "en": "Stacked (Time on top)",
+                "nl": "Gestapeld (Tijd boven)"
+              }
+            },
+            {
+              "id": "stacked-reverse",
+              "label": {
+                "en": "Stacked (Date on top)",
+                "nl": "Gestapeld (Datum boven)"
+              }
+            },
+            {
+              "id": "inline",
+              "label": {
+                "en": "Side by Side",
+                "nl": "Naast Elkaar"
+              }
+            },
+            {
+              "id": "inline-separator",
+              "label": {
+                "en": "Side by Side with |",
+                "nl": "Naast Elkaar met |"
+              }
+            },
+            {
+              "id": "inline-dot",
+              "label": {
+                "en": "Side by Side with •",
+                "nl": "Naast Elkaar met •"
+              }
+            },
+            {
+              "id": "compact",
+              "label": {
+                "en": "Compact (small date below)",
+                "nl": "Compact (kleine datum onder)"
+              }
+            }
+          ]
+        },
+        {
+          "id": "dateSize",
+          "type": "dropdown",
+          "label": {
+            "en": "Date Size (combined mode)",
+            "nl": "Datumgrootte (gecombineerd)"
+          },
+          "value": "small",
+          "values": [
+            {
+              "id": "small",
+              "label": {
+                "en": "Small",
+                "nl": "Klein"
+              }
+            },
+            {
+              "id": "medium",
+              "label": {
+                "en": "Medium",
+                "nl": "Gemiddeld"
+              }
+            },
+            {
+              "id": "large",
+              "label": {
+                "en": "Same as Time",
+                "nl": "Zelfde als Tijd"
+              }
+            }
+          ]
+        },
+        {
           "id": "alignment",
           "type": "dropdown",
           "label": {
-            "en": "Text Alignment",
-            "nl": "Tekstuitlijning"
+            "en": "Alignment",
+            "nl": "Uitlijning"
           },
           "value": "center",
           "values": [
@@ -1306,38 +1587,6 @@
               "label": {
                 "en": "Right",
                 "nl": "Rechts"
-              }
-            }
-          ]
-        },
-        {
-          "id": "size",
-          "type": "dropdown",
-          "label": {
-            "en": "Size",
-            "nl": "Grootte"
-          },
-          "value": "medium",
-          "values": [
-            {
-              "id": "small",
-              "label": {
-                "en": "Small",
-                "nl": "Klein"
-              }
-            },
-            {
-              "id": "medium",
-              "label": {
-                "en": "Medium",
-                "nl": "Gemiddeld"
-              }
-            },
-            {
-              "id": "large",
-              "label": {
-                "en": "Large",
-                "nl": "Groot"
               }
             }
           ]
