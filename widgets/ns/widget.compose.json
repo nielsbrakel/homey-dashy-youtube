@@ -19,6 +19,15 @@
       "value": "Amsterdam CS"
     },
     {
+      "id": "apiKey",
+      "type": "text",
+      "label": {
+        "en": "NS API Key (Primary Key)",
+        "nl": "NS API Sleutel (Primary Key)"
+      },
+      "value": ""
+    },
+    {
       "id": "maxDepartures",
       "type": "number",
       "label": {

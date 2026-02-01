@@ -1,168 +1,670 @@
-<html>
-  <head>
-    <style>
-      .buientabel-container {
-        display: flex;
-        flex-direction: column;
-        gap: var(--widget-su-3);
-        padding: var(--widget-su-3);
-        height: 100%;
+<style>
+  :root {
+    --chart-line-color: var(--homey-color-blue-500);
+    --chart-fill-color: var(--homey-color-blue-500);
+    --chart-grid-color: var(--homey-line-color-light);
+    --text-color-secondary: var(--homey-text-color-secondary);
+    --danger-color: var(--homey-color-red-500);
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .widget-container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: visible;
+    /* Allow tooltips to overflow if needed */
+    background: transparent;
+  }
+
+  /* Status Message Overlay */
+  .status-overlay {
+    position: absolute;
+    top: 30px;
+    left: 10px;
+    right: 10px;
+    bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-color-secondary);
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 50;
+    text-shadow: 0 1px 4px var(--homey-bg-color);
+  }
+
+  .status-overlay.error {
+    color: var(--danger-color);
+  }
+
+  /* Chart Container */
+  /* Chart Container: Positioned to leave space for Tooltip (top) and Axis (bottom) */
+  /* Chart Container: Positioned to leave space for Tooltip (top) and Axis (bottom) */
+  .chart-container {
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 15px;
+    right: 15px;
+    display: flex;
+    z-index: 10;
+    border-bottom: 1px solid var(--chart-grid-color);
+  }
+
+  /* Refresh Button */
+  /* Refresh Button */
+
+
+  /* Chart Elements */
+  .grid-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--chart-grid-color);
+    pointer-events: none;
+  }
+
+  .grid-label {
+    position: absolute;
+    right: 0;
+    transform: translateY(-100%);
+    font-size: 10px;
+    /* Bigger */
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    text-transform: uppercase;
+    opacity: 0.9;
+    pointer-events: none;
+    padding-bottom: 2px;
+    /* Readable over bars */
+    text-shadow: 0 1px 2px var(--homey-bg-color), 0 0 1px var(--homey-bg-color);
+  }
+
+  .now-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    background-color: var(--danger-color);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .now-label {
+    position: absolute;
+    top: -12px;
+    left: 0;
+    color: var(--danger-color);
+    font-size: 10px;
+    font-weight: bold;
+    pointer-events: none;
+    text-shadow: 0 0 2px var(--homey-bg-color);
+  }
+
+  .chart-bar {
+    flex: 1;
+    background: linear-gradient(to top, var(--bar-gradient-start, var(--homey-color-blue-400)), var(--bar-gradient-end, var(--homey-color-blue-600)));
+    border-radius: 2px 2px 0 0;
+    transition: height 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    min-height: 1px;
+    /* Always visible line for baseline */
+  }
+
+  .chart-bar:hover {
+    background: var(--bar-hover, var(--homey-color-blue-300));
+    z-index: 20;
+  }
+
+  .chart-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-5px);
+    background: var(--homey-bg-color-inverse);
+    color: var(--homey-text-color-inverse);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s;
+    z-index: 2000;
+    pointer-events: none;
+  }
+
+  .chart-bar:hover .chart-tooltip,
+  .chart-interaction-zone:hover .chart-tooltip,
+  .chart-interaction-zone.active .chart-tooltip {
+    opacity: 1;
+  }
+
+  .chart-axis-label {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: var(--text-color-secondary);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    text-shadow: 0 0 2px var(--homey-bg-color);
+  }
+
+  .chart-bar:nth-child(6n+1) .chart-axis-label,
+  .chart-interaction-zone:nth-child(6n+1) .chart-axis-label {
+    opacity: 1;
+  }
+
+  .chart-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .chart-interaction-zone {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  /* Interaction highlights */
+  /* Interaction highlights */
+  .chart-interaction-zone:hover,
+  .chart-interaction-zone.active {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Prevent page scrolling when interacting with chart */
+  .chart-interaction-zone {
+    touch-action: none;
+  }
+
+  /* Dot Indicator for Line Chart */
+  .indicator-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--homey-color-blue-500);
+    border: 2px solid var(--homey-bg-color);
+    border-radius: 50%;
+    transform: translate(-50%, 50%);
+    box-sizing: border-box;
+    /* Center on point */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s, bottom 0.1s, left 0.1s;
+    z-index: 55;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .chart-interaction-zone:hover .indicator-dot {
+    opacity: 1;
+  }
+</style>
+</head>
+
+<body class="homey-widget">
+  <div id="app" class="widget-container"></div>
+
+  <script type="text/javascript">
+    /**
+     * Constants & Configuration
+     */
+    const CONFIG = {
+      API_URL: 'https://gpsgadget.buienradar.nl/data/raintext/',
+      DEFAULT_LAT: '52.0907',
+      DEFAULT_LON: '5.1214',
+      DEFAULT_MAX_MM: 8.0, // Base scale for "Heavy" rain
+      ASPECT_RATIOS: {
+        '1:1': '100%',
+        '4:3': '75%',
+        '16:9': '56.25%',
+        '21:9': '42.86%',
+        '3:1': '33.33%'
+      },
+      LEVELS: [
+        { val: 0.5, key: 'light' },
+        { val: 2.5, key: 'moderate' },
+        { val: 7.6, key: 'heavy' }
+      ]
+    };
+
+    /**
+     * Utility Functions
+     */
+    const Utils = {
+      // 0-255 value to mm/h formula
+      valToMm: (val) => val === 0 ? 0 : Math.pow(10, (val - 109) / 32),
+
+      // Homey translation helper
+      __: (key) => Homey.__(`widgets.buientabel.${key}`) || key,
+
+      // Simple Catmull-Rom to SVG Path
+      getSmoothPath: (points, k = 0.25) => {
+        if (points.length === 0) return '';
+        if (points.length === 1) return `M ${points[0][0]},${points[0][1]}`;
+
+        let path = `M ${points[0][0]},${points[0][1]}`;
+
+        for (let i = 0; i < points.length - 1; i++) {
+          let p0 = points[i - 1] || points[i];
+          let p1 = points[i];
+          let p2 = points[i + 1];
+          let p3 = points[i + 2] || p2;
+
+          let cp1x = p1[0] + (p2[0] - p0[0]) * k;
+          let cp1y = p1[1] + (p2[1] - p0[1]) * k;
+          let cp2x = p2[0] - (p3[0] - p1[0]) * k;
+          let cp2y = p2[1] - (p3[1] - p1[1]) * k;
+
+          path += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`;
+        }
+        return path;
+      }
+    };
+
+    /**
+     * Service to fetch weather data
+     */
+    class WeatherService {
+      static async fetchForecast(lat, lon, source = 'buienradar') {
+        if (source === 'openmeteo') {
+          return this.fetchOpenMeteo(lat, lon);
+        } else {
+          return this.fetchBuienradar(lat, lon);
+        }
       }
 
-      .buientabel-graph {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-around;
-        gap: var(--widget-su-1);
-        height: 150px;
-        padding: var(--widget-su-2) 0;
-        border-bottom: 1px solid var(--homey-line-color-light);
+      static async fetchBuienradar(lat, lon) {
+        // Timestamp to prevent caching
+        const url = `${CONFIG.API_URL}?lat=${lat}&lon=${lon}&_t=${Date.now()}`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const text = await response.text();
+        return this.parseBuienradarData(text);
       }
 
-      .buientabel-bar {
-        flex: 1;
-        background-color: var(--homey-color-blue-500);
-        border-radius: 2px 2px 0 0;
-        min-height: 4px;
-        transition: height 0.2s ease;
-        position: relative;
+      static async fetchOpenMeteo(lat, lon) {
+        // Fetch 1 day of 15-min precipitation data for the current day
+        // timezone=auto ensures we get local time
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&minutely_15=precipitation&forecast_days=1&timezone=auto`;
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Open-Meteo HTTP ${response.status}`);
+        const json = await response.json();
+
+        return this.parseOpenMeteoData(json);
       }
 
-      .buientabel-bar:hover {
-        background-color: var(--homey-color-blue-600);
+      static parseBuienradarData(text) {
+        return text.trim().split(/\r?\n/).reduce((acc, line) => {
+          if (!line) return acc;
+          const [valStr, timeStr] = line.split('|');
+          if (valStr && timeStr) {
+            const val = parseInt(valStr.trim(), 10);
+            acc.push({
+              time: timeStr.trim(),
+              val: val,
+              mm: Utils.valToMm(val)
+            });
+          }
+          return acc;
+        }, []);
       }
 
-      .buientabel-bar-label {
-        position: absolute;
-        bottom: -20px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 10px;
-        color: var(--homey-text-color-secondary);
-        white-space: nowrap;
-      }
+      static parseOpenMeteoData(json) {
+        if (!json.minutely_15) return [];
 
-      .buientabel-legend {
-        display: flex;
-        justify-content: space-between;
-        font-size: var(--homey-font-size-small);
-        color: var(--homey-text-color-secondary);
-      }
-
-      .buientabel-loading {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 150px;
-        color: var(--homey-text-color-secondary);
-      }
-
-      .buientabel-error {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 150px;
-        color: var(--homey-text-color-danger);
-        text-align: center;
-        padding: var(--widget-su-2);
-      }
-    </style>
-  </head>
-
-  <body class="homey-widget">
-    <div class="buientabel-container">
-      <div id="buientabel-content" class="buientabel-loading">
-        Loading forecast...
-      </div>
-      <div class="buientabel-legend">
-        <span>Rain chance (mm/h)</span>
-        <button style="padding: var(--widget-su-1) var(--widget-su-2); border: 1px solid var(--homey-line-color); border-radius: 2px; background: var(--homey-color-mono-100); cursor: pointer; font-size: 11px;" id="refresh-btn">🔄</button>
-      </div>
-    </div>
-
-    <script type="text/javascript">
-      let currentSettings = {};
-      let forecastData = [];
-
-      function generateMockForecast(hoursAhead) {
-        const data = [];
+        const { time, precipitation } = json.minutely_15;
         const now = new Date();
-        
-        for (let i = 0; i < hoursAhead; i++) {
-          const time = new Date(now.getTime() + i * 3600000);
+        const data = [];
+
+        // We only want the next ~2 hours or similar to match Buienradar's scope (usually 2h)
+        // Buienradar gives roughly ~24 data points (5 min intervals = 2 hours).
+        // Open-Meteo gives 15 min intervals. Let's take the next 8-10 points (2-2.5 hours).
+
+        // Find the index closest to now
+        const nowIso = now.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm match
+        // Or better comparison using timestamps
+        const nowTime = now.getTime();
+
+        let startIndex = 0;
+        // Simple search for the slot just after or at current time
+        for (let i = 0; i < time.length; i++) {
+          if (new Date(time[i]).getTime() >= nowTime - 15 * 60 * 1000) { // Include current 15m slot
+            startIndex = i;
+            break;
+          }
+        }
+
+        // Take next 9 points (approx 2h 15m)
+        for (let i = startIndex; i < Math.min(startIndex + 9, time.length); i++) {
+          const t = new Date(time[i]);
+          const timeStr = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+
           data.push({
-            hour: time.getHours(),
-            chance: Math.random() * 100,
-            mm: Math.random() * 5,
+            time: timeStr,
+            val: 0, // Not used for Open-Meteo
+            mm: precipitation[i]
           });
         }
-        
+
         return data;
       }
+    }
 
-      function render() {
-        const content = document.getElementById('buientabel-content');
-        const maxChance = Math.max(...forecastData.map(d => d.chance), 1);
+    /**
+     * Handles Chart Rendering
+     */
+    class ChartRenderer {
+      constructor(container) {
+        this.container = container;
+      }
 
-        if (currentSettings.graphStyle === 'bars') {
-          const graph = document.createElement('div');
-          graph.className = 'buientabel-graph';
+      render(data, style, maxMm, noRain = false) {
+        this.container.innerHTML = '';
+        this.container.className = 'chart-container';
 
-          forecastData.forEach((data) => {
-            const bar = document.createElement('div');
-            bar.className = 'buientabel-bar';
-            bar.style.height = `${(data.chance / maxChance) * 100}%`;
-            
-            const label = document.createElement('div');
-            label.className = 'buientabel-bar-label';
-            label.textContent = `${data.hour}h`;
-            bar.appendChild(label);
+        // 1. Draw Grid Lines & NOW Line (Shared)
+        this.drawGrid(maxMm);
+        this.drawNowLine();
 
-            bar.title = `${Math.round(data.chance)}% - ${data.mm.toFixed(1)}mm`;
-            graph.appendChild(bar);
-          });
+        // 2. Draw Chart Data
+        const chartWrapper = document.createElement('div');
+        chartWrapper.className = 'chart-wrapper';
 
-          content.className = '';
-          content.innerHTML = '';
-          content.appendChild(graph);
+        if (style === 'line' || style === 'smooth') {
+          this.renderLineChart(chartWrapper, data, maxMm, style === 'smooth');
         } else {
-          content.textContent = 'Line chart coming soon';
+          this.renderBarChart(chartWrapper, data, maxMm);
+        }
+
+        this.container.appendChild(chartWrapper);
+
+        // 3. Overlay Message if no rain
+        if (noRain) {
+          const overlay = document.createElement('div');
+          overlay.className = 'status-overlay';
+          overlay.textContent = Utils.__('noRain');
+          this.container.appendChild(overlay);
         }
       }
 
-      function fetchForecast() {
-        const content = document.getElementById('buientabel-content');
-        
-        try {
-          content.className = 'buientabel-loading';
-          content.textContent = 'Loading forecast...';
+      drawGrid(maxMm) {
+        CONFIG.LEVELS.forEach(lvl => {
+          if (lvl.val < maxMm) {
+            const yPct = 100 - ((lvl.val / maxMm) * 100);
+            const line = document.createElement('div');
+            line.className = 'grid-line';
+            line.style.top = `${yPct}%`;
 
-          forecastData = generateMockForecast(currentSettings.hoursAhead || 6);
-          render();
-        } catch (err) {
-          console.error('Forecast fetch error:', err);
-          content.className = 'buientabel-error';
-          content.textContent = 'Unable to load forecast. Please try again.';
-        }
-      }
+            const label = document.createElement('div');
+            label.className = 'grid-label';
+            label.style.top = `${yPct}%`;
+            label.textContent = Utils.__(lvl.key);
 
-      function setupControls() {
-        const refreshBtn = document.getElementById('refresh-btn');
-        refreshBtn.onclick = () => fetchForecast();
-      }
-
-      function onHomeyReady(Homey) {
-        currentSettings = Homey.getSettings();
-
-        fetchForecast();
-        setupControls();
-        Homey.ready();
-
-        Homey.on('settings', (newSettings) => {
-          currentSettings = newSettings;
-          fetchForecast();
+            this.container.appendChild(line);
+            this.container.appendChild(label);
+          }
         });
       }
-    </script>
-  </body>
+
+      drawNowLine() {
+        const line = document.createElement('div');
+        line.className = 'now-line';
+        const label = document.createElement('div');
+        label.className = 'now-label';
+        label.textContent = Utils.__('now');
+        this.container.appendChild(line);
+        this.container.appendChild(label);
+      }
+
+      renderBarChart(wrapper, data, maxMm) {
+        wrapper.style.justifyContent = 'space-between';
+        wrapper.style.gap = '1px';
+
+        data.forEach(d => {
+          const bar = document.createElement('div');
+          bar.className = 'chart-bar';
+          const heightPct = (d.mm / maxMm) * 100;
+          // Use 0.5% min height if 0mm to keep structure, or 0? 
+          // If noRain overlay is present, we might want flat line.
+          // User asked for "empty table".
+          bar.style.height = `${Math.max(d.mm > 0 ? heightPct : 0.5, 0)}%`;
+
+          this.addTooltipAndLabel(bar, d, heightPct);
+          wrapper.appendChild(bar);
+        });
+      }
+
+      renderLineChart(wrapper, data, maxMm, smooth = false) {
+        // SVG Container
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.style.width = '100%';
+        svg.style.height = '100%';
+        svg.style.overflow = 'visible';
+        svg.setAttribute("preserveAspectRatio", "none");
+        svg.setAttribute("viewBox", "0 0 100 100");
+
+        // Points [x, y]
+        const points = data.map((d, i) => {
+          const x = (i / (data.length - 1)) * 100;
+          const y = 100 - ((d.mm / maxMm) * 100);
+          return [x, y];
+        });
+
+        // Path String
+        let dPath = "";
+        if (smooth) {
+          dPath = Utils.getSmoothPath(points);
+        } else {
+          dPath = points.map((p, i) => (i === 0 ? "M" : "L") + ` ${p[0]},${p[1]}`).join(" ");
+        }
+
+        // Area (Close the path to bottom corners)
+        const areaPath = `${dPath} L 100,100 L 0,100 Z`;
+
+        // Area Polygon/Path
+        const area = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        area.setAttribute("d", areaPath);
+        area.style.fill = "var(--chart-fill-color)";
+        area.style.opacity = "0.2";
+
+        // Stroke Line
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", dPath);
+        path.style.fill = "none";
+        path.style.stroke = "var(--chart-line-color)";
+        path.style.strokeWidth = "2";
+        path.style.vectorEffect = "non-scaling-stroke";
+
+        svg.appendChild(area);
+        svg.appendChild(path);
+
+        // Interaction Layer
+        const interactionLayer = document.createElement('div');
+        interactionLayer.style.position = 'absolute';
+        interactionLayer.style.top = '0';
+        interactionLayer.style.left = '0';
+        interactionLayer.style.width = '100%';
+        interactionLayer.style.height = '100%';
+        interactionLayer.style.display = 'flex';
+
+        data.forEach((d, i) => {
+          const zone = document.createElement('div');
+          zone.className = 'chart-interaction-zone';
+
+          // Dot (visible on hover)
+          const dot = document.createElement('div');
+          dot.className = 'indicator-dot';
+          const yPct = 100 - ((d.mm / maxMm) * 100);
+          dot.style.bottom = `${100 - yPct}%`;
+          dot.style.left = '50%';
+          zone.appendChild(dot);
+
+          this.addTooltipAndLabel(zone, d);
+          interactionLayer.appendChild(zone);
+        });
+
+        wrapper.appendChild(svg);
+        wrapper.appendChild(interactionLayer);
+      }
+
+      addTooltipAndLabel(element, data) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'chart-tooltip';
+        tooltip.textContent = `${data.time}: ${data.mm.toFixed(1)} mm/h`;
+
+        const label = document.createElement('div');
+        label.className = 'chart-axis-label';
+        label.textContent = data.time;
+
+        element.appendChild(tooltip);
+        element.appendChild(label);
+      }
+    }
+
+    /**
+     * Main Widget Controller
+     */
+    class BuienradarWidget {
+      constructor(root) {
+        this.root = root;
+        this.settings = {};
+        this.data = [];
+        this.refreshInterval = null;
+        this.renderer = new ChartRenderer(root);
+      }
+
+      init(Homey) {
+        this.Homey = Homey;
+        this.settings = Homey.getSettings() || {};
+
+        this.renderUI();
+        this.fetch();
+        this.setupAutoRefresh();
+        this.updateHeight();
+
+        Homey.on('settings', (newSettings) => {
+          this.settings = newSettings;
+          this.renderUI();
+          this.fetch();
+          this.setupAutoRefresh();
+          this.updateHeight();
+        });
+      }
+
+      renderUI() {
+        // Basic Structure
+        this.root.innerHTML = `
+          <div id="chart-mount" class="chart-container"></div>
+        `;
+
+        this.mountPoint = this.root.querySelector('#chart-mount');
+      }
+
+      async fetch() {
+        // Show loading only if no data
+        if (!this.data.length) this.showStatus(Utils.__('loading'));
+
+        try {
+          const lat = this.settings.lat || CONFIG.DEFAULT_LAT;
+          const lon = this.settings.lon || CONFIG.DEFAULT_LON;
+          const source = this.settings.dataSource || 'buienradar';
+
+          this.data = await WeatherService.fetchForecast(lat, lon, source);
+          this.renderData();
+        } catch (err) {
+          console.error(err);
+          this.showStatus(Utils.__('error'), true);
+        }
+      }
+
+      renderData() {
+        if (!this.mountPoint) return;
+
+        if (!this.data || this.data.length === 0) {
+          this.showStatus(Utils.__('noData'));
+          return;
+        }
+
+        // Apply Color Setting
+        const color = this.settings.chartColor || 'blue';
+        const colorVar = color === 'mono' ? 'mono' : color;
+        const style = this.settings.graphStyle || 'bars';
+
+        const rootStyle = document.documentElement.style;
+        rootStyle.setProperty('--chart-line-color', `var(--homey-color-${colorVar}-500)`);
+        rootStyle.setProperty('--chart-fill-color', `var(--homey-color-${colorVar}-500)`);
+
+        // Specific tweak for gradient bars if needed, but linear-gradient uses specific vars
+        // We'll update the bar gradient dynamically too
+        if (style !== 'line' && style !== 'smooth') {
+          // For bars we might need to update the styled rule or use vars in CSS
+          // Let's update css vars for bars too
+          rootStyle.setProperty('--bar-gradient-start', `var(--homey-color-${colorVar}-400)`);
+          rootStyle.setProperty('--bar-gradient-end', `var(--homey-color-${colorVar}-600)`);
+          rootStyle.setProperty('--bar-hover', `var(--homey-color-${colorVar}-300)`);
+        } else {
+          // Reset to blue defaults just in case? no, variables handle it.
+        }
+
+        const totalRain = this.data.reduce((sum, item) => sum + item.mm, 0);
+        const peakRain = Math.max(...this.data.map(d => d.mm));
+        const maxMm = Math.max(peakRain * 1.1, CONFIG.DEFAULT_MAX_MM);
+
+        // If no rain, still render but with overlay
+        this.renderer.render(this.data, this.settings.graphStyle, maxMm, totalRain === 0);
+      }
+
+      showStatus(msg, isError = false) {
+        if (!this.mountPoint) return;
+        this.mountPoint.innerHTML = `<div class="status-overlay ${isError ? 'error' : ''}" style="pointer-events:all; background:var(--homey-bg-color)">${msg}</div>`;
+      }
+
+      setupAutoRefresh() {
+        if (this.refreshInterval) clearInterval(this.refreshInterval);
+        const sec = parseInt(this.settings.refreshInterval, 10);
+        if (sec > 0) {
+          this.refreshInterval = setInterval(() => this.fetch(), sec * 1000);
+        }
+      }
+
+      updateHeight() {
+        const ratio = this.settings.aspectRatio || '16:9';
+        const heightPct = CONFIG.ASPECT_RATIOS[ratio] || '56.25%';
+        this.Homey.ready({ height: heightPct });
+      }
+    }
+
+    // --- Singleton Instance ---
+    const widget = new BuienradarWidget(document.getElementById('app'));
+
+    function onHomeyReady(Homey) {
+      widget.init(Homey);
+    }
+  </script>
+</body>
+
 </html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../_shared/shared-styles.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        /* Group background styles with correct specificity */
+        body.bg-solid {
+            background: var(--homey-background-color);
+        }
+
+        body.bg-transparent {
+            background: transparent;
+        }
+
+        .widget {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            /* Ensure padding is handled correctly */
+            padding: 8px;
+            /* Safe padding for shadow */
+        }
+
+        /* Alignment */
+        .align-h-left {
+            justify-content: flex-start;
+        }
+
+        .align-h-center {
+            justify-content: center;
+        }
+
+        .align-h-right {
+            justify-content: flex-end;
+        }
+
+        .align-v-top {
+            align-items: flex-start;
+        }
+
+        .align-v-center {
+            align-items: center;
+        }
+
+        .align-v-bottom {
+            align-items: flex-end;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            max-width: 100vh;
+            max-height: 100vw;
+            display: block;
+            /* Remove baseline gap */
+        }
+
+        /* Color Themes via CSS Variables */
+        :root {
+            --clock-color: var(--homey-text-color);
+            --clock-bg: transparent;
+            --hand-color: var(--clock-color);
+            --second-hand-color: var(--homey-color-red-500);
+        }
+
+        .color-default {
+            --clock-color: var(--homey-text-color);
+        }
+
+        .color-blue {
+            --clock-color: var(--homey-color-blue-500);
+        }
+
+        .color-green {
+            --clock-color: var(--homey-color-green-500);
+        }
+
+        .color-orange {
+            --clock-color: var(--homey-color-orange-500);
+        }
+
+        .color-red {
+            --clock-color: var(--homey-color-red-500);
+            --second-hand-color: var(--homey-text-color);
+        }
+
+        .color-black {
+            --clock-color: #000;
+        }
+
+        .color-white {
+            --clock-color: #fff;
+        }
+
+        /* SVG Elements */
+        .face {
+            fill: none;
+            stroke: var(--clock-color);
+            stroke-width: 2;
+        }
+
+        .marker {
+            stroke: var(--clock-color);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .marker.thin {
+            stroke-width: 1;
+            opacity: 0.6;
+        }
+
+        .hand {
+            stroke: var(--clock-color);
+            stroke-linecap: round;
+            /* Removed transform-origin from CSS to avoid conflicts, handled in attribute or JS */
+        }
+
+        .hand.hour {
+            stroke-width: 4;
+        }
+
+        .hand.minute {
+            stroke-width: 3;
+        }
+
+        .hand.second {
+            stroke: var(--second-hand-color);
+            stroke-width: 1.5;
+        }
+
+        #second-hand-group {
+            /* Removed transform-origin from CSS to avoid conflicts, handled in attribute or JS */
+        }
+
+        .center-dot {
+            fill: var(--clock-color);
+        }
+
+        .style-swiss .hand.hour {
+            stroke-width: 5;
+            stroke-linecap: square;
+        }
+
+        .style-swiss .hand.minute {
+            stroke-width: 4;
+            stroke-linecap: square;
+        }
+
+        .style-swiss .hand.second {
+            stroke: #d00;
+            stroke-width: 2;
+        }
+
+        .style-swiss .second-tip {
+            fill: #d00;
+        }
+
+        .number {
+            fill: var(--clock-color);
+            font-family: -apple-system, system-ui, sans-serif;
+            font-size: 14px;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            font-weight: 600;
+        }
+
+        .date-box {
+            fill: var(--homey-background-color, #fff);
+            stroke: var(--clock-color);
+            stroke-width: 1;
+        }
+
+        .date-text {
+            fill: var(--clock-color);
+            font-size: 5px;
+            font-family: -apple-system, system-ui, sans-serif;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="widget" id="widget">
+        <svg viewBox="0 0 100 100" id="clock-svg">
+            <!-- Markers Group -->
+            <g id="markers"></g>
+
+            <!-- Numbers Group (Classic only) -->
+            <g id="numbers"></g>
+
+            <!-- Date Group -->
+            <g id="date-group" style="display: none;">
+                <rect x="70" y="46.5" width="14" height="7" rx="1" class="date-box" />
+                <text id="date-text" x="77" y="50.5" class="date-text">1</text>
+            </g>
+
+            <!-- Hands: Add transform-origin attribute -->
+            <line id="hour-hand" class="hand hour" x1="50" y1="50" x2="50" y2="25" />
+            <line id="minute-hand" class="hand minute" x1="50" y1="50" x2="50" y2="15" />
+            <g id="second-hand-group" style="display: none;">
+                <line id="second-hand" class="hand second" x1="50" y1="60" x2="50" y2="15" />
+                <circle id="second-tip" class="second-tip" cx="50" cy="15" r="0" /> <!-- For Swiss style tip -->
+            </g>
+
+            <!-- Center Cap -->
+            <circle class="center-dot" cx="50" cy="50" r="2.5" />
+        </svg>
+    </div>
+
+    <script>
+        let currentSettings = {};
+
+        function toRad(deg) { return deg * Math.PI / 180; }
+
+        function updateClock() {
+            const now = new Date();
+            const h = now.getHours() % 12;
+            const m = now.getMinutes();
+            const s = now.getSeconds();
+            const d = now.getDate();
+
+            // Calculate angles
+            // Hours moves with minutes: (h * 30) + (m * 0.5)
+            const hAngle = (h * 30) + (m * 0.5);
+            const mAngle = m * 6;
+            const sAngle = s * 6;
+
+            const hourHand = document.getElementById('hour-hand');
+            const minuteHand = document.getElementById('minute-hand');
+            const secondHandGroup = document.getElementById('second-hand-group');
+            const dateText = document.getElementById('date-text');
+
+            // Rotate via transform with explicit center point (50, 50)
+            hourHand.setAttribute('transform', `rotate(${hAngle}, 50, 50)`);
+            minuteHand.setAttribute('transform', `rotate(${mAngle}, 50, 50)`);
+
+            // Update Date
+            if (currentSettings.showDate) {
+                dateText.textContent = d;
+            }
+
+            if (currentSettings.showSeconds) {
+                secondHandGroup.style.display = 'block';
+                secondHandGroup.setAttribute('transform', `rotate(${sAngle}, 50, 50)`);
+            } else {
+                secondHandGroup.style.display = 'none';
+            }
+        }
+
+        function drawFace() {
+            const markersGroup = document.getElementById('markers');
+            const numbersGroup = document.getElementById('numbers');
+            const secondTip = document.getElementById('second-tip');
+            const widget = document.getElementById('widget');
+            const dateGroup = document.getElementById('date-group');
+
+            // Reset
+            markersGroup.innerHTML = '';
+            numbersGroup.innerHTML = '';
+            secondTip.setAttribute('r', '0');
+
+            // Apply Widget Classes
+            widget.className = `widget style-${currentSettings.style || 'modern'} color-${currentSettings.color || 'default'}`;
+
+            // Alignment
+            widget.classList.add(`align-h-${currentSettings.horizontalAlignment || 'center'}`);
+            widget.classList.add(`align-v-${currentSettings.verticalAlignment || 'center'}`);
+
+            // Background / Transparency
+            if (currentSettings.transparentBackground) {
+                document.body.classList.add('bg-transparent');
+                document.body.classList.remove('bg-solid');
+                widget.classList.remove('widget-card');
+            } else {
+                document.body.classList.remove('bg-transparent');
+                // We don't apply bg-solid to body if we use widget-card on the container/widget layer for rounded corners
+                // Ideally, widget-card handles background. 
+                // But analog clock SVG fills the area. Let's make sure .widget-card is applied to the widget div.
+                widget.classList.add('widget-card');
+            }
+
+            // Show/Hide Date
+            if (currentSettings.showDate) {
+                dateGroup.style.display = 'block';
+            } else {
+                dateGroup.style.display = 'none';
+            }
+
+            const style = currentSettings.style || 'modern';
+
+            // Helper to check if we should skip marker at 3 o'clock (index 3 for hours, 15 for minutes)
+            const skipPosition = (val, max) => {
+                if (!currentSettings.showDate) return false;
+                // 3 o'clock is 1/4 of the way
+                if (max === 4 && val === 1) return true; // 90 deg
+                if (max === 12 && val === 3) return true; // 3 o'clock
+                if (max === 60 && val === 15) return true; // 15 mins
+                return false;
+            };
+
+            if (style === 'minimal') {
+                // Just 4 markers
+                for (let i = 0; i < 4; i++) {
+                    if (skipPosition(i, 4)) continue;
+
+                    const angle = i * 90;
+                    const r1 = 45;
+                    const r2 = 40;
+                    const line = createLine(angle, r1, r2, 'marker');
+                    markersGroup.appendChild(line);
+                }
+            } else if (style === 'classic') {
+                // Numbers 1-12
+                for (let i = 1; i <= 12; i++) {
+                    if (skipPosition(i, 12)) continue;
+
+                    const angle = i * 30;
+                    const r = 38;
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    const coords = getCoords(angle, r);
+                    text.setAttribute('x', coords.x);
+                    text.setAttribute('y', coords.y + 1); // Slight vertical adjust
+                    text.textContent = i;
+                    text.setAttribute('class', 'number');
+                    numbersGroup.appendChild(text);
+                }
+
+                // Small ticks
+                for (let i = 0; i < 60; i++) {
+                    if (i % 5 === 0) continue; // Skip where numbers are
+                    const angle = i * 6;
+                    const line = createLine(angle, 45, 44, 'marker thin');
+                    markersGroup.appendChild(line);
+                }
+            } else if (style === 'swiss') {
+                // Swiss Railway: Thick hour markers, thin minute markers
+                for (let i = 0; i < 60; i++) {
+                    if (skipPosition(i, 60)) continue;
+
+                    const isHour = i % 5 === 0;
+                    const angle = i * 6;
+                    const r2 = isHour ? 35 : 42; // Longer hour markers
+                    const line = createLine(angle, 45, r2, isHour ? 'marker' : 'marker thin');
+                    if (isHour) line.setAttribute('stroke-width', '2.5');
+                    markersGroup.appendChild(line);
+                }
+                // Swiss second hand tip
+                secondTip.setAttribute('r', '3.5');
+            } else {
+                // Modern: Simple ticks
+                for (let i = 0; i < 12; i++) {
+                    if (skipPosition(i, 12)) continue;
+
+                    const angle = i * 30;
+                    const line = createLine(angle, 45, 35, 'marker');
+                    markersGroup.appendChild(line);
+                }
+            }
+        }
+
+        function getCoords(angle, radius) {
+            return {
+                x: 50 + radius * Math.sin(toRad(angle)),
+                y: 50 - radius * Math.cos(toRad(angle))
+            };
+        }
+
+        function createLine(angle, r1, r2, className) {
+            const p1 = getCoords(angle, r1);
+            const p2 = getCoords(angle, r2);
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute('x1', p1.x);
+            line.setAttribute('y1', p1.y);
+            line.setAttribute('x2', p2.x);
+            line.setAttribute('y2', p2.y);
+            line.setAttribute('class', className);
+            return line;
+        }
+
+        function getWidgetSize(sizeId) {
+            const sizes = {
+                'small': 64,
+                'medium': 128,
+                'large': 192,
+                'xlarge': 256
+            };
+            return sizes[sizeId] || 128;
+        }
+
+        function onHomeyReady(Homey) {
+            currentSettings = Homey.getSettings();
+
+            // Initial resize
+            const height = getWidgetSize(currentSettings.size || 'medium');
+
+            Homey.on('settings.set', (key, value) => {
+                currentSettings[key] = value;
+                if (key === 'size') {
+                    Homey.ready({ height: getWidgetSize(value) });
+                }
+                drawFace();
+                updateClock();
+            });
+
+            drawFace();
+            updateClock();
+
+            // Update loop
+            setInterval(updateClock, 1000);
+
+            // Send height
+            Homey.ready({ height: height });
+        }
+    </script>
+</body>
+
+</html>

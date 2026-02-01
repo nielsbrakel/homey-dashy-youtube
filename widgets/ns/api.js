@@ -1,28 +1,55 @@
-'use strict';
+const https = require('https');
 
 module.exports = {
-  async getSomething({ homey, query }) {
-    // you can access query parameters like "/?foo=bar" through `query.foo`
+  async getDepartures({ homey, query }) {
+    const { station, apiKey } = query;
 
-    // you can access the App instance through homey.app
-    // const result = await homey.app.getSomething();
-    // return result;
+    if (!apiKey) {
+      throw new Error('Missing API Key');
+    }
 
-    // perform other logic like mapping result data
+    if (!station) {
+      throw new Error('Missing Station');
+    }
 
-    return 'Hello from App';
-  },
+    return new Promise((resolve, reject) => {
+      const options = {
+        hostname: 'gateway.apiportal.ns.nl',
+        path: `/reisinformatie-api/api/v2/departures?station=${encodeURIComponent(station)}`,
+        method: 'GET',
+        headers: {
+          'Ocp-Apim-Subscription-Key': apiKey,
+          'User-Agent': 'Homey/Dashy',
+          'Accept': 'application/json'
+        }
+      };
 
-  async addSomething({ homey, body }) {
-    // access the post body and perform some action on it.
-    return homey.app.addSomething(body);
-  },
+      const req = https.request(options, (res) => {
+        let data = '';
 
-  async updateSomething({ homey, params, body }) {
-    return homey.app.setSomething(body);
-  },
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
 
-  async deleteSomething({ homey, params }) {
-    return homey.app.deleteSomething(params.id);
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            try {
+              const parsedData = JSON.parse(data);
+              resolve(parsedData);
+            } catch (e) {
+              reject(new Error('Failed to parse NS API response: ' + e.message));
+            }
+          } else {
+            reject(new Error(`NS API returned status ${res.statusCode}: ${data}`));
+          }
+        });
+      });
+
+      req.on('error', (e) => {
+        reject(new Error('NS API Request failed: ' + e.message));
+      });
+
+      req.end();
+    });
   },
 };

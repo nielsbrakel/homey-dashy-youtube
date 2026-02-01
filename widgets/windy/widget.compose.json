@@ -346,6 +346,13 @@
             "en": "Ultrawide (21:9)",
             "nl": "Ultrabreed (21:9)"
           }
+        },
+        {
+          "id": "3:1",
+          "label": {
+            "en": "Panoramic (3:1)",
+            "nl": "Panoramisch (3:1)"
+          }
         }
       ]
     }

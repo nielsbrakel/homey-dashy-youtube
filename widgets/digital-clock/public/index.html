@@ -26,6 +26,7 @@
       height: 100%;
       text-align: center;
       transition: all 0.3s ease;
+      /* Default padding */
       padding: 8px;
       box-sizing: border-box;
     }
@@ -69,37 +70,74 @@
 
 
     /* Typography Sizes */
-    .size-xsmall .date-text {
+    .size-xsmall .time {
       font-size: 16px;
     }
 
-    .size-small .date-text {
+    .size-xsmall .date {
+      font-size: 8px;
+      margin-top: 1px;
+    }
+
+    .size-small .time {
       font-size: 24px;
     }
 
-    .size-medium .date-text {
+    .size-small .date {
+      font-size: 10px;
+      margin-top: 2px;
+    }
+
+    .size-medium .time {
       font-size: 42px;
     }
 
-    .size-large .date-text {
+    .size-medium .date {
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .size-large .time {
       font-size: 56px;
     }
 
-    .size-xlarge .date-text {
+    .size-large .date {
+      font-size: 18px;
+      margin-top: 6px;
+    }
+
+    .size-xlarge .time {
       font-size: 72px;
     }
 
+    .size-xlarge .date {
+      font-size: 24px;
+      margin-top: 8px;
+    }
+
     /* Font Weights */
-    .weight-thin .date-text {
+    .weight-thin .time {
       font-weight: 200;
     }
 
-    .weight-normal .date-text {
+    .weight-normal .time {
       font-weight: 500;
     }
 
-    .weight-bold .date-text {
+    .weight-bold .time {
       font-weight: 800;
+    }
+
+    .weight-thin .date {
+      font-weight: 300;
+    }
+
+    .weight-normal .date {
+      font-weight: 400;
+    }
+
+    .weight-bold .date {
+      font-weight: 600;
     }
 
     /* Colors */
@@ -127,41 +165,104 @@
       color: #9c27b0;
     }
 
-    .date-text {
+    /* Time Elements */
+    .time {
+      line-height: 1;
+      white-space: nowrap;
+      font-feature-settings: "tnum";
+      font-variant-numeric: tabular-nums;
+    }
+
+    .date {
+      opacity: 0.8;
       line-height: 1.2;
     }
 
-    .uppercase {
-      text-transform: uppercase;
+    .seconds {
+      font-size: 0.6em;
+      opacity: 0.7;
+    }
+
+    .period {
+      font-size: 0.4em;
+      margin-left: 0.1em;
+      opacity: 0.6;
+      vertical-align: top;
+    }
+
+    /* Blinking Animation */
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.2;
+      }
+    }
+
+    .blink .colon {
+      animation: blink 1s infinite;
     }
   </style>
 </head>
 
 <body>
   <div class="widget" id="widget">
-    <div class="date-text" id="date"></div>
+    <div class="time" id="time"></div>
+    <div class="date" id="date"></div>
   </div>
 
   <script>
     let currentSettings = {};
-    let refreshTimer;
 
-    function updateDate() {
+    function updateTime() {
       const now = new Date();
+      const timeElement = document.getElementById('time');
       const dateElement = document.getElementById('date');
+      const widgetElement = document.getElementById('widget');
 
-      let dateString = formatDate(now);
+      // 1. Time Formatting
+      const is24h = currentSettings.clockFormat !== '12';
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      let seconds = now.getSeconds();
+      let period = '';
 
-      if (currentSettings.uppercase) {
-        dateString = dateString.toUpperCase();
+      if (!is24h) {
+        period = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
       }
 
-      dateElement.innerText = dateString;
+      const pad = (num) => num.toString().padStart(2, '0');
+
+      let timeHtml = `${pad(hours)}<span class="colon">:</span>${pad(minutes)}`;
+
+      if (currentSettings.showSeconds) {
+        timeHtml += `<span class="seconds">:${pad(seconds)}</span>`;
+      }
+
+      if (period) {
+        timeHtml += `<span class="period">${pad(period)}</span>`;
+      }
+
+      timeElement.innerHTML = timeHtml;
+
+      // 2. Date Formatting
+      if (currentSettings.showDate) {
+        dateElement.style.display = 'block';
+        dateElement.innerText = formatDate(now);
+      } else {
+        dateElement.style.display = 'none';
+      }
     }
 
     function formatDate(date) {
-      const lang = 'en-US';
-      const format = currentSettings.dateFormat || 'long';
+      const lang = 'en-US'; // Default to EN for now, Homey might provide locale
+      const format = currentSettings.dateFormat || 'weekday-short';
 
       const options = {};
 
@@ -191,7 +292,7 @@
           options.day = 'numeric'; options.month = 'long';
           break;
         default:
-          options.month = 'long'; options.day = 'numeric'; options.year = 'numeric';
+          options.weekday = 'short'; options.month = 'short'; options.day = 'numeric';
       }
 
       return date.toLocaleDateString(undefined, options);
@@ -233,25 +334,14 @@
         widget.classList.add('widget-card');
       }
 
+      if (currentSettings.blinkSeparator) {
+        widget.classList.add('blink');
+      }
+
       // Auto-resize
       if (Homey) {
         Homey.ready({ height: getSizeHeight(size) });
       }
-    }
-
-    function scheduleRefreshAtMidnight() {
-      if (refreshTimer) clearTimeout(refreshTimer);
-
-      const now = new Date();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-
-      const msUntilMidnight = tomorrow.getTime() - now.getTime();
-      refreshTimer = setTimeout(() => {
-        updateDate();
-        scheduleRefreshAtMidnight();
-      }, msUntilMidnight);
     }
 
     function onHomeyReady(Homey) {
@@ -260,14 +350,14 @@
       Homey.on('settings.set', (key, value) => {
         currentSettings[key] = value;
         updateStyles(Homey);
-        updateDate();
+        updateTime();
       });
 
       updateStyles(Homey);
-      updateDate();
-      scheduleRefreshAtMidnight();
+      updateTime();
 
-      Homey.ready();
+      // Update every second to keep sync
+      setInterval(updateTime, 1000);
     }
   </script>
 </body>

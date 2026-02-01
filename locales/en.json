@@ -10,6 +10,16 @@
       "lap": "Lap",
       "noLaps": "Press lap to record times",
       "addStopwatch": "+ Add Stopwatch"
+    },
+    "buientabel": {
+      "noRain": "No precipitation expected",
+      "light": "LIGHT",
+      "moderate": "MODERATE",
+      "heavy": "HEAVY",
+      "now": "NOW",
+      "loading": "Loading...",
+      "error": "Error loading data",
+      "noData": "No data available"
     }
   }
 }

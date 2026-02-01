@@ -1,227 +1,237 @@
 <html>
-  <head>
-    <style>
-      .ns-container {
-        display: flex;
-        flex-direction: column;
-        gap: var(--widget-su-2);
-        padding: var(--widget-su-3);
-      }
 
-      .ns-header {
-        text-align: center;
-        margin-bottom: var(--widget-su-2);
-      }
+<head>
+  <style>
+    .ns-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--widget-su-2);
+      padding: var(--widget-su-3);
+    }
 
-      .ns-station {
-        font-size: var(--homey-font-size-default);
-        font-weight: var(--homey-font-weight-bold);
-        color: var(--homey-text-color);
-      }
+    .ns-header {
+      text-align: center;
+      margin-bottom: var(--widget-su-2);
+    }
 
-      .ns-departures {
-        display: flex;
-        flex-direction: column;
-        gap: var(--widget-su-2);
-        max-height: 400px;
-        overflow-y: auto;
-      }
+    .ns-station {
+      font-size: var(--homey-font-size-default);
+      font-weight: var(--homey-font-weight-bold);
+      color: var(--homey-text-color);
+    }
 
-      .ns-departure {
-        display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: var(--widget-su-2);
-        padding: var(--widget-su-2);
-        border: 1px solid var(--homey-line-color-light);
-        border-radius: var(--homey-border-radius-default);
-        align-items: center;
-      }
+    .ns-departures {
+      display: flex;
+      flex-direction: column;
+      gap: var(--widget-su-2);
+      max-height: 400px;
+      overflow-y: auto;
+    }
 
-      .ns-departure-info {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
+    .ns-departure {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: var(--widget-su-2);
+      padding: var(--widget-su-2);
+      border: 1px solid var(--homey-line-color-light);
+      border-radius: var(--homey-border-radius-default);
+      align-items: center;
+    }
 
-      .ns-destination {
-        font-size: var(--homey-font-size-default);
-        font-weight: var(--homey-font-weight-bold);
-        color: var(--homey-text-color);
-      }
+    .ns-departure-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
-      .ns-departure-time {
-        font-family: monospace;
-        font-size: var(--homey-font-size-small);
-        color: var(--homey-text-color-secondary);
-      }
+    .ns-destination {
+      font-size: var(--homey-font-size-default);
+      font-weight: var(--homey-font-weight-bold);
+      color: var(--homey-text-color);
+    }
 
-      .ns-platform {
-        font-size: var(--homey-font-size-medium);
-        font-weight: var(--homey-font-weight-bold);
-        color: var(--homey-text-color);
-        text-align: center;
-      }
+    .ns-departure-time {
+      font-family: monospace;
+      font-size: var(--homey-font-size-small);
+      color: var(--homey-text-color-secondary);
+    }
 
-      .ns-platform-label {
-        font-size: 9px;
-        color: var(--homey-text-color-secondary);
-      }
+    .ns-platform {
+      font-size: var(--homey-font-size-medium);
+      font-weight: var(--homey-font-weight-bold);
+      color: var(--homey-text-color);
+      text-align: center;
+    }
 
-      .ns-delay {
-        font-size: var(--homey-font-size-small);
-        color: var(--homey-text-color-danger);
-        font-weight: var(--homey-font-weight-bold);
-      }
+    .ns-platform-label {
+      font-size: 9px;
+      color: var(--homey-text-color-secondary);
+    }
 
-      .ns-loading {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: var(--widget-su-4);
-        color: var(--homey-text-color-secondary);
-      }
+    .ns-delay {
+      font-size: var(--homey-font-size-small);
+      color: var(--homey-text-color-danger);
+      font-weight: var(--homey-font-weight-bold);
+    }
 
-      .ns-error {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: var(--widget-su-4);
-        color: var(--homey-text-color-danger);
-        text-align: center;
-      }
+    .ns-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--widget-su-4);
+      color: var(--homey-text-color-secondary);
+    }
 
-      .ns-empty {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: var(--widget-su-4);
-        color: var(--homey-text-color-secondary);
-      }
-    </style>
-  </head>
+    .ns-error {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--widget-su-4);
+      color: var(--homey-text-color-danger);
+      text-align: center;
+    }
 
-  <body class="homey-widget">
-    <div class="ns-container">
-      <div class="ns-header">
-        <div class="ns-station" id="ns-station">Amsterdam CS</div>
-      </div>
-      <div id="ns-content" class="ns-loading">
-        Loading departures...
-      </div>
+    .ns-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--widget-su-4);
+      color: var(--homey-text-color-secondary);
+    }
+  </style>
+</head>
+
+<body class="homey-widget">
+  <div class="ns-container">
+    <div class="ns-header">
+      <div class="ns-station" id="ns-station">Amsterdam CS</div>
     </div>
+    <div id="ns-content" class="ns-loading">
+      Loading departures...
+    </div>
+  </div>
 
-    <script type="text/javascript">
-      let currentSettings = {};
-      let departures = [];
+  <script type="text/javascript">
+    let currentSettings = {};
+    let departures = [];
 
-      function generateMockDepartures(count) {
-        const now = new Date();
-        const depList = [];
-        const destinations = ['Utrecht', 'Rotterdam', 'Den Haag', 'Groningen', 'Maastricht'];
-        
-        for (let i = 0; i < count; i++) {
-          const time = new Date(now.getTime() + (i + 1) * 15 * 60000);
-          depList.push({
-            destination: destinations[i % destinations.length],
-            time: `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`,
-            platform: String((Math.floor(Math.random() * 15) + 1)),
-            delay: Math.random() > 0.7 ? Math.floor(Math.random() * 20) + 1 : 0,
-            type: ['Sprinter', 'Intercity', 'Thalys'][Math.floor(Math.random() * 3)],
+
+    function render() {
+      const content = document.getElementById('ns-content');
+
+      if (departures.length === 0) {
+        content.className = 'ns-empty';
+        content.textContent = 'No departures found';
+        return;
+      }
+
+      const list = document.createElement('div');
+      list.className = 'ns-departures';
+
+      departures.forEach((dep) => {
+        const item = document.createElement('div');
+        item.className = 'ns-departure';
+
+        const info = document.createElement('div');
+        info.className = 'ns-departure-info';
+
+        const dest = document.createElement('div');
+        dest.className = 'ns-destination';
+        dest.textContent = dep.destination;
+
+        const timeEl = document.createElement('div');
+        timeEl.className = 'ns-departure-time';
+        timeEl.textContent = `${dep.time} ${dep.type}`;
+
+        info.appendChild(dest);
+        info.appendChild(timeEl);
+        item.appendChild(info);
+
+        if (currentSettings.showPlatform) {
+          const platform = document.createElement('div');
+          platform.className = 'ns-platform';
+          platform.textContent = dep.platform;
+          const label = document.createElement('div');
+          label.className = 'ns-platform-label';
+          label.textContent = 'Perron';
+          const platformDiv = document.createElement('div');
+          platformDiv.appendChild(platform);
+          platformDiv.appendChild(label);
+          item.appendChild(platformDiv);
+        }
+
+        if (currentSettings.showDelay && dep.delay > 0) {
+          const delay = document.createElement('div');
+          delay.className = 'ns-delay';
+          delay.textContent = `+${dep.delay}m`;
+          item.appendChild(delay);
+        }
+
+        list.appendChild(item);
+      });
+
+      content.className = '';
+      content.innerHTML = '';
+      content.appendChild(list);
+    }
+
+    async function fetchDepartures() {
+      const content = document.getElementById('ns-content');
+
+      // Don't fetch if no API key is set
+      if (!currentSettings.apiKey) {
+        content.className = 'ns-error';
+        content.innerHTML = 'Please enter your NS API Key<br>in the widget settings.';
+        return;
+      }
+
+      try {
+        content.className = 'ns-loading';
+        content.textContent = 'Loading departures...';
+
+        const data = await Homey.api('GET', `/departures?station=${encodeURIComponent(currentSettings.station || 'Amsterdam CS')}&apiKey=${encodeURIComponent(currentSettings.apiKey)}`);
+
+        if (data && data.payload && data.payload.departures) {
+          departures = data.payload.departures.slice(0, currentSettings.maxDepartures || 5).map(dep => {
+            const plannedTime = new Date(dep.plannedDateTime);
+            const actualTime = new Date(dep.actualDateTime);
+            const delayMinutes = Math.round((actualTime - plannedTime) / 60000);
+
+            return {
+              destination: dep.direction,
+              time: `${String(actualTime.getHours()).padStart(2, '0')}:${String(actualTime.getMinutes()).padStart(2, '0')}`,
+              platform: dep.actualTrack || dep.plannedTrack,
+              delay: delayMinutes,
+              type: dep.product.longCategoryName || dep.product.categoryCode
+            };
           });
-        }
-        
-        return depList;
-      }
-
-      function render() {
-        const content = document.getElementById('ns-content');
-        
-        if (departures.length === 0) {
-          content.className = 'ns-empty';
-          content.textContent = 'No departures found';
-          return;
-        }
-
-        const list = document.createElement('div');
-        list.className = 'ns-departures';
-
-        departures.forEach((dep) => {
-          const item = document.createElement('div');
-          item.className = 'ns-departure';
-
-          const info = document.createElement('div');
-          info.className = 'ns-departure-info';
-          
-          const dest = document.createElement('div');
-          dest.className = 'ns-destination';
-          dest.textContent = dep.destination;
-          
-          const timeEl = document.createElement('div');
-          timeEl.className = 'ns-departure-time';
-          timeEl.textContent = `${dep.time} ${dep.type}`;
-          
-          info.appendChild(dest);
-          info.appendChild(timeEl);
-          item.appendChild(info);
-
-          if (currentSettings.showPlatform) {
-            const platform = document.createElement('div');
-            platform.className = 'ns-platform';
-            platform.textContent = dep.platform;
-            const label = document.createElement('div');
-            label.className = 'ns-platform-label';
-            label.textContent = 'Perron';
-            const platformDiv = document.createElement('div');
-            platformDiv.appendChild(platform);
-            platformDiv.appendChild(label);
-            item.appendChild(platformDiv);
-          }
-
-          if (currentSettings.showDelay && dep.delay > 0) {
-            const delay = document.createElement('div');
-            delay.className = 'ns-delay';
-            delay.textContent = `+${dep.delay}m`;
-            item.appendChild(delay);
-          }
-
-          list.appendChild(item);
-        });
-
-        content.className = '';
-        content.innerHTML = '';
-        content.appendChild(list);
-      }
-
-      function fetchDepartures() {
-        const content = document.getElementById('ns-content');
-        
-        try {
-          content.className = 'ns-loading';
-          content.textContent = 'Loading departures...';
-
-          departures = generateMockDepartures(currentSettings.maxDepartures || 5);
           render();
-        } catch (err) {
-          console.error('NS fetch error:', err);
-          content.className = 'ns-error';
-          content.textContent = 'Unable to load departures. Check API key.';
+        } else {
+          throw new Error('Invalid data received');
         }
+
+      } catch (err) {
+        console.error('NS fetch error:', err);
+        content.className = 'ns-error';
+        content.textContent = 'Unable to load departures. Check API key and Station name.';
       }
+    }
 
-      function onHomeyReady(Homey) {
-        currentSettings = Homey.getSettings();
+    function onHomeyReady(Homey) {
+      currentSettings = Homey.getSettings();
 
+      document.getElementById('ns-station').textContent = currentSettings.station || 'Amsterdam CS';
+
+      fetchDepartures();
+      Homey.ready();
+
+      Homey.on('settings', (newSettings) => {
+        currentSettings = newSettings;
         document.getElementById('ns-station').textContent = currentSettings.station || 'Amsterdam CS';
-
         fetchDepartures();
-        Homey.ready();
+      });
+    }
+  </script>
+</body>
 
-        Homey.on('settings', (newSettings) => {
-          currentSettings = newSettings;
-          document.getElementById('ns-station').textContent = currentSettings.station || 'Amsterdam CS';
-          fetchDepartures();
-        });
-      }
-    </script>
-  </body>
 </html>

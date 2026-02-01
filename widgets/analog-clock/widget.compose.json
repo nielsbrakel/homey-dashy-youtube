@@ -1,0 +1,243 @@
+{
+    "name": {
+        "en": "Analog Clock",
+        "nl": "Analoge Klok"
+    },
+    "description": {
+        "en": "Classic analog clock face.",
+        "nl": "Klassieke analoge klok."
+    },
+    "height": 128,
+    "transparent": true,
+    "settings": [
+        {
+            "id": "style",
+            "type": "dropdown",
+            "label": {
+                "en": "Style",
+                "nl": "Stijl"
+            },
+            "value": "modern",
+            "values": [
+                {
+                    "id": "minimal",
+                    "label": {
+                        "en": "Minimal (No Numbers)",
+                        "nl": "Minimalistisch (Geen Cijfers)"
+                    }
+                },
+                {
+                    "id": "modern",
+                    "label": {
+                        "en": "Modern (Markers)",
+                        "nl": "Modern (Markeringen)"
+                    }
+                },
+                {
+                    "id": "classic",
+                    "label": {
+                        "en": "Classic (Numbers)",
+                        "nl": "Klassiek (Cijfers)"
+                    }
+                },
+                {
+                    "id": "swiss",
+                    "label": {
+                        "en": "Swiss Railway",
+                        "nl": "Zwitserse Spoorwegen"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "color",
+            "type": "dropdown",
+            "label": {
+                "en": "Color",
+                "nl": "Kleur"
+            },
+            "value": "default",
+            "values": [
+                {
+                    "id": "default",
+                    "label": {
+                        "en": "Default",
+                        "nl": "Standaard"
+                    }
+                },
+                {
+                    "id": "blue",
+                    "label": {
+                        "en": "Blue",
+                        "nl": "Blauw"
+                    }
+                },
+                {
+                    "id": "green",
+                    "label": {
+                        "en": "Green",
+                        "nl": "Groen"
+                    }
+                },
+                {
+                    "id": "orange",
+                    "label": {
+                        "en": "Orange",
+                        "nl": "Oranje"
+                    }
+                },
+                {
+                    "id": "red",
+                    "label": {
+                        "en": "Red",
+                        "nl": "Rood"
+                    }
+                },
+                {
+                    "id": "black",
+                    "label": {
+                        "en": "Black",
+                        "nl": "Zwart"
+                    }
+                },
+                {
+                    "id": "white",
+                    "label": {
+                        "en": "White",
+                        "nl": "Wit"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "size",
+            "type": "dropdown",
+            "label": {
+                "en": "Size",
+                "nl": "Grootte"
+            },
+            "value": "medium",
+            "values": [
+                {
+                    "id": "small",
+                    "label": {
+                        "en": "Small (64px)",
+                        "nl": "Klein (64px)"
+                    }
+                },
+                {
+                    "id": "medium",
+                    "label": {
+                        "en": "Medium (128px)",
+                        "nl": "Gemiddeld (128px)"
+                    }
+                },
+                {
+                    "id": "large",
+                    "label": {
+                        "en": "Large (192px)",
+                        "nl": "Groot (192px)"
+                    }
+                },
+                {
+                    "id": "xlarge",
+                    "label": {
+                        "en": "Extra Large (256px)",
+                        "nl": "Extra Groot (256px)"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "showSeconds",
+            "type": "checkbox",
+            "label": {
+                "en": "Show Second Hand",
+                "nl": "Toon Secondewijzer"
+            },
+            "value": true
+        },
+        {
+            "id": "showDate",
+            "type": "checkbox",
+            "label": {
+                "en": "Show Date",
+                "nl": "Toon Datum"
+            },
+            "value": true
+        },
+        {
+            "id": "horizontalAlignment",
+            "type": "dropdown",
+            "label": {
+                "en": "Horizontal Alignment",
+                "nl": "Horizontale Uitlijning"
+            },
+            "value": "center",
+            "values": [
+                {
+                    "id": "left",
+                    "label": {
+                        "en": "Left",
+                        "nl": "Links"
+                    }
+                },
+                {
+                    "id": "center",
+                    "label": {
+                        "en": "Center",
+                        "nl": "Midden"
+                    }
+                },
+                {
+                    "id": "right",
+                    "label": {
+                        "en": "Right",
+                        "nl": "Rechts"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "verticalAlignment",
+            "type": "dropdown",
+            "label": {
+                "en": "Vertical Alignment",
+                "nl": "Verticale Uitlijning"
+            },
+            "value": "center",
+            "values": [
+                {
+                    "id": "top",
+                    "label": {
+                        "en": "Top",
+                        "nl": "Boven"
+                    }
+                },
+                {
+                    "id": "center",
+                    "label": {
+                        "en": "Center",
+                        "nl": "Midden"
+                    }
+                },
+                {
+                    "id": "bottom",
+                    "label": {
+                        "en": "Bottom",
+                        "nl": "Onder"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "transparentBackground",
+            "type": "checkbox",
+            "label": {
+                "en": "Transparent Background",
+                "nl": "Transparante Achtergrond"
+            },
+            "value": false
+        }
+    ]
+}
