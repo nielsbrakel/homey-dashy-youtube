@@ -21,7 +21,6 @@
     width: 100%;
     position: relative;
     overflow: visible;
-    /* Allow tooltips to overflow if needed */
     background: transparent;
   }
 
@@ -42,6 +41,7 @@
     pointer-events: none;
     z-index: 50;
     text-shadow: 0 1px 4px var(--homey-bg-color);
+    opacity: 0.7;
   }
 
   .status-overlay.error {
@@ -49,8 +49,6 @@
   }
 
   /* Chart Container */
-  /* Chart Container: Positioned to leave space for Tooltip (top) and Axis (bottom) */
-  /* Chart Container: Positioned to leave space for Tooltip (top) and Axis (bottom) */
   .chart-container {
     position: absolute;
     top: 30px;
@@ -61,10 +59,6 @@
     z-index: 10;
     border-bottom: 1px solid var(--chart-grid-color);
   }
-
-  /* Refresh Button */
-  /* Refresh Button */
-
 
   /* Chart Elements */
   .grid-line {
@@ -80,15 +74,14 @@
     right: 0;
     transform: translateY(-100%);
     font-size: 10px;
-    /* Bigger */
     font-weight: 600;
     color: var(--text-color-secondary);
     text-transform: uppercase;
     opacity: 0.9;
     pointer-events: none;
     padding-bottom: 2px;
-    /* Readable over bars */
     text-shadow: 0 1px 2px var(--homey-bg-color), 0 0 1px var(--homey-bg-color);
+    z-index: 100;
   }
 
   .now-line {
@@ -126,25 +119,27 @@
 
   .chart-bar:hover {
     background: var(--bar-hover, var(--homey-color-blue-300));
-    z-index: 20;
+    z-index: 100;
   }
 
   .chart-tooltip {
     position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-5px);
-    background: var(--homey-bg-color-inverse);
-    color: var(--homey-text-color-inverse);
-    padding: 4px 8px;
-    border-radius: 4px;
+    top: 0;
+    left: 0;
+    transform: translateX(-50%) translateY(-100%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
     font-size: 10px;
+    font-weight: 500;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.1s;
-    z-index: 2000;
-    pointer-events: none;
+    z-index: 9999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    margin-top: -8px;
+    transition: opacity 0.15s ease;
   }
 
   .chart-bar:hover .chart-tooltip,
@@ -189,36 +184,32 @@
   }
 
   /* Interaction highlights */
-  /* Interaction highlights */
   .chart-interaction-zone:hover,
   .chart-interaction-zone.active {
     background: rgba(255, 255, 255, 0.05);
-  }
-
-  /* Prevent page scrolling when interacting with chart */
-  .chart-interaction-zone {
     touch-action: none;
   }
 
   /* Dot Indicator for Line Chart */
   .indicator-dot {
     position: absolute;
-    width: 8px;
-    height: 8px;
-    background: var(--homey-color-blue-500);
-    border: 2px solid var(--homey-bg-color);
+    left: 50%;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--chart-line-color);
     border-radius: 50%;
-    transform: translate(-50%, 50%);
+    transform: translate(-50%, -50%);
     box-sizing: border-box;
-    /* Center on point */
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.1s, bottom 0.1s, left 0.1s;
+    transition: opacity 0.15s ease, top 0.3s ease;
     z-index: 55;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 
-  .chart-interaction-zone:hover .indicator-dot {
+  .chart-interaction-zone:hover .indicator-dot,
+  .chart-interaction-zone.active .indicator-dot {
     opacity: 1;
   }
 </style>
@@ -260,10 +251,19 @@
       // Homey translation helper
       __: (key) => Homey.__(`widgets.buientabel.${key}`) || key,
 
-      // Simple Catmull-Rom to SVG Path
+      // Error mapper
+      getError: (err) => {
+        if (err.message.includes('Location outside')) return Utils.__('locationError');
+        return Utils.__('error');
+      },
+
+      // Simple Catmull-Rom to SVG Path with clamping
       getSmoothPath: (points, k = 0.25) => {
         if (points.length === 0) return '';
         if (points.length === 1) return `M ${points[0][0]},${points[0][1]}`;
+
+        // Clamp helper for Y values (0=top, 100=bottom)
+        const clampY = (y) => Math.max(0, Math.min(100, y));
 
         let path = `M ${points[0][0]},${points[0][1]}`;
 
@@ -274,9 +274,9 @@
           let p3 = points[i + 2] || p2;
 
           let cp1x = p1[0] + (p2[0] - p0[0]) * k;
-          let cp1y = p1[1] + (p2[1] - p0[1]) * k;
+          let cp1y = clampY(p1[1] + (p2[1] - p0[1]) * k);
           let cp2x = p2[0] - (p3[0] - p1[0]) * k;
-          let cp2y = p2[1] - (p3[1] - p1[1]) * k;
+          let cp2y = clampY(p2[1] - (p3[1] - p1[1]) * k);
 
           path += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2[0]},${p2[1]}`;
         }
@@ -300,6 +300,7 @@
         // Timestamp to prevent caching
         const url = `${CONFIG.API_URL}?lat=${lat}&lon=${lon}&_t=${Date.now()}`;
         const response = await fetch(url);
+        if (response.status === 404) throw new Error('Location outside NL/BE');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const text = await response.text();
         return this.parseBuienradarData(text);
@@ -337,39 +338,57 @@
         if (!json.minutely_15) return [];
 
         const { time, precipitation } = json.minutely_15;
-        const now = new Date();
-        const data = [];
-
-        // We only want the next ~2 hours or similar to match Buienradar's scope (usually 2h)
-        // Buienradar gives roughly ~24 data points (5 min intervals = 2 hours).
-        // Open-Meteo gives 15 min intervals. Let's take the next 8-10 points (2-2.5 hours).
-
-        // Find the index closest to now
-        const nowIso = now.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm match
-        // Or better comparison using timestamps
-        const nowTime = now.getTime();
-
+        const nowTime = Date.now();
         let startIndex = 0;
-        // Simple search for the slot just after or at current time
+
+        // Find the 15-min slot that covers "now" (or starts just before now)
+        // Since intervals are sorted, we look for the last index where time[i] <= now
+        // But intervals are 15m. So time[i] <= now < time[i+1]
+        // Actually simplest: find first index where time[i] + 15m > now.
+        // Or closest.
+
+        // Let's iterate. 
         for (let i = 0; i < time.length; i++) {
-          if (new Date(time[i]).getTime() >= nowTime - 15 * 60 * 1000) { // Include current 15m slot
+          const tStart = new Date(time[i]).getTime();
+          // Open Meteo timestamps are start of interval.
+          // If now is 12:05, and intervals are 12:00, 12:15...
+          // We want 12:00 (index 0). 
+          // So if tStart <= now.
+          if (tStart <= nowTime) {
             startIndex = i;
+          } else {
+            // We passed 'now'. So previous index was the correct one.
+            // startIndex is already set to i-1 (or whatever it was).
+            // Stop.
             break;
           }
         }
 
-        // Take next 9 points (approx 2h 15m)
-        for (let i = startIndex; i < Math.min(startIndex + 9, time.length); i++) {
+        // Safeguard: if now is way before data (e.g. timezone mess), startIndex might be 0.
+        // If now is way after, startIndex might be last index.
+
+        // Take next 9 points (approx 2h 15m) starting from our determined "current" slot
+        const data = [];
+        const count = Math.min(startIndex + 9, time.length);
+
+        for (let i = startIndex; i < count; i++) {
           const t = new Date(time[i]);
           const timeStr = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
 
+          const rawMm = precipitation[i];
+          // OpenMeteo returns mm per 15 min interval.
+          // Buienradar displays intensity in mm/h.
+          // To convert mm/15min to mm/h, multiply by 4.
+          const intensityMmH = rawMm * 4;
+
           data.push({
             time: timeStr,
-            val: 0, // Not used for Open-Meteo
-            mm: precipitation[i]
+            val: 0,
+            mm: intensityMmH
           });
         }
 
+        console.log('OpenMeteo Data (StartIndex ' + startIndex + '):', data[0]);
         return data;
       }
     }
@@ -380,29 +399,73 @@
     class ChartRenderer {
       constructor(container) {
         this.container = container;
+        this.currentStyle = null;
+        this.barElements = []; // Cache for updates
       }
 
-      render(data, style, maxMm, noRain = false) {
+      // Initialize the empty chart structure (Grid, Axis, Empty Elements)
+      // Initialize the empty chart structure (Grid, Axis, Empty Elements)
+      renderEmpty(style = 'bars', maxMm = CONFIG.DEFAULT_MAX_MM) {
         this.container.innerHTML = '';
         this.container.className = 'chart-container';
 
-        // 1. Draw Grid Lines & NOW Line (Shared)
+        // 1. Grid & Layers
         this.drawGrid(maxMm);
         this.drawNowLine();
 
-        // 2. Draw Chart Data
-        const chartWrapper = document.createElement('div');
-        chartWrapper.className = 'chart-wrapper';
+        // 2. Wrapper for data
+        this.wrapper = document.createElement('div');
+        this.wrapper.className = 'chart-wrapper';
+        this.container.appendChild(this.wrapper);
 
-        if (style === 'line' || style === 'smooth') {
-          this.renderLineChart(chartWrapper, data, maxMm, style === 'smooth');
-        } else {
-          this.renderBarChart(chartWrapper, data, maxMm);
+        // 3. Global Tooltip Element (Always Top Level)
+        this.tooltip = document.createElement('div');
+        this.tooltip.className = 'chart-tooltip';
+        this.container.appendChild(this.tooltip);
+
+        this.currentStyle = style;
+        this.barElements = []; // Clear cache
+        this.svg = null;
+        this.svgPath = null;
+        this.svgArea = null;
+        this.interactions = [];
+      }
+
+      // Update calls render logic but tries to reuse if possible?
+      // Or we just implement 'render' that decides whether to build or update.
+      render(data, style, maxMm, noRain = false) {
+        // Robust reuse check: same style, same data length, and elements exist
+        const isBar = style !== 'line' && style !== 'smooth';
+        const hasContainerConfig = !!this.wrapper && !!this.tooltip;
+        const matchesStyle = this.currentStyle === style;
+
+        // For lines, check SVG presence. For bars, check elements count vs data
+        const matchesElements = isBar
+          ? this.barElements.length === data.length
+          : (!!this.svgPath && this.interactions.length === data.length);
+
+        const canReuse = this.container.innerHTML !== '' && hasContainerConfig && matchesStyle && matchesElements;
+
+        if (!canReuse) {
+          this.build(data, style, maxMm);
+          // Force reflow after build to ensure transitions start from initial state
+          void this.container.offsetHeight;
         }
 
-        this.container.appendChild(chartWrapper);
+        // Force layout flush so 0-height bars animate to new height if we just built them
+        if (!canReuse) {
+          // Reading a layout property forces reflow
+          void this.container.offsetHeight;
+        }
 
-        // 3. Overlay Message if no rain
+        // Now Update Values (Animations happen here)
+        this.updateValues(data, style, maxMm);
+
+        // Handle Overlays (No Rain / Loading)
+        // Clean up old overlays
+        const oldOverlay = this.container.querySelector('.status-overlay');
+        if (oldOverlay) oldOverlay.remove();
+
         if (noRain) {
           const overlay = document.createElement('div');
           overlay.className = 'status-overlay';
@@ -411,6 +474,45 @@
         }
       }
 
+      setLoading(isLoading) {
+        const oldOverlay = this.container.querySelector('.status-overlay');
+        if (oldOverlay) oldOverlay.remove();
+
+        if (isLoading) {
+          const overlay = document.createElement('div');
+          overlay.className = 'status-overlay';
+          overlay.innerHTML = Utils.__('loading');
+          this.container.appendChild(overlay);
+        }
+      }
+
+      build(data, style, maxMm) {
+        // If wrapper missing (shouldn't happen if renderEmpty called, but safe check)
+        if (!this.wrapper) this.renderEmpty(style, maxMm);
+
+        // Clear wrapper content if rebuilding to be safe (e.g. switching styles)
+        if (this.currentStyle !== style) {
+          this.renderEmpty(style, maxMm);
+        }
+
+        if (style === 'line' || style === 'smooth') {
+          this.buildLineChart(data);
+        } else {
+          this.buildBarChart(data);
+        }
+
+        this.currentStyle = style;
+      }
+
+      updateValues(data, style, maxMm) {
+        if (style === 'line' || style === 'smooth') {
+          this.updateLineChart(data, maxMm, style === 'smooth');
+        } else {
+          this.updateBarChart(data, maxMm);
+        }
+      }
+
+      // --- Grid Logic ---
       drawGrid(maxMm) {
         CONFIG.LEVELS.forEach(lvl => {
           if (lvl.val < maxMm) {
@@ -440,69 +542,94 @@
         this.container.appendChild(label);
       }
 
-      renderBarChart(wrapper, data, maxMm) {
-        wrapper.style.justifyContent = 'space-between';
-        wrapper.style.gap = '1px';
+      // --- Bar Logic ---
+      buildBarChart(data) {
+        this.wrapper.style.justifyContent = 'space-between';
+        this.wrapper.style.gap = '1px';
+        this.barElements = [];
 
         data.forEach(d => {
           const bar = document.createElement('div');
           bar.className = 'chart-bar';
-          const heightPct = (d.mm / maxMm) * 100;
-          // Use 0.5% min height if 0mm to keep structure, or 0? 
-          // If noRain overlay is present, we might want flat line.
-          // User asked for "empty table".
-          bar.style.height = `${Math.max(d.mm > 0 ? heightPct : 0.5, 0)}%`;
+          bar.style.height = '0%';
 
-          this.addTooltipAndLabel(bar, d, heightPct);
-          wrapper.appendChild(bar);
+          // For bars, trigger and position element are the same
+          this.setupTooltip(bar, bar, d);
+          this.addAxisLabel(bar, d);
+
+          this.wrapper.appendChild(bar);
+          this.barElements.push(bar);
         });
       }
 
-      renderLineChart(wrapper, data, maxMm, smooth = false) {
-        // SVG Container
-        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.style.width = '100%';
-        svg.style.height = '100%';
-        svg.style.overflow = 'visible';
-        svg.setAttribute("preserveAspectRatio", "none");
-        svg.setAttribute("viewBox", "0 0 100 100");
+      updateBarChart(data, maxMm) {
+        data.forEach((d, i) => {
+          const bar = this.barElements[i];
+          if (!bar) return;
 
-        // Points [x, y]
-        const points = data.map((d, i) => {
+          const heightPct = (d.mm / maxMm) * 100;
+          // Ensure we always render something if data exists, but 0.5% min is good for visual
+          bar.style.height = `${Math.max(d.mm > 0 ? heightPct : 0.5, 0)}%`;
+
+          // Update tooltip text dynamic?
+          const tooltip = bar.querySelector('.chart-tooltip');
+          if (tooltip) tooltip.textContent = `${d.time}: ${d.mm.toFixed(1)} mm/h`;
+        });
+      }
+
+      // --- Line Logic ---
+      buildLineChart(data) {
+        // SVG Container
+        this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        this.svg.style.width = '100%';
+        this.svg.style.height = '100%';
+        this.svg.style.overflow = 'visible';
+        this.svg.setAttribute("preserveAspectRatio", "none");
+        this.svg.setAttribute("viewBox", "0 0 100 100");
+
+        // Initialize with a flat line matching DATA LENGTH
+        // CSS transitions require the same Path Commands (L vs C) match.
+        const isSmooth = this.currentStyle === 'smooth';
+
+        const flatPoints = data.map((d, i) => {
           const x = (i / (data.length - 1)) * 100;
-          const y = 100 - ((d.mm / maxMm) * 100);
-          return [x, y];
+          return [x, 100]; // y=100 (bottom)
         });
 
-        // Path String
-        let dPath = "";
-        if (smooth) {
-          dPath = Utils.getSmoothPath(points);
+        let flatD = "";
+        if (isSmooth) {
+          flatD = Utils.getSmoothPath(flatPoints);
         } else {
-          dPath = points.map((p, i) => (i === 0 ? "M" : "L") + ` ${p[0]},${p[1]}`).join(" ");
+          flatD = flatPoints.map((p, i) => (i === 0 ? "M" : "L") + ` ${p[0]},${p[1]}`).join(" ");
         }
 
-        // Area (Close the path to bottom corners)
-        const areaPath = `${dPath} L 100,100 L 0,100 Z`;
+        const flatAreaD = `${flatD} L 100,100 L 0,100 Z`;
 
-        // Area Polygon/Path
-        const area = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        area.setAttribute("d", areaPath);
-        area.style.fill = "var(--chart-fill-color)";
-        area.style.opacity = "0.2";
+        // Area
+        this.svgArea = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this.svgArea.setAttribute("d", flatAreaD);
+        this.svgArea.style.fill = "var(--chart-fill-color)";
+        this.svgArea.style.opacity = "0.2";
+        this.svgArea.style.transition = "d 0.3s ease";
 
-        // Stroke Line
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", dPath);
-        path.style.fill = "none";
-        path.style.stroke = "var(--chart-line-color)";
-        path.style.strokeWidth = "2";
-        path.style.vectorEffect = "non-scaling-stroke";
+        // Path
+        this.svgPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        this.svgPath.setAttribute("d", flatD);
+        this.svgPath.style.fill = "none";
+        this.svgPath.style.stroke = "var(--chart-line-color)";
+        this.svgPath.style.strokeWidth = "2";
+        this.svgPath.style.vectorEffect = "non-scaling-stroke";
+        this.svgPath.style.transition = "d 0.3s ease";
 
-        svg.appendChild(area);
-        svg.appendChild(path);
+        this.svg.appendChild(this.svgArea);
+        this.svg.appendChild(this.svgPath);
+        this.wrapper.appendChild(this.svg);
 
         // Interaction Layer
+        this.buildInteractionLayer(data);
+      }
+
+      buildInteractionLayer(data) {
         const interactionLayer = document.createElement('div');
         interactionLayer.style.position = 'absolute';
         interactionLayer.style.top = '0';
@@ -510,37 +637,192 @@
         interactionLayer.style.width = '100%';
         interactionLayer.style.height = '100%';
         interactionLayer.style.display = 'flex';
+        this.interactions = [];
 
-        data.forEach((d, i) => {
+        // Create dots separate from zones so they can be positioned absolutely
+        const dotsLayer = document.createElement('div');
+        dotsLayer.style.position = 'absolute';
+        dotsLayer.style.top = '0';
+        dotsLayer.style.left = '0';
+        dotsLayer.style.width = '100%';
+        dotsLayer.style.height = '100%';
+        dotsLayer.style.pointerEvents = 'none';
+
+        data.forEach((d, index) => {
           const zone = document.createElement('div');
           zone.className = 'chart-interaction-zone';
 
-          // Dot (visible on hover)
+          // Dot is positioned absolutely in dotsLayer
           const dot = document.createElement('div');
           dot.className = 'indicator-dot';
-          const yPct = 100 - ((d.mm / maxMm) * 100);
-          dot.style.bottom = `${100 - yPct}%`;
-          dot.style.left = '50%';
-          zone.appendChild(dot);
+          // Set horizontal position matching SVG X coordinate
+          const xPct = (index / (data.length - 1)) * 100;
+          dot.style.left = `${xPct}%`;
+          dotsLayer.appendChild(dot);
 
-          this.addTooltipAndLabel(zone, d);
+          // Store reference for hover activation
+          zone.dataset.dotIndex = index;
+
+          // Bind tooltip to zone (receives events), position relative to dot
+          this.setupTooltipWithDot(zone, dot, d);
+          this.addAxisLabel(zone, d);
+
           interactionLayer.appendChild(zone);
+          this.interactions.push({ zone, dot, data: d });
         });
 
-        wrapper.appendChild(svg);
-        wrapper.appendChild(interactionLayer);
+        this.wrapper.appendChild(interactionLayer);
+        this.wrapper.appendChild(dotsLayer);
       }
 
-      addTooltipAndLabel(element, data) {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'chart-tooltip';
-        tooltip.textContent = `${data.time}: ${data.mm.toFixed(1)} mm/h`;
+      updateLineChart(data, maxMm, smooth) {
+        // Points
+        const points = data.map((d, i) => {
+          const x = (i / (data.length - 1)) * 100;
+          let y = 100 - ((d.mm / maxMm) * 100);
+          y = Math.max(0, Math.min(100, y)); // Clamp Y to [0,100]
+          return [x, y];
+        });
 
+        let dPath = "";
+        if (smooth) {
+          dPath = Utils.getSmoothPath(points);
+        } else {
+          dPath = points.map((p, i) => (i === 0 ? "M" : "L") + ` ${p[0]},${p[1]}`).join(" ");
+        }
+
+        const areaPath = `${dPath} L 100,100 L 0,100 Z`;
+
+        this.svgPath.setAttribute("d", dPath);
+        this.svgArea.setAttribute("d", areaPath);
+
+        // Update dots position
+        data.forEach((d, i) => {
+          const inter = this.interactions[i];
+          if (!inter) return;
+
+          // Calculate Y position as percentage from TOP (matches SVG coordinate system)
+          // SVG Y: 0=top, 100=bottom. Higher mm = lower Y = higher on chart
+          const yPct = 100 - ((d.mm / maxMm) * 100);
+          const clampedPct = Math.max(0, Math.min(100, yPct));
+          inter.dot.style.top = `${clampedPct}%`;
+        });
+      }
+
+      // For line charts with separate dots layer
+      setupTooltipWithDot(triggerElement, dot, data) {
+        const showDot = () => dot.style.opacity = '1';
+        const hideDot = () => {
+          if (!this.activeZone) dot.style.opacity = '0';
+        };
+
+        // Click/tap toggle for persistent tooltip
+        const toggleTooltip = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Clear any other active zones and dots first
+          if (this.activeZone && this.activeZone !== triggerElement) {
+            this.activeZone.classList.remove('active');
+            const prevDot = this.interactions.find(i => i.zone === this.activeZone)?.dot;
+            if (prevDot) prevDot.style.opacity = '0';
+          }
+
+          // Toggle this zone
+          const isActive = triggerElement.classList.toggle('active');
+          if (isActive) {
+            this.activeZone = triggerElement;
+            dot.style.opacity = '1';
+            this.showTooltip(dot, data);
+          } else {
+            this.activeZone = null;
+            dot.style.opacity = '0';
+            this.hideTooltip();
+          }
+        };
+
+        // Mouse hover (non-persistent)
+        triggerElement.addEventListener('mouseenter', () => {
+          if (!this.activeZone) {
+            showDot();
+            this.showTooltip(dot, data);
+          }
+        });
+        triggerElement.addEventListener('mouseleave', () => {
+          if (!this.activeZone) {
+            hideDot();
+            this.hideTooltip();
+          }
+        });
+
+        // Click/touch for persistent tooltip
+        triggerElement.addEventListener('click', toggleTooltip);
+        triggerElement.addEventListener('touchstart', toggleTooltip, { passive: false });
+      }
+
+      // For bar charts (trigger and position are the same element)
+      setupTooltip(triggerElement, positionElement, data) {
+        // Click/tap toggle for persistent tooltip
+        const toggleTooltip = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Clear any other active zones first
+          if (this.activeZone && this.activeZone !== triggerElement) {
+            this.activeZone.classList.remove('active');
+          }
+
+          // Toggle this zone
+          const isActive = triggerElement.classList.toggle('active');
+          if (isActive) {
+            this.activeZone = triggerElement;
+            this.showTooltip(positionElement, data);
+          } else {
+            this.activeZone = null;
+            this.hideTooltip();
+          }
+        };
+
+        // Mouse hover (non-persistent)
+        triggerElement.addEventListener('mouseenter', () => {
+          if (!this.activeZone) this.showTooltip(positionElement, data);
+        });
+        triggerElement.addEventListener('mouseleave', () => {
+          if (!this.activeZone) this.hideTooltip();
+        });
+
+        // Click/touch for persistent tooltip
+        triggerElement.addEventListener('click', toggleTooltip);
+        triggerElement.addEventListener('touchstart', toggleTooltip, { passive: false });
+      }
+
+      showTooltip(positionElement, data) {
+        if (!this.tooltip) return;
+
+        // Set Content
+        this.tooltip.textContent = `${data.time}: ${data.mm.toFixed(1)} mm/h`;
+
+        // Position relative to positionElement
+        const containerRect = this.container.getBoundingClientRect();
+        const targetRect = positionElement.getBoundingClientRect();
+
+        // Center horizontally on the element, position above it
+        const left = targetRect.left - containerRect.left + (targetRect.width / 2);
+        const top = targetRect.top - containerRect.top;
+
+        this.tooltip.style.left = `${left}px`;
+        this.tooltip.style.top = `${top}px`;
+        this.tooltip.style.opacity = '1';
+      }
+
+      hideTooltip() {
+        if (this.tooltip) this.tooltip.style.opacity = '0';
+      }
+
+      addAxisLabel(element, data) {
         const label = document.createElement('div');
         label.className = 'chart-axis-label';
         label.textContent = data.time;
-
-        element.appendChild(tooltip);
         element.appendChild(label);
       }
     }
@@ -562,6 +844,12 @@
         this.settings = Homey.getSettings() || {};
 
         this.renderUI();
+
+        // Show empty table logic immediately
+        const style = this.settings.graphStyle || 'bars';
+        this.renderer.renderEmpty(style);
+        this.renderer.setLoading(true);
+
         this.fetch();
         this.setupAutoRefresh();
         this.updateHeight();
@@ -569,6 +857,8 @@
         Homey.on('settings', (newSettings) => {
           this.settings = newSettings;
           this.renderUI();
+          this.renderer.renderEmpty(this.settings.graphStyle || 'bars');
+          this.renderer.setLoading(true); // Show loading on settings change too
           this.fetch();
           this.setupAutoRefresh();
           this.updateHeight();
@@ -576,17 +866,13 @@
       }
 
       renderUI() {
-        // Basic Structure
-        this.root.innerHTML = `
-          <div id="chart-mount" class="chart-container"></div>
-        `;
-
+        this.root.innerHTML = '<div id="chart-mount" class="chart-container"></div>';
         this.mountPoint = this.root.querySelector('#chart-mount');
       }
 
       async fetch() {
-        // Show loading only if no data
-        if (!this.data.length) this.showStatus(Utils.__('loading'));
+        // If we have no data, show loading overlay (not full replacement)
+        if (!this.data.length) this.renderer.setLoading(true);
 
         try {
           const lat = this.settings.lat || CONFIG.DEFAULT_LAT;
@@ -597,7 +883,9 @@
           this.renderData();
         } catch (err) {
           console.error(err);
-          this.showStatus(Utils.__('error'), true);
+          // Show specific error if known, else generic
+          const msg = Utils.getError(err);
+          this.showStatus(msg, true);
         }
       }
 
@@ -634,13 +922,29 @@
         const peakRain = Math.max(...this.data.map(d => d.mm));
         const maxMm = Math.max(peakRain * 1.1, CONFIG.DEFAULT_MAX_MM);
 
+        // Debug data
+        // console.log('Rendering Data:', this.data);
+
         // If no rain, still render but with overlay
-        this.renderer.render(this.data, this.settings.graphStyle, maxMm, totalRain === 0);
+        this.renderer.render(this.data, style, maxMm, totalRain === 0);
       }
 
       showStatus(msg, isError = false) {
         if (!this.mountPoint) return;
-        this.mountPoint.innerHTML = `<div class="status-overlay ${isError ? 'error' : ''}" style="pointer-events:all; background:var(--homey-bg-color)">${msg}</div>`;
+
+        // If we have a renderer, try to use it to inject status
+        if (this.renderer && this.renderer.container) {
+          const oldOverlay = this.renderer.container.querySelector('.status-overlay');
+          if (oldOverlay) oldOverlay.remove();
+
+          const overlay = document.createElement('div');
+          overlay.className = `status-overlay ${isError ? 'error' : ''}`;
+          overlay.innerHTML = msg;
+          this.renderer.container.appendChild(overlay);
+        } else {
+          // Fallback
+          this.mountPoint.innerHTML = `<div class="status-overlay ${isError ? 'error' : ''}" style="pointer-events:all; background:var(--homey-bg-color); top:0; bottom:0;">${msg}</div>`;
+        }
       }
 
       setupAutoRefresh() {

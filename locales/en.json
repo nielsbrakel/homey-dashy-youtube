@@ -12,14 +12,15 @@
       "addStopwatch": "+ Add Stopwatch"
     },
     "buientabel": {
+      "loading": "Loading...",
       "noRain": "No precipitation expected",
+      "noData": "No data available",
+      "error": "Error loading data",
+      "locationError": "Coordinates outside NL/BE are not supported by Buienradar. Please use Open-Meteo.",
       "light": "LIGHT",
       "moderate": "MODERATE",
       "heavy": "HEAVY",
-      "now": "NOW",
-      "loading": "Loading...",
-      "error": "Error loading data",
-      "noData": "No data available"
+      "now": "NOW"
     }
   }
 }

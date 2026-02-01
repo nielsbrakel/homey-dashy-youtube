@@ -553,6 +553,59 @@
           ]
         },
         {
+          "id": "backgroundGradient",
+          "type": "dropdown",
+          "label": {
+            "en": "Background",
+            "nl": "Achtergrond"
+          },
+          "value": "none",
+          "values": [
+            {
+              "id": "none",
+              "label": {
+                "en": "None (Transparent)",
+                "nl": "Geen (Transparant)"
+              }
+            },
+            {
+              "id": "sunset",
+              "label": {
+                "en": "Sunset",
+                "nl": "Zonsondergang"
+              }
+            },
+            {
+              "id": "ocean",
+              "label": {
+                "en": "Ocean",
+                "nl": "Oceaan"
+              }
+            },
+            {
+              "id": "forest",
+              "label": {
+                "en": "Forest",
+                "nl": "Bos"
+              }
+            },
+            {
+              "id": "night",
+              "label": {
+                "en": "Night Sky",
+                "nl": "Nachthemel"
+              }
+            },
+            {
+              "id": "aurora",
+              "label": {
+                "en": "Aurora",
+                "nl": "Noorderlicht"
+              }
+            }
+          ]
+        },
+        {
           "id": "aspectRatio",
           "type": "dropdown",
           "label": {
@@ -651,7 +704,7 @@
             "en": "Latitude",
             "nl": "Breedtegraad"
           },
-          "value": "52.0907"
+          "value": "52.1326"
         },
         {
           "id": "lon",
@@ -660,7 +713,7 @@
             "en": "Longitude",
             "nl": "Lengtegraad"
           },
-          "value": "5.1214"
+          "value": "5.2913"
         }
       ],
       "id": "buientabel"

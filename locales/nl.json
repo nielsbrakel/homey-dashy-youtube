@@ -12,14 +12,15 @@
       "addStopwatch": "+ Stopwatch toevoegen"
     },
     "buientabel": {
+      "loading": "Laden...",
       "noRain": "Geen neerslag verwacht",
+      "noData": "Geen data beschikbaar",
+      "error": "Fout bij laden data",
+      "locationError": "Coördinaten buiten NL/BE worden niet ondersteund door Buienradar. Gebruik Open-Meteo.",
       "light": "LICHT",
       "moderate": "MATIG",
       "heavy": "ZWAAR",
-      "now": "NU",
-      "loading": "Laden...",
-      "error": "Fout bij laden",
-      "noData": "Geen gegevens"
+      "now": "NU"
     }
   }
 }
