@@ -4,5 +4,8 @@
   },
   "0.1.0": {
     "en": "first version"
+  },
+  "0.2.0": {
+    "en": "Added new widgets and refined some others"
   }
 }
