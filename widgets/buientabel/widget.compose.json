@@ -228,6 +228,15 @@
         "nl": "Lengtegraad"
       },
       "value": "5.2913"
+    },
+    {
+      "id": "debugMode",
+      "type": "checkbox",
+      "label": {
+        "en": "Debug Mode",
+        "nl": "Debug Modus"
+      },
+      "value": false
     }
   ]
 }

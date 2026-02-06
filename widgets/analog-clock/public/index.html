@@ -10,31 +10,45 @@
         body {
             margin: 0;
             padding: 0;
+            margin: 0;
+            padding: 0;
             width: 100%;
-            height: 100%;
+            background: transparent;
             overflow: hidden;
-            background: transparent;
         }
 
-        /* Group background styles with correct specificity */
-        body.bg-solid {
-            background: var(--homey-background-color);
-        }
-
-        body.bg-transparent {
-            background: transparent;
-        }
-
-        .widget {
+        /* Outer spacing wrapper */
+        .widget-spacing-wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            height: 100%;
+            width: 100%;
             box-sizing: border-box;
-            /* Ensure padding is handled correctly */
-            padding: 8px;
-            /* Safe padding for shadow */
+            transition: none;
+        }
+
+        /* Inner card handles background */
+        .widget-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            border-radius: var(--homey-border-radius, 12px);
+            /* Ensure shadow and background are here */
+            background: var(--homey-background-color);
+            box-shadow: var(--homey-box-shadow);
+            padding: 16px;
+        }
+
+        .bg-transparent .widget-card {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        /* Access to SVG */
+        svg {
+            display: block;
         }
 
         /* Alignment */
@@ -62,15 +76,6 @@
             align-items: flex-end;
         }
 
-        svg {
-            width: 100%;
-            height: 100%;
-            max-width: 100vh;
-            max-height: 100vw;
-            display: block;
-            /* Remove baseline gap */
-        }
-
         /* Color Themes via CSS Variables */
         :root {
             --clock-color: var(--homey-text-color);
@@ -79,33 +84,30 @@
             --second-hand-color: var(--homey-color-red-500);
         }
 
-        .color-default {
-            --clock-color: var(--homey-text-color);
-        }
+
 
         .color-blue {
-            --clock-color: var(--homey-color-blue-500);
+            --second-hand-color: var(--homey-color-blue-500);
         }
 
         .color-green {
-            --clock-color: var(--homey-color-green-500);
+            --second-hand-color: var(--homey-color-green-500);
         }
 
         .color-orange {
-            --clock-color: var(--homey-color-orange-500);
+            --second-hand-color: var(--homey-color-orange-500);
         }
 
         .color-red {
-            --clock-color: var(--homey-color-red-500);
-            --second-hand-color: var(--homey-text-color);
+            --second-hand-color: var(--homey-color-red-500);
         }
 
         .color-black {
-            --clock-color: #000;
+            --second-hand-color: #000;
         }
 
         .color-white {
-            --clock-color: #fff;
+            --second-hand-color: #fff;
         }
 
         /* SVG Elements */
@@ -126,10 +128,15 @@
             opacity: 0.6;
         }
 
+        .no-card {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+
         .hand {
             stroke: var(--clock-color);
             stroke-linecap: round;
-            /* Removed transform-origin from CSS to avoid conflicts, handled in attribute or JS */
         }
 
         .hand.hour {
@@ -143,10 +150,6 @@
         .hand.second {
             stroke: var(--second-hand-color);
             stroke-width: 1.5;
-        }
-
-        #second-hand-group {
-            /* Removed transform-origin from CSS to avoid conflicts, handled in attribute or JS */
         }
 
         .center-dot {
@@ -175,7 +178,7 @@
         .number {
             fill: var(--clock-color);
             font-family: -apple-system, system-ui, sans-serif;
-            font-size: 14px;
+            font-size: 11px;
             text-anchor: middle;
             dominant-baseline: middle;
             font-weight: 600;
@@ -199,31 +202,33 @@
 </head>
 
 <body>
-    <div class="widget" id="widget">
-        <svg viewBox="0 0 100 100" id="clock-svg">
-            <!-- Markers Group -->
-            <g id="markers"></g>
+    <div class="widget-spacing-wrapper" id="app-container">
+        <div class="widget-card" id="widget-card">
+            <svg viewBox="0 0 100 100" id="clock-svg">
+                <!-- Markers Group -->
+                <g id="markers"></g>
 
-            <!-- Numbers Group (Classic only) -->
-            <g id="numbers"></g>
+                <!-- Numbers Group (Classic only) -->
+                <g id="numbers"></g>
 
-            <!-- Date Group -->
-            <g id="date-group" style="display: none;">
-                <rect x="70" y="46.5" width="14" height="7" rx="1" class="date-box" />
-                <text id="date-text" x="77" y="50.5" class="date-text">1</text>
-            </g>
+                <!-- Date Group -->
+                <g id="date-group" style="display: none;">
+                    <rect x="70" y="46.5" width="14" height="7" rx="1" class="date-box" />
+                    <text id="date-text" x="77" y="50.5" class="date-text">1</text>
+                </g>
 
-            <!-- Hands: Add transform-origin attribute -->
-            <line id="hour-hand" class="hand hour" x1="50" y1="50" x2="50" y2="25" />
-            <line id="minute-hand" class="hand minute" x1="50" y1="50" x2="50" y2="15" />
-            <g id="second-hand-group" style="display: none;">
-                <line id="second-hand" class="hand second" x1="50" y1="60" x2="50" y2="15" />
-                <circle id="second-tip" class="second-tip" cx="50" cy="15" r="0" /> <!-- For Swiss style tip -->
-            </g>
+                <!-- Hands -->
+                <line id="hour-hand" class="hand hour" x1="50" y1="50" x2="50" y2="25" />
+                <line id="minute-hand" class="hand minute" x1="50" y1="50" x2="50" y2="15" />
+                <g id="second-hand-group" style="display: none;">
+                    <line id="second-hand" class="hand second" x1="50" y1="60" x2="50" y2="15" />
+                    <circle id="second-tip" class="second-tip" cx="50" cy="15" r="0" />
+                </g>
 
-            <!-- Center Cap -->
-            <circle class="center-dot" cx="50" cy="50" r="2.5" />
-        </svg>
+                <!-- Center Cap -->
+                <circle class="center-dot" cx="50" cy="50" r="2.5" />
+            </svg>
+        </div>
     </div>
 
     <script>
@@ -239,7 +244,6 @@
             const d = now.getDate();
 
             // Calculate angles
-            // Hours moves with minutes: (h * 30) + (m * 0.5)
             const hAngle = (h * 30) + (m * 0.5);
             const mAngle = m * 6;
             const sAngle = s * 6;
@@ -270,8 +274,10 @@
             const markersGroup = document.getElementById('markers');
             const numbersGroup = document.getElementById('numbers');
             const secondTip = document.getElementById('second-tip');
-            const widget = document.getElementById('widget');
+            const appContainer = document.getElementById('app-container');
+            const widgetCard = document.getElementById('widget-card');
             const dateGroup = document.getElementById('date-group');
+            const svg = document.getElementById('clock-svg');
 
             // Reset
             markersGroup.innerHTML = '';
@@ -279,23 +285,27 @@
             secondTip.setAttribute('r', '0');
 
             // Apply Widget Classes
-            widget.className = `widget style-${currentSettings.style || 'modern'} color-${currentSettings.color || 'default'}`;
+            document.body.className = `style-${currentSettings.style || 'modern'} color-${currentSettings.color || 'red'}`;
 
-            // Alignment
-            widget.classList.add(`align-h-${currentSettings.horizontalAlignment || 'center'}`);
-            widget.classList.add(`align-v-${currentSettings.verticalAlignment || 'center'}`);
+            // Alignment (on outer wrapper)
+            appContainer.className = 'widget-spacing-wrapper';
+            widgetCard.classList.add(`align-h-${currentSettings.horizontalAlignment || 'center'}`);
 
-            // Background / Transparency
-            if (currentSettings.transparentBackground) {
+
+
+
+            // Size (set on SVG or Card)
+            const size = getWidgetSize(currentSettings.size || 'medium');
+            svg.style.width = `${size}px`;
+            svg.style.height = `${size}px`;
+
+            //            // Start with defaults
+            if (currentSettings.showInCard === false) {
                 document.body.classList.add('bg-transparent');
-                document.body.classList.remove('bg-solid');
-                widget.classList.remove('widget-card');
+                widgetCard.classList.add('no-card');
             } else {
                 document.body.classList.remove('bg-transparent');
-                // We don't apply bg-solid to body if we use widget-card on the container/widget layer for rounded corners
-                // Ideally, widget-card handles background. 
-                // But analog clock SVG fills the area. Let's make sure .widget-card is applied to the widget div.
-                widget.classList.add('widget-card');
+                widgetCard.classList.remove('no-card');
             }
 
             // Show/Hide Date
@@ -307,10 +317,9 @@
 
             const style = currentSettings.style || 'modern';
 
-            // Helper to check if we should skip marker at 3 o'clock (index 3 for hours, 15 for minutes)
+            // Helper to check if we should skip marker at 3 o'clock
             const skipPosition = (val, max) => {
                 if (!currentSettings.showDate) return false;
-                // 3 o'clock is 1/4 of the way
                 if (max === 4 && val === 1) return true; // 90 deg
                 if (max === 12 && val === 3) return true; // 3 o'clock
                 if (max === 60 && val === 15) return true; // 15 mins
@@ -318,61 +327,49 @@
             };
 
             if (style === 'minimal') {
-                // Just 4 markers
                 for (let i = 0; i < 4; i++) {
                     if (skipPosition(i, 4)) continue;
-
                     const angle = i * 90;
-                    const r1 = 45;
-                    const r2 = 40;
-                    const line = createLine(angle, r1, r2, 'marker');
-                    markersGroup.appendChild(line);
+                    markersGroup.appendChild(createLine(angle, 45, 40, 'marker'));
                 }
-            } else if (style === 'classic') {
-                // Numbers 1-12
-                for (let i = 1; i <= 12; i++) {
-                    if (skipPosition(i, 12)) continue;
-
-                    const angle = i * 30;
-                    const r = 38;
-                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                    const coords = getCoords(angle, r);
-                    text.setAttribute('x', coords.x);
-                    text.setAttribute('y', coords.y + 1); // Slight vertical adjust
-                    text.textContent = i;
-                    text.setAttribute('class', 'number');
-                    numbersGroup.appendChild(text);
+            } else if (style === 'classic' || style === 'classic-no-numbers') {
+                if (style === 'classic') {
+                    for (let i = 1; i <= 12; i++) {
+                        if (skipPosition(i, 12)) continue;
+                        const angle = i * 30;
+                        const coords = getCoords(angle, 38);
+                        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                        text.setAttribute('x', coords.x);
+                        text.setAttribute('y', coords.y + 1);
+                        text.textContent = i;
+                        text.setAttribute('class', 'number');
+                        numbersGroup.appendChild(text);
+                    }
                 }
-
-                // Small ticks
                 for (let i = 0; i < 60; i++) {
-                    if (i % 5 === 0) continue; // Skip where numbers are
-                    const angle = i * 6;
-                    const line = createLine(angle, 45, 44, 'marker thin');
-                    markersGroup.appendChild(line);
+                    const isHour = i % 5 === 0;
+                    if (style === 'classic' && isHour) continue;
+
+                    if (style === 'classic-no-numbers' && isHour) {
+                        markersGroup.appendChild(createLine(i * 6, 45, 40, 'marker'));
+                    } else {
+                        markersGroup.appendChild(createLine(i * 6, 45, 44, 'marker thin'));
+                    }
                 }
             } else if (style === 'swiss') {
-                // Swiss Railway: Thick hour markers, thin minute markers
                 for (let i = 0; i < 60; i++) {
                     if (skipPosition(i, 60)) continue;
-
                     const isHour = i % 5 === 0;
-                    const angle = i * 6;
-                    const r2 = isHour ? 35 : 42; // Longer hour markers
-                    const line = createLine(angle, 45, r2, isHour ? 'marker' : 'marker thin');
+                    const r2 = isHour ? 35 : 42;
+                    const line = createLine(i * 6, 45, r2, isHour ? 'marker' : 'marker thin');
                     if (isHour) line.setAttribute('stroke-width', '2.5');
                     markersGroup.appendChild(line);
                 }
-                // Swiss second hand tip
                 secondTip.setAttribute('r', '3.5');
             } else {
-                // Modern: Simple ticks
                 for (let i = 0; i < 12; i++) {
                     if (skipPosition(i, 12)) continue;
-
-                    const angle = i * 30;
-                    const line = createLine(angle, 45, 35, 'marker');
-                    markersGroup.appendChild(line);
+                    markersGroup.appendChild(createLine(i * 30, 45, 35, 'marker'));
                 }
             }
         }
@@ -397,38 +394,45 @@
         }
 
         function getWidgetSize(sizeId) {
-            const sizes = {
-                'small': 64,
-                'medium': 128,
-                'large': 192,
-                'xlarge': 256
-            };
+            const sizes = { 'small': 64, 'medium': 128, 'large': 192, 'xlarge': 256 };
             return sizes[sizeId] || 128;
+        }
+
+
+
+        function calculateTotalHeight() {
+            // Use offsetHeight
+            const appContainer = document.getElementById('app-container');
+            return appContainer.offsetHeight;
         }
 
         function onHomeyReady(Homey) {
             currentSettings = Homey.getSettings();
 
-            // Initial resize
-            const height = getWidgetSize(currentSettings.size || 'medium');
-
             Homey.on('settings.set', (key, value) => {
                 currentSettings[key] = value;
-                if (key === 'size') {
-                    Homey.ready({ height: getWidgetSize(value) });
-                }
                 drawFace();
                 updateClock();
+                // Height update is handled by ResizeObserver
             });
 
             drawFace();
             updateClock();
 
-            // Update loop
             setInterval(updateClock, 1000);
 
-            // Send height
-            Homey.ready({ height: height });
+            // Dynamic height handling
+            const updateHeight = () => {
+                const h = calculateTotalHeight();
+                Homey.ready({ height: h }); // Initial
+                if (Homey.setHeight) Homey.setHeight(h);
+            };
+
+            const resizeObserver = new ResizeObserver(() => updateHeight());
+            resizeObserver.observe(document.body); // Watch body for changes (padding changes affect size)
+
+            // Initial call
+            setTimeout(updateHeight, 0);
         }
     </script>
 </body>

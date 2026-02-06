@@ -47,6 +47,15 @@
       "min": 1,
       "max": 5,
       "value": 3
+    },
+    {
+      "id": "debugMode",
+      "type": "checkbox",
+      "label": {
+        "en": "Debug Mode",
+        "nl": "Debug Modus"
+      },
+      "value": false
     }
   ]
 }

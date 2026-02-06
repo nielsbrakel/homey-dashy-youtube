@@ -11,36 +11,50 @@
     body {
       margin: 0;
       padding: 0;
+      margin: 0;
+      padding: 0;
       width: 100%;
-      height: 100%;
-      overflow: hidden;
       background-color: transparent;
+      overflow: hidden;
     }
 
-    .widget {
+    /* Outer Wrapper for Spacing */
+    .widget-spacing-wrapper {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       width: 100%;
-      height: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      transition: none;
+    }
+
+    /* Inner Card for Background/Border */
+    .widget-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      transition: all 0.3s ease;
-      /* Default padding */
-      padding: 8px;
+      width: 100%;
+      /* Card should take available width inside padding */
+      height: auto;
+      /* Dynamic height */
+      background: var(--homey-background-color);
+      border-radius: var(--homey-border-radius, 12px);
+      box-shadow: var(--homey-box-shadow);
+      padding: 16px;
+      /* Internal padding for text breathing room */
       box-sizing: border-box;
     }
 
-    /* Backgrounds */
-    .bg-solid {
-      background: var(--homey-background-color);
-    }
-
-    .bg-transparent {
+    .bg-transparent .widget-card {
       background: transparent;
+      box-shadow: none;
     }
 
-    /* Alignment */
+    /* Alignment (Applied to Spacer) */
     .align-h-left {
       align-items: flex-start;
       text-align: left;
@@ -69,7 +83,7 @@
     }
 
 
-    /* Typography Sizes */
+    /* Typography Sizes (Applied to Card) */
     .size-xsmall .time {
       font-size: 16px;
     }
@@ -145,26 +159,6 @@
       color: var(--homey-text-color);
     }
 
-    .color-blue {
-      color: var(--homey-color-blue-500);
-    }
-
-    .color-green {
-      color: var(--homey-color-green-500);
-    }
-
-    .color-orange {
-      color: var(--homey-color-orange-500);
-    }
-
-    .color-red {
-      color: var(--homey-color-red-500);
-    }
-
-    .color-purple {
-      color: #9c27b0;
-    }
-
     /* Time Elements */
     .time {
       line-height: 1;
@@ -190,29 +184,20 @@
       vertical-align: top;
     }
 
-    /* Blinking Animation */
-    @keyframes blink {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.2;
-      }
-    }
-
-    .blink .colon {
-      animation: blink 1s infinite;
+    .no-card {
+      background: transparent !important;
+      box-shadow: none !important;
+      padding: 0 !important;
     }
   </style>
 </head>
 
 <body>
-  <div class="widget" id="widget">
-    <div class="time" id="time"></div>
-    <div class="date" id="date"></div>
+  <div class="widget-spacing-wrapper" id="app-container">
+    <div class="widget-card" id="widget-card">
+      <div class="time" id="time"></div>
+      <div class="date" id="date"></div>
+    </div>
   </div>
 
   <script>
@@ -222,7 +207,6 @@
       const now = new Date();
       const timeElement = document.getElementById('time');
       const dateElement = document.getElementById('date');
-      const widgetElement = document.getElementById('widget');
 
       // 1. Time Formatting
       const is24h = currentSettings.clockFormat !== '12';
@@ -261,9 +245,7 @@
     }
 
     function formatDate(date) {
-      const lang = 'en-US'; // Default to EN for now, Homey might provide locale
       const format = currentSettings.dateFormat || 'weekday-short';
-
       const options = {};
 
       switch (format) {
@@ -298,50 +280,45 @@
       return date.toLocaleDateString(undefined, options);
     }
 
-    function getSizeHeight(size) {
-      switch (size) {
-        case 'xsmall': return 40;
-        case 'small': return 64;
-        case 'medium': return 96;
-        case 'large': return 128;
-        case 'xlarge': return 160;
-        default: return 96;
+
+
+    function updateStyles(Homey) {
+      const appContainer = document.getElementById('app-container');
+      const widgetCard = document.getElementById('widget-card');
+
+      // Styles applied to Card (sizes, colors, weights)
+      widgetCard.className = 'widget-card'; // Reset
+      const size = currentSettings.size || 'medium';
+      widgetCard.classList.add(`size-${size}`);
+      widgetCard.classList.add(`color-default`);
+      widgetCard.classList.add(`weight-${currentSettings.fontWeight || 'normal'}`);
+
+
+
+      // Alignment applied to Wrapper
+      appContainer.className = 'widget-spacing-wrapper';
+      widgetCard.classList.add(`align-h-${currentSettings.horizontalAlignment || 'center'}`);
+
+
+
+
+      // Show In Card (default true if undefined)
+      // Note: Homey boolean settings are usually not undefined but true/false.
+      // If we change the ID, old settings might be undefined initially until saved?
+      // Default to true.
+      if (currentSettings.showInCard === false) {
+        document.body.classList.add('bg-transparent'); // existing class for body
+        widgetCard.classList.add('no-card');
+      } else {
+        document.body.classList.remove('bg-transparent');
+        widgetCard.classList.remove('no-card');
       }
     }
 
-    function updateStyles(Homey) {
-      const widget = document.getElementById('widget');
-
-      // Reset classes
-      widget.className = 'widget';
-
-      // Add classes based on settings
-      const size = currentSettings.size || 'medium';
-      widget.classList.add(`size-${size}`);
-      widget.classList.add(`color-${currentSettings.color || 'default'}`);
-      widget.classList.add(`weight-${currentSettings.fontWeight || 'normal'}`);
-
-      // Alignment
-      widget.classList.add(`align-h-${currentSettings.horizontalAlignment || 'center'}`);
-      widget.classList.add(`align-v-${currentSettings.verticalAlignment || 'center'}`);
-
-      // Background
-      if (currentSettings.transparentBackground) {
-        widget.classList.add('bg-transparent');
-        widget.classList.remove('widget-card');
-      } else {
-        widget.classList.remove('bg-transparent');
-        widget.classList.add('widget-card');
-      }
-
-      if (currentSettings.blinkSeparator) {
-        widget.classList.add('blink');
-      }
-
-      // Auto-resize
-      if (Homey) {
-        Homey.ready({ height: getSizeHeight(size) });
-      }
+    function calculateTotalHeight() {
+      // Use offsetHeight of the container to get actual content size
+      const appContainer = document.getElementById('app-container');
+      return appContainer.offsetHeight;
     }
 
     function onHomeyReady(Homey) {
@@ -351,13 +328,30 @@
         currentSettings[key] = value;
         updateStyles(Homey);
         updateTime();
+        // ResizeObserver will handle height
       });
 
-      updateStyles(Homey);
+      updateStyles(null);
       updateTime();
 
-      // Update every second to keep sync
       setInterval(updateTime, 1000);
+
+      // Dynamic Height
+      const updateHeight = () => {
+        if (Homey) {
+          Homey.ready({ height: calculateTotalHeight() });
+          if (Homey.setHeight) {
+            Homey.setHeight(calculateTotalHeight());
+          }
+        }
+      };
+
+      const resizeObserver = new ResizeObserver(() => {
+        updateHeight();
+      });
+      resizeObserver.observe(document.body);
+
+      setTimeout(updateHeight, 0);
     }
   </script>
 </body>

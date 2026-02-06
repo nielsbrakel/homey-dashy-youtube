@@ -248,45 +248,13 @@
       ]
     },
     {
-      "id": "verticalAlignment",
-      "type": "dropdown",
-      "label": {
-        "en": "Vertical Alignment",
-        "nl": "Verticale Uitlijning"
-      },
-      "value": "center",
-      "values": [
-        {
-          "id": "top",
-          "label": {
-            "en": "Top",
-            "nl": "Boven"
-          }
-        },
-        {
-          "id": "center",
-          "label": {
-            "en": "Center",
-            "nl": "Midden"
-          }
-        },
-        {
-          "id": "bottom",
-          "label": {
-            "en": "Bottom",
-            "nl": "Onder"
-          }
-        }
-      ]
-    },
-    {
-      "id": "transparentBackground",
+      "id": "showInCard",
       "type": "checkbox",
       "label": {
-        "en": "Transparent Background",
-        "nl": "Transparante Achtergrond"
+        "en": "Show In Card",
+        "nl": "Toon In Kaart"
       },
-      "value": false
+      "value": true
     },
     {
       "id": "uppercase",

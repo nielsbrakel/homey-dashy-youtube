@@ -11,9 +11,9 @@
     body {
       margin: 0;
       padding: 0;
+      margin: 0;
+      padding: 0;
       width: 100%;
-      height: 100%;
-      overflow: hidden;
       background-color: transparent;
     }
 
@@ -23,7 +23,6 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      height: 100%;
       text-align: center;
       transition: all 0.3s ease;
       padding: 8px;
@@ -134,6 +133,12 @@
     .uppercase {
       text-transform: uppercase;
     }
+
+    .no-card {
+      background: transparent !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
   </style>
 </head>
 
@@ -208,6 +213,8 @@
       }
     }
 
+
+
     function updateStyles(Homey) {
       const widget = document.getElementById('widget');
 
@@ -222,21 +229,25 @@
 
       // Alignment
       widget.classList.add(`align-h-${currentSettings.horizontalAlignment || 'center'}`);
-      widget.classList.add(`align-v-${currentSettings.verticalAlignment || 'center'}`);
 
-      // Background
-      if (currentSettings.transparentBackground) {
-        widget.classList.add('bg-transparent');
-        widget.classList.remove('widget-card');
+
+
+
+      // Background / Card Mode
+      if (currentSettings.showInCard === false) {
+        document.body.classList.add('bg-transparent');
+        widget.classList.add('no-card');
       } else {
-        widget.classList.remove('bg-transparent');
+        document.body.classList.remove('bg-transparent');
+        widget.classList.remove('no-card');
         widget.classList.add('widget-card');
       }
 
-      // Auto-resize
+      // Auto-resize including vertical spacing
       if (Homey) {
-        Homey.ready({ height: getSizeHeight(size) });
+        Homey.setHeight(widget.offsetHeight);
       }
+    }
     }
 
     function scheduleRefreshAtMidnight() {
@@ -254,6 +265,11 @@
       }, msUntilMidnight);
     }
 
+    function calculateTotalHeight() {
+      const widget = document.getElementById('widget');
+      return widget.offsetHeight;
+    }
+
     function onHomeyReady(Homey) {
       currentSettings = Homey.getSettings();
 
@@ -263,11 +279,11 @@
         updateDate();
       });
 
-      updateStyles(Homey);
+      updateStyles(null); // Don't set height here
       updateDate();
       scheduleRefreshAtMidnight();
 
-      Homey.ready();
+      Homey.ready({ height: calculateTotalHeight() });
     }
   </script>
 </body>

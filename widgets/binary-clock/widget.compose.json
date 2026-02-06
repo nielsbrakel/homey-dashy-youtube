@@ -1,57 +1,79 @@
 {
     "name": {
-        "en": "Analog Clock",
-        "nl": "Analoge Klok"
+        "en": "Binary Clock",
+        "nl": "Binaire Klok"
     },
     "description": {
-        "en": "Classic analog clock face.",
-        "nl": "Klassieke analoge klok."
+        "en": "Time displayed in binary format",
+        "nl": "Tijd weergegeven in binair formaat"
     },
     "height": 128,
     "transparent": true,
     "settings": [
         {
-            "id": "style",
+            "id": "clockFormat",
             "type": "dropdown",
             "label": {
-                "en": "Style",
-                "nl": "Stijl"
+                "en": "Time Format",
+                "nl": "Tijdformaat"
             },
-            "value": "modern",
+            "value": "24",
             "values": [
                 {
-                    "id": "minimal",
+                    "id": "24",
                     "label": {
-                        "en": "Minimal (No Numbers)",
-                        "nl": "Minimalistisch (Geen Cijfers)"
+                        "en": "24-hour",
+                        "nl": "24-uur"
                     }
                 },
                 {
-                    "id": "modern",
+                    "id": "12",
                     "label": {
-                        "en": "Modern (Markers)",
-                        "nl": "Modern (Markeringen)"
+                        "en": "12-hour",
+                        "nl": "12-uur"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "showSeconds",
+            "type": "checkbox",
+            "label": {
+                "en": "Show Seconds",
+                "nl": "Toon Seconden"
+            },
+            "value": true
+        },
+        {
+            "id": "showLabels",
+            "type": "checkbox",
+            "label": {
+                "en": "Show H/M/S Labels",
+                "nl": "Toon U/M/S Labels"
+            },
+            "value": true
+        },
+        {
+            "id": "orientation",
+            "type": "dropdown",
+            "label": {
+                "en": "Orientation",
+                "nl": "Oriëntatie"
+            },
+            "value": "horizontal",
+            "values": [
+                {
+                    "id": "vertical",
+                    "label": {
+                        "en": "Vertical",
+                        "nl": "Verticaal"
                     }
                 },
                 {
-                    "id": "classic",
+                    "id": "horizontal",
                     "label": {
-                        "en": "Classic (Numbers)",
-                        "nl": "Klassiek (Cijfers)"
-                    }
-                },
-                {
-                    "id": "classic-no-numbers",
-                    "label": {
-                        "en": "Classic (No Numbers)",
-                        "nl": "Klassiek (Geen Cijfers)"
-                    }
-                },
-                {
-                    "id": "swiss",
-                    "label": {
-                        "en": "Swiss Railway",
-                        "nl": "Zwitserse Spoorwegen"
+                        "en": "Horizontal",
+                        "nl": "Horizontaal"
                     }
                 }
             ]
@@ -60,11 +82,18 @@
             "id": "color",
             "type": "dropdown",
             "label": {
-                "en": "Second Hand Color",
-                "nl": "Kleur Secondewijzer"
+                "en": "Color",
+                "nl": "Kleur"
             },
-            "value": "red",
+            "value": "orange",
             "values": [
+                {
+                    "id": "default",
+                    "label": {
+                        "en": "Default",
+                        "nl": "Standaard"
+                    }
+                },
                 {
                     "id": "blue",
                     "label": {
@@ -94,17 +123,10 @@
                     }
                 },
                 {
-                    "id": "black",
+                    "id": "purple",
                     "label": {
-                        "en": "Black",
-                        "nl": "Zwart"
-                    }
-                },
-                {
-                    "id": "white",
-                    "label": {
-                        "en": "White",
-                        "nl": "Wit"
+                        "en": "Purple",
+                        "nl": "Paars"
                     }
                 }
             ]
@@ -149,20 +171,11 @@
             ]
         },
         {
-            "id": "showSeconds",
+            "id": "showInCard",
             "type": "checkbox",
             "label": {
-                "en": "Show Second Hand",
-                "nl": "Toon Secondewijzer"
-            },
-            "value": true
-        },
-        {
-            "id": "showDate",
-            "type": "checkbox",
-            "label": {
-                "en": "Show Date",
-                "nl": "Toon Datum"
+                "en": "Show In Card",
+                "nl": "Toon In Kaart"
             },
             "value": true
         },
@@ -197,15 +210,6 @@
                     }
                 }
             ]
-        },
-        {
-            "id": "showInCard",
-            "type": "checkbox",
-            "label": {
-                "en": "Show In Card",
-                "nl": "Toon In Kaart"
-            },
-            "value": true
         }
     ]
 }

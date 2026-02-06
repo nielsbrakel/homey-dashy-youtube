@@ -128,59 +128,6 @@
             ]
         },
         {
-            "id": "color",
-            "type": "dropdown",
-            "label": {
-                "en": "Text Color",
-                "nl": "Tekstkleur"
-            },
-            "value": "default",
-            "values": [
-                {
-                    "id": "default",
-                    "label": {
-                        "en": "Default",
-                        "nl": "Standaard"
-                    }
-                },
-                {
-                    "id": "blue",
-                    "label": {
-                        "en": "Blue",
-                        "nl": "Blauw"
-                    }
-                },
-                {
-                    "id": "green",
-                    "label": {
-                        "en": "Green",
-                        "nl": "Groen"
-                    }
-                },
-                {
-                    "id": "orange",
-                    "label": {
-                        "en": "Orange",
-                        "nl": "Oranje"
-                    }
-                },
-                {
-                    "id": "red",
-                    "label": {
-                        "en": "Red",
-                        "nl": "Rood"
-                    }
-                },
-                {
-                    "id": "purple",
-                    "label": {
-                        "en": "Purple",
-                        "nl": "Paars"
-                    }
-                }
-            ]
-        },
-        {
             "id": "fontWeight",
             "type": "dropdown",
             "label": {
@@ -291,54 +238,13 @@
             ]
         },
         {
-            "id": "verticalAlignment",
-            "type": "dropdown",
-            "label": {
-                "en": "Vertical Alignment",
-                "nl": "Verticale Uitlijning"
-            },
-            "value": "center",
-            "values": [
-                {
-                    "id": "top",
-                    "label": {
-                        "en": "Top",
-                        "nl": "Boven"
-                    }
-                },
-                {
-                    "id": "center",
-                    "label": {
-                        "en": "Center",
-                        "nl": "Midden"
-                    }
-                },
-                {
-                    "id": "bottom",
-                    "label": {
-                        "en": "Bottom",
-                        "nl": "Onder"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "transparentBackground",
+            "id": "showInCard",
             "type": "checkbox",
             "label": {
-                "en": "Transparent Background",
-                "nl": "Transparante Achtergrond"
+                "en": "Show In Card",
+                "nl": "Toon In Kaart"
             },
-            "value": false
-        },
-        {
-            "id": "blinkSeparator",
-            "type": "checkbox",
-            "label": {
-                "en": "Blinking Colon",
-                "nl": "Knipperende Dubbele Punt"
-            },
-            "value": false
+            "value": true
         }
     ]
 }

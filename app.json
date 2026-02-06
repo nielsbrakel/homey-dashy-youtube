@@ -71,6 +71,13 @@
               }
             },
             {
+              "id": "classic-no-numbers",
+              "label": {
+                "en": "Classic (No Numbers)",
+                "nl": "Klassiek (Geen Cijfers)"
+              }
+            },
+            {
               "id": "swiss",
               "label": {
                 "en": "Swiss Railway",
@@ -83,18 +90,11 @@
           "id": "color",
           "type": "dropdown",
           "label": {
-            "en": "Color",
-            "nl": "Kleur"
+            "en": "Second Hand Color",
+            "nl": "Kleur Secondewijzer"
           },
-          "value": "default",
+          "value": "red",
           "values": [
-            {
-              "id": "default",
-              "label": {
-                "en": "Default",
-                "nl": "Standaard"
-              }
-            },
             {
               "id": "blue",
               "label": {
@@ -229,19 +229,212 @@
           ]
         },
         {
-          "id": "verticalAlignment",
+          "id": "showInCard",
+          "type": "checkbox",
+          "label": {
+            "en": "Show In Card",
+            "nl": "Toon In Kaart"
+          },
+          "value": true
+        }
+      ],
+      "id": "analog-clock"
+    },
+    "binary-clock": {
+      "name": {
+        "en": "Binary Clock",
+        "nl": "Binaire Klok"
+      },
+      "description": {
+        "en": "Time displayed in binary format",
+        "nl": "Tijd weergegeven in binair formaat"
+      },
+      "height": 128,
+      "transparent": true,
+      "settings": [
+        {
+          "id": "clockFormat",
           "type": "dropdown",
           "label": {
-            "en": "Vertical Alignment",
-            "nl": "Verticale Uitlijning"
+            "en": "Time Format",
+            "nl": "Tijdformaat"
+          },
+          "value": "24",
+          "values": [
+            {
+              "id": "24",
+              "label": {
+                "en": "24-hour",
+                "nl": "24-uur"
+              }
+            },
+            {
+              "id": "12",
+              "label": {
+                "en": "12-hour",
+                "nl": "12-uur"
+              }
+            }
+          ]
+        },
+        {
+          "id": "showSeconds",
+          "type": "checkbox",
+          "label": {
+            "en": "Show Seconds",
+            "nl": "Toon Seconden"
+          },
+          "value": true
+        },
+        {
+          "id": "showLabels",
+          "type": "checkbox",
+          "label": {
+            "en": "Show H/M/S Labels",
+            "nl": "Toon U/M/S Labels"
+          },
+          "value": true
+        },
+        {
+          "id": "orientation",
+          "type": "dropdown",
+          "label": {
+            "en": "Orientation",
+            "nl": "Oriëntatie"
+          },
+          "value": "horizontal",
+          "values": [
+            {
+              "id": "vertical",
+              "label": {
+                "en": "Vertical",
+                "nl": "Verticaal"
+              }
+            },
+            {
+              "id": "horizontal",
+              "label": {
+                "en": "Horizontal",
+                "nl": "Horizontaal"
+              }
+            }
+          ]
+        },
+        {
+          "id": "color",
+          "type": "dropdown",
+          "label": {
+            "en": "Color",
+            "nl": "Kleur"
+          },
+          "value": "orange",
+          "values": [
+            {
+              "id": "default",
+              "label": {
+                "en": "Default",
+                "nl": "Standaard"
+              }
+            },
+            {
+              "id": "blue",
+              "label": {
+                "en": "Blue",
+                "nl": "Blauw"
+              }
+            },
+            {
+              "id": "green",
+              "label": {
+                "en": "Green",
+                "nl": "Groen"
+              }
+            },
+            {
+              "id": "orange",
+              "label": {
+                "en": "Orange",
+                "nl": "Oranje"
+              }
+            },
+            {
+              "id": "red",
+              "label": {
+                "en": "Red",
+                "nl": "Rood"
+              }
+            },
+            {
+              "id": "purple",
+              "label": {
+                "en": "Purple",
+                "nl": "Paars"
+              }
+            }
+          ]
+        },
+        {
+          "id": "size",
+          "type": "dropdown",
+          "label": {
+            "en": "Size",
+            "nl": "Grootte"
+          },
+          "value": "medium",
+          "values": [
+            {
+              "id": "small",
+              "label": {
+                "en": "Small (64px)",
+                "nl": "Klein (64px)"
+              }
+            },
+            {
+              "id": "medium",
+              "label": {
+                "en": "Medium (128px)",
+                "nl": "Gemiddeld (128px)"
+              }
+            },
+            {
+              "id": "large",
+              "label": {
+                "en": "Large (192px)",
+                "nl": "Groot (192px)"
+              }
+            },
+            {
+              "id": "xlarge",
+              "label": {
+                "en": "Extra Large (256px)",
+                "nl": "Extra Groot (256px)"
+              }
+            }
+          ]
+        },
+        {
+          "id": "showInCard",
+          "type": "checkbox",
+          "label": {
+            "en": "Show In Card",
+            "nl": "Toon In Kaart"
+          },
+          "value": true
+        },
+        {
+          "id": "horizontalAlignment",
+          "type": "dropdown",
+          "label": {
+            "en": "Horizontal Alignment",
+            "nl": "Horizontale Uitlijning"
           },
           "value": "center",
           "values": [
             {
-              "id": "top",
+              "id": "left",
               "label": {
-                "en": "Top",
-                "nl": "Boven"
+                "en": "Left",
+                "nl": "Links"
               }
             },
             {
@@ -252,77 +445,56 @@
               }
             },
             {
-              "id": "bottom",
+              "id": "right",
               "label": {
-                "en": "Bottom",
-                "nl": "Onder"
+                "en": "Right",
+                "nl": "Rechts"
               }
             }
           ]
-        },
-        {
-          "id": "transparentBackground",
-          "type": "checkbox",
-          "label": {
-            "en": "Transparent Background",
-            "nl": "Transparante Achtergrond"
-          },
-          "value": false
         }
       ],
-      "id": "analog-clock"
+      "id": "binary-clock"
     },
     "buienradar": {
       "name": {
-        "en": "Buienradar",
-        "nl": "Buienradar"
+        "en": "Five-Day Radar",
+        "nl": "5-Daagse Radar"
       },
       "description": {
-        "en": "Dutch radar data and weather maps from Buienradar",
-        "nl": "Nederlandse radargegevens en weerkaarten van Buienradar"
+        "en": "5-day precipitation forecast from Buienradar",
+        "nl": "5-daagse neerslagverwachting van Buienradar"
       },
-      "height": 350,
+      "height": 406,
+      "settings": [],
+      "id": "buienradar"
+    },
+    "buienradar-map": {
+      "name": {
+        "en": "Location Zoom Map",
+        "nl": "Locatie Zoom Kaart"
+      },
+      "description": {
+        "en": "Zoomable precipitation map for a specific location",
+        "nl": "Inzoombare neerslagkaart voor een specifieke locatie"
+      },
+      "height": 300,
       "settings": [
         {
-          "id": "gadgetType",
-          "type": "dropdown",
-          "label": {
-            "en": "Gadget Type",
-            "nl": "Gadget Type"
-          },
-          "value": "radarfivedays",
-          "values": [
-            {
-              "id": "radarfivedays",
-              "label": {
-                "en": "5-Day Radar",
-                "nl": "5-Daagse Radar"
-              }
-            },
-            {
-              "id": "zoommap",
-              "label": {
-                "en": "Location Zoom Map",
-                "nl": "Locatie Zoom Kaart"
-              }
-            }
-          ]
-        },
-        {
-          "id": "postcode",
+          "id": "location",
           "type": "text",
           "label": {
-            "en": "Postal Code (for Zoom Map)",
-            "nl": "Postcode (voor Zoom Kaart)"
+            "en": "Location (City or Postal Code)",
+            "nl": "Locatie (Stad of Postcode)"
           },
-          "value": "3991VT"
+          "value": "Amsterdam"
         },
         {
           "id": "zoomLevel",
           "type": "dropdown",
           "label": {
-            "en": "Zoom Level (for Zoom Map)",
-            "nl": "Zoomniveau (voor Zoom Kaart)"
+            "en": "Zoom Level",
+            "nl": "Zoomniveau"
           },
           "value": "provincia",
           "values": [
@@ -357,40 +529,40 @@
           ]
         },
         {
-          "id": "mapSize",
+          "id": "widgetSize",
           "type": "dropdown",
           "label": {
-            "en": "Map Size (for Zoom Map)",
-            "nl": "Kaartgrootte (voor Zoom Kaart)"
+            "en": "Size",
+            "nl": "Grootte"
           },
-          "value": "2b",
+          "value": "medium",
           "values": [
             {
-              "id": "1",
+              "id": "small",
               "label": {
-                "en": "Small (120x200px)",
-                "nl": "Klein (120x200px)"
+                "en": "Small (120x220)",
+                "nl": "Klein (120x220)"
               }
             },
             {
-              "id": "2a",
+              "id": "medium",
               "label": {
-                "en": "Medium (256x256px)",
-                "nl": "Gemiddeld (256x256px)"
+                "en": "Medium (256x256)",
+                "nl": "Gemiddeld (256x256)"
               }
             },
             {
-              "id": "2b",
+              "id": "large",
               "label": {
-                "en": "Large (330x330px)",
-                "nl": "Groot (330x330px)"
+                "en": "Large (330x330)",
+                "nl": "Groot (330x330)"
               }
             },
             {
-              "id": "3",
+              "id": "xlarge",
               "label": {
-                "en": "Extra Large (550x512px)",
-                "nl": "Extra Groot (550x512px)"
+                "en": "Extra Large (550x512)",
+                "nl": "Extra Groot (550x512)"
               }
             }
           ]
@@ -399,8 +571,8 @@
           "id": "timePeriod",
           "type": "dropdown",
           "label": {
-            "en": "Time Period (for Zoom Map)",
-            "nl": "Tijdsperiode (voor Zoom Kaart)"
+            "en": "Time Period",
+            "nl": "Tijdsperiode"
           },
           "value": "0",
           "values": [
@@ -424,13 +596,13 @@
           "id": "showName",
           "type": "checkbox",
           "label": {
-            "en": "Show Location Name (for Zoom Map)",
-            "nl": "Toon Locatienaam (voor Zoom Kaart)"
+            "en": "Show Location Name",
+            "nl": "Toon Locatienaam"
           },
           "value": true
         }
       ],
-      "id": "buienradar"
+      "id": "buienradar-map"
     },
     "buientabel": {
       "name": {
@@ -662,6 +834,15 @@
             "nl": "Lengtegraad"
           },
           "value": "5.2913"
+        },
+        {
+          "id": "debugMode",
+          "type": "checkbox",
+          "label": {
+            "en": "Debug Mode",
+            "nl": "Debug Modus"
+          },
+          "value": false
         }
       ],
       "id": "buientabel"
@@ -916,45 +1097,13 @@
           ]
         },
         {
-          "id": "verticalAlignment",
-          "type": "dropdown",
-          "label": {
-            "en": "Vertical Alignment",
-            "nl": "Verticale Uitlijning"
-          },
-          "value": "center",
-          "values": [
-            {
-              "id": "top",
-              "label": {
-                "en": "Top",
-                "nl": "Boven"
-              }
-            },
-            {
-              "id": "center",
-              "label": {
-                "en": "Center",
-                "nl": "Midden"
-              }
-            },
-            {
-              "id": "bottom",
-              "label": {
-                "en": "Bottom",
-                "nl": "Onder"
-              }
-            }
-          ]
-        },
-        {
-          "id": "transparentBackground",
+          "id": "showInCard",
           "type": "checkbox",
           "label": {
-            "en": "Transparent Background",
-            "nl": "Transparante Achtergrond"
+            "en": "Show In Card",
+            "nl": "Toon In Kaart"
           },
-          "value": false
+          "value": true
         },
         {
           "id": "uppercase",
@@ -1098,59 +1247,6 @@
           ]
         },
         {
-          "id": "color",
-          "type": "dropdown",
-          "label": {
-            "en": "Text Color",
-            "nl": "Tekstkleur"
-          },
-          "value": "default",
-          "values": [
-            {
-              "id": "default",
-              "label": {
-                "en": "Default",
-                "nl": "Standaard"
-              }
-            },
-            {
-              "id": "blue",
-              "label": {
-                "en": "Blue",
-                "nl": "Blauw"
-              }
-            },
-            {
-              "id": "green",
-              "label": {
-                "en": "Green",
-                "nl": "Groen"
-              }
-            },
-            {
-              "id": "orange",
-              "label": {
-                "en": "Orange",
-                "nl": "Oranje"
-              }
-            },
-            {
-              "id": "red",
-              "label": {
-                "en": "Red",
-                "nl": "Rood"
-              }
-            },
-            {
-              "id": "purple",
-              "label": {
-                "en": "Purple",
-                "nl": "Paars"
-              }
-            }
-          ]
-        },
-        {
           "id": "fontWeight",
           "type": "dropdown",
           "label": {
@@ -1261,19 +1357,164 @@
           ]
         },
         {
-          "id": "verticalAlignment",
+          "id": "showInCard",
+          "type": "checkbox",
+          "label": {
+            "en": "Show In Card",
+            "nl": "Toon In Kaart"
+          },
+          "value": true
+        }
+      ],
+      "id": "digital-clock"
+    },
+    "flip-clock": {
+      "name": {
+        "en": "Flip Clock",
+        "nl": "Flip Klok"
+      },
+      "description": {
+        "en": "Retro style flip clock with animation",
+        "nl": "Retro stijl flip klok met animatie"
+      },
+      "height": 128,
+      "transparent": true,
+      "settings": [
+        {
+          "id": "clockFormat",
           "type": "dropdown",
           "label": {
-            "en": "Vertical Alignment",
-            "nl": "Verticale Uitlijning"
+            "en": "Time Format",
+            "nl": "Tijdformaat"
+          },
+          "value": "24",
+          "values": [
+            {
+              "id": "24",
+              "label": {
+                "en": "24-hour",
+                "nl": "24-uur"
+              }
+            },
+            {
+              "id": "12",
+              "label": {
+                "en": "12-hour (AM/PM)",
+                "nl": "12-uur (AM/PM)"
+              }
+            }
+          ]
+        },
+        {
+          "id": "showSeconds",
+          "type": "checkbox",
+          "label": {
+            "en": "Show Seconds",
+            "nl": "Toon Seconden"
+          },
+          "value": true
+        },
+        {
+          "id": "color",
+          "type": "dropdown",
+          "label": {
+            "en": "Color",
+            "nl": "Kleur"
+          },
+          "value": "default",
+          "values": [
+            {
+              "id": "default",
+              "label": {
+                "en": "Default (Auto)",
+                "nl": "Standaard (Auto)"
+              }
+            },
+            {
+              "id": "blue",
+              "label": {
+                "en": "Blue",
+                "nl": "Blauw"
+              }
+            },
+            {
+              "id": "green",
+              "label": {
+                "en": "Green",
+                "nl": "Groen"
+              }
+            },
+            {
+              "id": "orange",
+              "label": {
+                "en": "Orange",
+                "nl": "Oranje"
+              }
+            },
+            {
+              "id": "red",
+              "label": {
+                "en": "Red",
+                "nl": "Rood"
+              }
+            }
+          ]
+        },
+        {
+          "id": "size",
+          "type": "dropdown",
+          "label": {
+            "en": "Size",
+            "nl": "Grootte"
+          },
+          "value": "medium",
+          "values": [
+            {
+              "id": "small",
+              "label": {
+                "en": "Small",
+                "nl": "Klein"
+              }
+            },
+            {
+              "id": "medium",
+              "label": {
+                "en": "Medium",
+                "nl": "Gemiddeld"
+              }
+            },
+            {
+              "id": "large",
+              "label": {
+                "en": "Large",
+                "nl": "Groot"
+              }
+            }
+          ]
+        },
+        {
+          "id": "showColons",
+          "type": "checkbox",
+          "label": {
+            "en": "Show Colons",
+            "nl": "Toon Dubbele Punt"
+          },
+          "value": false
+        },
+        {
+          "id": "horizontalAlignment",
+          "type": "dropdown",
+          "label": {
+            "en": "Horizontal Alignment",
+            "nl": "Horizontale Uitlijning"
           },
           "value": "center",
           "values": [
             {
-              "id": "top",
+              "id": "left",
               "label": {
-                "en": "Top",
-                "nl": "Boven"
+                "en": "Left",
+                "nl": "Links"
               }
             },
             {
@@ -1284,34 +1525,25 @@
               }
             },
             {
-              "id": "bottom",
+              "id": "right",
               "label": {
-                "en": "Bottom",
-                "nl": "Onder"
+                "en": "Right",
+                "nl": "Rechts"
               }
             }
           ]
         },
         {
-          "id": "transparentBackground",
+          "id": "showInCard",
           "type": "checkbox",
           "label": {
-            "en": "Transparent Background",
-            "nl": "Transparante Achtergrond"
+            "en": "Show In Card",
+            "nl": "Toon In Kaart"
           },
-          "value": false
-        },
-        {
-          "id": "blinkSeparator",
-          "type": "checkbox",
-          "label": {
-            "en": "Blinking Colon",
-            "nl": "Knipperende Dubbele Punt"
-          },
-          "value": false
+          "value": true
         }
       ],
-      "id": "digital-clock"
+      "id": "flip-clock"
     },
     "ns": {
       "name": {
@@ -1461,6 +1693,15 @@
           "min": 1,
           "max": 5,
           "value": 3
+        },
+        {
+          "id": "debugMode",
+          "type": "checkbox",
+          "label": {
+            "en": "Debug Mode",
+            "nl": "Debug Modus"
+          },
+          "value": false
         }
       ],
       "id": "stopwatch"
@@ -1540,6 +1781,15 @@
           "min": 0,
           "max": 59,
           "value": 0
+        },
+        {
+          "id": "debugMode",
+          "type": "checkbox",
+          "label": {
+            "en": "Debug Mode",
+            "nl": "Debug Modus"
+          },
+          "value": false
         }
       ],
       "id": "timer"

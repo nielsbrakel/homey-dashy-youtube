@@ -1,10 +1,18 @@
 <html>
+
 <head>
   <style>
     /* Reset & Base */
-    body { margin: 0; padding: 0; overflow: hidden; }
-    html { overflow: hidden; }
-    
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    html {
+      overflow: hidden;
+    }
+
     /* Timer List */
     .timer-list {
       display: flex;
@@ -31,8 +39,15 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .timer-item::before {
@@ -55,9 +70,19 @@
     }
 
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-3px); }
-      75% { transform: translateX(3px); }
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-3px);
+      }
+
+      75% {
+        transform: translateX(3px);
+      }
     }
 
     /* Controls & Display */
@@ -101,7 +126,9 @@
       z-index: 2;
     }
 
-    .timer-close:hover { background: var(--homey-color-mono-200); }
+    .timer-close:hover {
+      background: var(--homey-color-mono-200);
+    }
 
     /* Round Icon Button */
     .btn-round {
@@ -116,11 +143,27 @@
       justify-content: center;
     }
 
-    .btn-round:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-round.btn-primary { background-color: var(--homey-color-orange-500); }
-    .btn-round.btn-primary:hover:not(:disabled) { background-color: var(--homey-color-orange-500); filter: brightness(0.9); }
-    .btn-round.btn-secondary { background-color: var(--homey-color-mono-200); }
-    .btn-round.btn-secondary:hover { background-color: var(--homey-color-mono-300); }
+    .btn-round:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-round.btn-primary {
+      background-color: var(--homey-color-orange-500);
+    }
+
+    .btn-round.btn-primary:hover:not(:disabled) {
+      background-color: var(--homey-color-orange-500);
+      filter: brightness(0.9);
+    }
+
+    .btn-round.btn-secondary {
+      background-color: var(--homey-color-mono-200);
+    }
+
+    .btn-round.btn-secondary:hover {
+      background-color: var(--homey-color-mono-300);
+    }
 
     /* Icon */
     .icon {
@@ -135,7 +178,9 @@
       mask-position: center;
     }
 
-    .btn-secondary .icon { background: var(--homey-text-color); }
+    .btn-secondary .icon {
+      background: var(--homey-text-color);
+    }
 
     .icon-play {
       -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>');
@@ -163,21 +208,39 @@
       transition: background 0.2s;
     }
 
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    
-    .btn.btn-primary { background: var(--homey-color-green-400); color: white; }
-    .btn.btn-primary:hover:not(:disabled) { background: var(--homey-color-green-500); }
-    
-    .btn.btn-secondary { background: var(--homey-color-mono-200); color: var(--homey-text-color); }
-    .btn.btn-secondary:hover { background: var(--homey-color-mono-300); }
-    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn.btn-primary {
+      background: var(--homey-color-green-400);
+      color: white;
+    }
+
+    .btn.btn-primary:hover:not(:disabled) {
+      background: var(--homey-color-green-500);
+    }
+
+    .btn.btn-secondary {
+      background: var(--homey-color-mono-200);
+      color: var(--homey-text-color);
+    }
+
+    .btn.btn-secondary:hover {
+      background: var(--homey-color-mono-300);
+    }
+
     .btn-add {
       width: 100%;
       padding: var(--homey-su-3);
       background: var(--homey-color-blue-400);
       color: white;
     }
-    .btn-add:hover { background: var(--homey-color-blue-500); }
+
+    .btn-add:hover {
+      background: var(--homey-color-blue-500);
+    }
 
     /* Time Picker */
     .picker {
@@ -186,7 +249,7 @@
       gap: var(--homey-su-2);
     }
 
-    .picker-col { 
+    .picker-col {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -232,7 +295,9 @@
       background: linear-gradient(to top, var(--homey-color-mono-100), transparent);
     }
 
-    .picker-scroll:active { cursor: grabbing; }
+    .picker-scroll:active {
+      cursor: grabbing;
+    }
 
     .picker-values {
       position: absolute;
@@ -274,9 +339,35 @@
       color: var(--homey-text-color);
     }
 
-    .countdown.finished { color: var(--homey-color-red-500); }
+    .countdown.finished {
+      color: var(--homey-color-red-500);
+    }
+
+    /* Debug Button Styles */
+    .debug-indicator {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255, 0, 0, 0.7);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      z-index: 100;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .debug-indicator.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
   </style>
 </head>
+
 <body>
   <div id="app"></div>
 
@@ -286,24 +377,32 @@
       ITEM_HEIGHT: 22,
       MAX_TIMERS: 5,
       TIMER_HEIGHT: 120,
+      DEBUG_HEIGHT: 100,
       GAP: 12,
       BTN_HEIGHT: 44,
       PADDING: 0,
+      CHECKPOINT_INTERVAL: 3000, // Save checkpoint every 3s when running
       LIMITS: { hours: 23, minutes: 59, seconds: 59 },
       // Settings defaults
       INITIAL_TIMERS: 1,
       ALLOW_ADDING: true,
       DEFAULT_HOURS: 0,
       DEFAULT_MINUTES: 5,
-      DEFAULT_SECONDS: 0
+      DEFAULT_SECONDS: 0,
+      DEBUG_MODE: false
     };
 
     // State
     let Homey;
+    let widgetId = null;
     let timers = [];
     let tickInterval = null;
+    let checkpointInterval = null;
     let settings = {};
-    
+    let restoreReason = 'cold start';
+    let lastSaveTimestamp = null;
+    let lastSavePayload = null;
+
     // Translation helper
     const __ = (key) => Homey?.__(`widgets.timer.${key}`) ?? key;
 
@@ -312,6 +411,7 @@
     const $$ = (sel, ctx = document) => ctx.querySelectorAll(sel);
     const pad = n => String(n).padStart(2, '0');
     const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+    const debugLog = (...args) => CONFIG.DEBUG_MODE && console.log('[Timer]', ...args);
 
     const formatTime = (secs) => {
       const h = Math.floor(secs / 3600);
@@ -323,14 +423,152 @@
     const vibrate = () => navigator.vibrate?.([200, 100, 200]);
 
     const calcHeight = () => {
-      const { TIMER_HEIGHT, GAP, BTN_HEIGHT, PADDING, MAX_TIMERS, ALLOW_ADDING } = CONFIG;
+      const { TIMER_HEIGHT, GAP, BTN_HEIGHT, PADDING, MAX_TIMERS, ALLOW_ADDING, DEBUG_MODE, DEBUG_HEIGHT } = CONFIG;
       const timerTotal = timers.length * TIMER_HEIGHT + Math.max(0, timers.length - 1) * GAP;
       const canAdd = ALLOW_ADDING && timers.length < MAX_TIMERS;
       const btnHeight = canAdd ? BTN_HEIGHT + GAP : 0;
-      return PADDING + timerTotal + btnHeight;
+      const debugHeight = DEBUG_MODE ? DEBUG_HEIGHT + GAP : 0;
+      return PADDING + timerTotal + btnHeight + debugHeight;
     };
 
     const setHeight = () => Homey?.setHeight?.(calcHeight());
+
+    // --- Persistence ---
+
+    /**
+     * Build the state object for persistence
+     */
+    const buildPersistState = () => {
+      return {
+        timers: timers.map(t => ({
+          id: t.id,
+          hours: t.hours,
+          minutes: t.minutes,
+          seconds: t.seconds,
+          duration: t.duration,
+          isRunning: t.isRunning,
+          isSetup: t.isSetup,
+          shakeShown: t.shakeShown,
+          remainingAtLastStart: t.isRunning ? t.pausedTime : t.remaining,
+          lastStartEpochMs: t.isRunning ? t.startTime : null
+        })),
+        updatedAtEpochMs: Date.now()
+      };
+    };
+
+    /**
+     * Save state via LocalStorage (Homey API fallback)
+     */
+    const saveState = async () => {
+      if (!widgetId) return;
+
+      const state = buildPersistState();
+      lastSavePayload = state;
+      lastSaveTimestamp = Date.now();
+
+      debugLog('Saving state:', state);
+
+      try {
+        // Use LocalStorage prefixed with widgetId
+        localStorage.setItem(`dashy_timer_${widgetId}`, JSON.stringify(state));
+
+        // Optionally try Homey API too if needed, but LocalStorage is reliable for this view
+        // await Homey.api('PUT', `/state?widgetId=${encodeURIComponent(widgetId)}`, state);
+      } catch (err) {
+        console.error('Failed to save timer state:', err);
+      }
+    };
+
+    /**
+     * Load state via LocalStorage
+     */
+    const loadState = async () => {
+      if (!widgetId) return null;
+
+      try {
+        const raw = localStorage.getItem(`dashy_timer_${widgetId}`);
+        if (!raw) return null;
+
+        const state = JSON.parse(raw);
+        debugLog('Loaded state:', state);
+        return state;
+      } catch (err) {
+        console.error('Failed to load timer state:', err);
+        return null;
+      }
+    };
+
+    /**
+     * Restore timers from saved state
+     */
+    const restoreFromState = (savedState) => {
+      if (!savedState || !savedState.timers || savedState.timers.length === 0) {
+        return false;
+      }
+
+      restoreReason = 'restored from storage';
+      const now = Date.now();
+
+      timers = savedState.timers.map(saved => {
+        const timer = {
+          id: saved.id,
+          hours: saved.hours,
+          minutes: saved.minutes,
+          seconds: saved.seconds,
+          duration: saved.duration,
+          isSetup: saved.isSetup,
+          shakeShown: saved.shakeShown || false,
+          isNew: false
+        };
+
+        if (saved.isRunning && saved.lastStartEpochMs) {
+          const timeSinceStartMs = now - saved.lastStartEpochMs;
+          const timeSinceStartSecs = Math.floor(timeSinceStartMs / 1000);
+
+          timer.remaining = Math.max(0, saved.remainingAtLastStart - timeSinceStartSecs);
+
+          if (timer.remaining > 0) {
+            timer.isRunning = true;
+            timer.startTime = now;
+            timer.pausedTime = timer.remaining;
+          } else {
+            timer.isRunning = false;
+            timer.remaining = 0;
+            debugLog('Timer finished while gone:', timer.id);
+          }
+        } else {
+          timer.remaining = saved.remainingAtLastStart ?? saved.duration;
+          timer.isRunning = false;
+          timer.startTime = null;
+          timer.pausedTime = timer.remaining;
+        }
+
+        return timer;
+      });
+
+      debugLog('Restored timers:', timers);
+      return true;
+    };
+
+    /**
+     * Start periodic checkpoint saves (only when running)
+     */
+    const startCheckpoint = () => {
+      if (!checkpointInterval) {
+        checkpointInterval = setInterval(() => {
+          if (timers.some(t => t.isRunning)) {
+            saveState();
+          }
+        }, CONFIG.CHECKPOINT_INTERVAL);
+      }
+    };
+
+    const stopCheckpoint = () => {
+      if (checkpointInterval) {
+        clearInterval(checkpointInterval);
+        checkpointInterval = null;
+      }
+    };
 
     // --- Timer CRUD ---
     const createTimer = () => {
@@ -353,10 +591,11 @@
     const updatePicker = (id, field, delta) => {
       const timer = getTimer(id);
       if (!timer?.isSetup) return;
-      
+
       timer[field] = clamp(timer[field] + delta, 0, CONFIG.LIMITS[field]);
       timer.duration = timer.remaining = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
       render();
+      saveState(); // Save on picker change
     };
 
     const toggleTimer = (id) => {
@@ -375,30 +614,38 @@
         timer.startTime = Date.now();
         timer.pausedTime = timer.remaining;
         startTick();
+        startCheckpoint();
+      } else {
+        // Saving pause state explicitly
+        timer.pausedTime = timer.remaining;
       }
 
       render();
       setHeight();
+      saveState(); // Save on toggle
     };
 
     const resetTimer = (id) => {
       const timer = getTimer(id);
       if (!timer) return;
-      
+
       Object.assign(timer, {
         isRunning: false,
         isSetup: true,
         remaining: timer.duration,
         shakeShown: false
       });
+
       render();
       setHeight();
+      saveState(); // Save on reset
     };
 
     const removeTimer = (id) => {
       timers = timers.filter(t => t.id !== id);
       render();
       setHeight();
+      saveState(); // Save on remove
     };
 
     const addTimer = () => {
@@ -406,6 +653,7 @@
       timers.push(createTimer());
       render();
       setHeight();
+      saveState(); // Save on add
     };
 
     // --- Tick Loop ---
@@ -422,6 +670,7 @@
         if (timer.remaining === 0 && wasActive) {
           timer.isRunning = false;
           vibrate();
+          saveState(); // Save when timer finishes
           render();
         } else {
           updateDisplay(timer);
@@ -431,6 +680,7 @@
       if (!anyRunning && tickInterval) {
         clearInterval(tickInterval);
         tickInterval = null;
+        stopCheckpoint();
       }
     };
 
@@ -444,7 +694,7 @@
 
       const countdown = $('.countdown', el);
       const finished = timer.remaining <= 0;
-      
+
       if (countdown) {
         countdown.textContent = formatTime(timer.remaining);
         countdown.classList.toggle('finished', finished);
@@ -454,15 +704,35 @@
       el.classList.toggle('finished', finished);
     };
 
+    // --- Debug Panel ---
+    const renderDebugPanel = () => {
+      if (!CONFIG.DEBUG_MODE) return '';
+
+      const payload = lastSavePayload ? JSON.stringify(lastSavePayload, null, 2) : 'No saves yet';
+      const timestamp = lastSaveTimestamp ? new Date(lastSaveTimestamp).toLocaleTimeString() : 'Never';
+
+      return `
+        <div class="debug-panel" style="background: var(--homey-color-mono-100); padding: 8px; border-radius: 8px; font-size: 10px; font-family: monospace; margin-top: 8px;">
+          <div><strong>Widget ID:</strong> ${widgetId}</div>
+          <div><strong>Restore Reason:</strong> ${restoreReason}</div>
+          <div><strong>Last Save:</strong> ${timestamp}</div>
+          <details>
+            <summary>Last Payload</summary>
+            <pre style="font-size: 9px; overflow: auto; max-height: 60px;">${payload}</pre>
+          </details>
+        </div>
+      `;
+    };
+
     // --- Rendering ---
     const renderPickerCol = (timer, field, labelKey, max) => {
       const value = timer[field];
       const offset = CONFIG.ITEM_HEIGHT * (1 - value);
-      const items = Array.from({ length: max + 1 }, (_, i) => 
+      const items = Array.from({ length: max + 1 }, (_, i) =>
         `<div class="picker-val${i === value ? ' active' : ''}" 
               onclick="updatePicker('${timer.id}','${field}',${i - value})">${pad(i)}</div>`
       ).join('');
-      
+
       return `
         <div class="picker-col">
           <div class="picker-label">${__(labelKey)}</div>
@@ -476,7 +746,7 @@
       const { isSetup, isRunning, duration, remaining, id, shakeShown, isNew } = timer;
       const finished = !isSetup && remaining <= 0;
       const showShake = finished && !shakeShown;
-      
+
       if (showShake) timer.shakeShown = true;
 
       const classes = ['timer-item', finished && 'finished', showShake && 'shake', isNew && 'fade-in'].filter(Boolean).join(' ');
@@ -488,7 +758,7 @@
       const isPaused = !isSetup && !isRunning && !finished;
       let controlBtn;
       let resetBtn = '';
-      
+
       if (finished) {
         controlBtn = `<button class="btn-round btn-secondary" onclick="resetTimer('${id}')"><div class="icon icon-reset"></div></button>`;
       } else if (isSetup) {
@@ -524,10 +794,28 @@
     const render = () => {
       const content = timers.map(renderTimer).join('');
       const canAdd = settings.allowAddingTimers !== false && timers.length < CONFIG.MAX_TIMERS;
+
       const addBtn = canAdd
-        ? `<button class="btn btn-add" onclick="addTimer()">${__('addTimer')}</button>` 
+        ? `<button class="btn btn-add" onclick="addTimer()">+ Add Timer</button>`
         : '';
-      $('#app').innerHTML = `<div class="timer-list">${content}${addBtn}</div>`;
+
+      const debugModeEnabled = settings.debugMode === true;
+      const debugBtn = debugModeEnabled
+        ? `<div class="debug-indicator visible" onclick="event.stopPropagation(); document.querySelector('.debug-panel').classList.toggle('visible');">Debug Menu</div>`
+        : '';
+
+      const app = document.getElementById('app');
+      // Ensure we don't wipe out the app container itself if previously we were targeting #app logic differently
+      // The original code targeted $('#app').innerHTML.
+
+      app.innerHTML = `
+        ${debugBtn}
+        <div class="timer-list">${content}${addBtn}</div>
+        ${renderDebugPanel()}
+      `;
+
+      // Re-attach listeners or rely on inline onclicks as established
+      // attachScrollListeners is called after render
       attachScrollListeners();
     };
 
@@ -561,10 +849,14 @@
     };
 
     // --- Init ---
-    window.onHomeyReady = (homey) => {
+    window.onHomeyReady = async (homey) => {
       Homey = homey;
       settings = Homey.getSettings() || {};
-      
+
+      // Get widget instance ID from Homey
+      widgetId = Homey.getWidgetInstanceId();
+      debugLog('Widget ID:', widgetId);
+
       // Apply settings to CONFIG
       CONFIG.MAX_TIMERS = settings.maxTimers ?? CONFIG.MAX_TIMERS;
       CONFIG.INITIAL_TIMERS = settings.initialTimers ?? CONFIG.INITIAL_TIMERS;
@@ -572,20 +864,32 @@
       CONFIG.DEFAULT_HOURS = settings.defaultHours ?? CONFIG.DEFAULT_HOURS;
       CONFIG.DEFAULT_MINUTES = settings.defaultMinutes ?? CONFIG.DEFAULT_MINUTES;
       CONFIG.DEFAULT_SECONDS = settings.defaultSeconds ?? CONFIG.DEFAULT_SECONDS;
-      
-      // Create initial timers
-      const initialCount = Math.min(CONFIG.INITIAL_TIMERS, CONFIG.MAX_TIMERS);
-      for (let i = 0; i < initialCount; i++) {
-        const timer = createTimer();
-        timer.isNew = i === 0 ? false : true; // Don't animate the first timer
-        timers.push(timer);
+      CONFIG.DEBUG_MODE = settings.debugMode ?? CONFIG.DEBUG_MODE;
+
+      // Try to restore from persistence
+      const savedState = await loadState();
+      const restored = restoreFromState(savedState);
+
+      if (!restored) {
+        // No saved state - create initial timers
+        const initialCount = Math.min(CONFIG.INITIAL_TIMERS, CONFIG.MAX_TIMERS);
+        for (let i = 0; i < initialCount; i++) {
+          const timer = createTimer();
+          timer.isNew = false;
+          timers.push(timer);
+        }
       }
-      // Don't animate initial timers
-      timers.forEach(t => t.isNew = false);
-      
+
+      // If any timer is running, start the tick loop
+      if (timers.some(t => t.isRunning)) {
+        startTick();
+        startCheckpoint();
+      }
+
       render();
       Homey.ready({ height: calcHeight() });
     };
   </script>
 </body>
+
 </html>

@@ -1,70 +1,65 @@
 {
     "name": {
-        "en": "Analog Clock",
-        "nl": "Analoge Klok"
+        "en": "Flip Clock",
+        "nl": "Flip Klok"
     },
     "description": {
-        "en": "Classic analog clock face.",
-        "nl": "Klassieke analoge klok."
+        "en": "Retro style flip clock with animation",
+        "nl": "Retro stijl flip klok met animatie"
     },
     "height": 128,
     "transparent": true,
     "settings": [
         {
-            "id": "style",
+            "id": "clockFormat",
             "type": "dropdown",
             "label": {
-                "en": "Style",
-                "nl": "Stijl"
+                "en": "Time Format",
+                "nl": "Tijdformaat"
             },
-            "value": "modern",
+            "value": "24",
             "values": [
                 {
-                    "id": "minimal",
+                    "id": "24",
                     "label": {
-                        "en": "Minimal (No Numbers)",
-                        "nl": "Minimalistisch (Geen Cijfers)"
+                        "en": "24-hour",
+                        "nl": "24-uur"
                     }
                 },
                 {
-                    "id": "modern",
+                    "id": "12",
                     "label": {
-                        "en": "Modern (Markers)",
-                        "nl": "Modern (Markeringen)"
-                    }
-                },
-                {
-                    "id": "classic",
-                    "label": {
-                        "en": "Classic (Numbers)",
-                        "nl": "Klassiek (Cijfers)"
-                    }
-                },
-                {
-                    "id": "classic-no-numbers",
-                    "label": {
-                        "en": "Classic (No Numbers)",
-                        "nl": "Klassiek (Geen Cijfers)"
-                    }
-                },
-                {
-                    "id": "swiss",
-                    "label": {
-                        "en": "Swiss Railway",
-                        "nl": "Zwitserse Spoorwegen"
+                        "en": "12-hour (AM/PM)",
+                        "nl": "12-uur (AM/PM)"
                     }
                 }
             ]
         },
         {
+            "id": "showSeconds",
+            "type": "checkbox",
+            "label": {
+                "en": "Show Seconds",
+                "nl": "Toon Seconden"
+            },
+            "value": true
+        },
+        {
             "id": "color",
             "type": "dropdown",
             "label": {
-                "en": "Second Hand Color",
-                "nl": "Kleur Secondewijzer"
+                "en": "Color",
+                "nl": "Kleur"
             },
-            "value": "red",
+            "value": "default",
             "values": [
+                {
+                    "id": "default",
+                    "label": {
+                        "en": "Default (Auto)",
+                        "nl": "Standaard (Auto)"
+                    }
+                },
                 {
                     "id": "blue",
                     "label": {
@@ -92,20 +87,6 @@
                         "en": "Red",
                         "nl": "Rood"
                     }
-                },
-                {
-                    "id": "black",
-                    "label": {
-                        "en": "Black",
-                        "nl": "Zwart"
-                    }
-                },
-                {
-                    "id": "white",
-                    "label": {
-                        "en": "White",
-                        "nl": "Wit"
-                    }
                 }
             ]
         },
@@ -121,50 +102,34 @@
                 {
                     "id": "small",
                     "label": {
-                        "en": "Small (64px)",
-                        "nl": "Klein (64px)"
+                        "en": "Small",
+                        "nl": "Klein"
                     }
                 },
                 {
                     "id": "medium",
                     "label": {
-                        "en": "Medium (128px)",
-                        "nl": "Gemiddeld (128px)"
+                        "en": "Medium",
+                        "nl": "Gemiddeld"
                     }
                 },
                 {
                     "id": "large",
                     "label": {
-                        "en": "Large (192px)",
-                        "nl": "Groot (192px)"
-                    }
-                },
-                {
-                    "id": "xlarge",
-                    "label": {
-                        "en": "Extra Large (256px)",
-                        "nl": "Extra Groot (256px)"
+                        "en": "Large",
+                        "nl": "Groot"
                     }
                 }
             ]
         },
         {
-            "id": "showSeconds",
+            "id": "showColons",
             "type": "checkbox",
             "label": {
-                "en": "Show Second Hand",
-                "nl": "Toon Secondewijzer"
+                "en": "Show Colons",
+                "nl": "Toon Dubbele Punt"
             },
-            "value": true
-        },
-        {
-            "id": "showDate",
-            "type": "checkbox",
-            "label": {
-                "en": "Show Date",
-                "nl": "Toon Datum"
-            },
-            "value": true
+            "value": false
         },
         {
             "id": "horizontalAlignment",
