@@ -1,48 +1,23 @@
 {
     "name": {
-        "en": "Binary Clock",
-        "nl": "Binaire Klok"
+        "en": "Word Clock Grid",
+        "nl": "Woorden Klok Raster"
     },
     "description": {
-        "en": "Time displayed in binary format",
-        "nl": "Tijd weergegeven in binair formaat"
+        "en": "Time displayed as a word matrix with highlighted letters",
+        "nl": "Tijd weergegeven als een woordenraster met gemarkeerde letters"
     },
-    "height": 128,
+    "height": 200,
     "transparent": true,
     "settings": [
-        {
-            "id": "clockFormat",
-            "type": "dropdown",
-            "label": {
-                "en": "Time Format",
-                "nl": "Tijdformaat"
-            },
-            "value": "24",
-            "values": [
-                {
-                    "id": "24",
-                    "label": {
-                        "en": "24-hour",
-                        "nl": "24-uur"
-                    }
-                },
-                {
-                    "id": "12",
-                    "label": {
-                        "en": "12-hour",
-                        "nl": "12-uur"
-                    }
-                }
-            ]
-        },
         {
             "id": "color",
             "type": "dropdown",
             "label": {
-                "en": "Color",
-                "nl": "Kleur"
+                "en": "Highlight Color",
+                "nl": "Markeerkleur"
             },
-            "value": "orange",
+            "value": "default",
             "values": [
                 {
                     "id": "default",
@@ -121,54 +96,11 @@
             ]
         },
         {
-            "id": "orientation",
-            "type": "dropdown",
-            "label": {
-                "en": "Orientation",
-                "nl": "Oriëntatie"
-            },
-            "value": "horizontal",
-            "values": [
-                {
-                    "id": "vertical",
-                    "label": {
-                        "en": "Vertical",
-                        "nl": "Verticaal"
-                    }
-                },
-                {
-                    "id": "horizontal",
-                    "label": {
-                        "en": "Horizontal",
-                        "nl": "Horizontaal"
-                    }
-                }
-            ]
-        },
-        {
             "id": "showInCard",
             "type": "checkbox",
             "label": {
                 "en": "Show In Card",
                 "nl": "Toon In Kaart"
-            },
-            "value": true
-        },
-        {
-            "id": "showLabels",
-            "type": "checkbox",
-            "label": {
-                "en": "Show H/M/S Labels",
-                "nl": "Toon U/M/S Labels"
-            },
-            "value": true
-        },
-        {
-            "id": "showSeconds",
-            "type": "checkbox",
-            "label": {
-                "en": "Show Seconds",
-                "nl": "Toon Seconden"
             },
             "value": true
         },

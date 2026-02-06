@@ -11,52 +11,6 @@
     "transparent": true,
     "settings": [
         {
-            "id": "style",
-            "type": "dropdown",
-            "label": {
-                "en": "Style",
-                "nl": "Stijl"
-            },
-            "value": "modern",
-            "values": [
-                {
-                    "id": "minimal",
-                    "label": {
-                        "en": "Minimal (No Numbers)",
-                        "nl": "Minimalistisch (Geen Cijfers)"
-                    }
-                },
-                {
-                    "id": "modern",
-                    "label": {
-                        "en": "Modern (Markers)",
-                        "nl": "Modern (Markeringen)"
-                    }
-                },
-                {
-                    "id": "classic",
-                    "label": {
-                        "en": "Classic (Numbers)",
-                        "nl": "Klassiek (Cijfers)"
-                    }
-                },
-                {
-                    "id": "classic-no-numbers",
-                    "label": {
-                        "en": "Classic (No Numbers)",
-                        "nl": "Klassiek (Geen Cijfers)"
-                    }
-                },
-                {
-                    "id": "swiss",
-                    "label": {
-                        "en": "Swiss Railway",
-                        "nl": "Zwitserse Spoorwegen"
-                    }
-                }
-            ]
-        },
-        {
             "id": "color",
             "type": "dropdown",
             "label": {
@@ -110,63 +64,6 @@
             ]
         },
         {
-            "id": "size",
-            "type": "dropdown",
-            "label": {
-                "en": "Size",
-                "nl": "Grootte"
-            },
-            "value": "medium",
-            "values": [
-                {
-                    "id": "small",
-                    "label": {
-                        "en": "Small (64px)",
-                        "nl": "Klein (64px)"
-                    }
-                },
-                {
-                    "id": "medium",
-                    "label": {
-                        "en": "Medium (128px)",
-                        "nl": "Gemiddeld (128px)"
-                    }
-                },
-                {
-                    "id": "large",
-                    "label": {
-                        "en": "Large (192px)",
-                        "nl": "Groot (192px)"
-                    }
-                },
-                {
-                    "id": "xlarge",
-                    "label": {
-                        "en": "Extra Large (256px)",
-                        "nl": "Extra Groot (256px)"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "showSeconds",
-            "type": "checkbox",
-            "label": {
-                "en": "Show Second Hand",
-                "nl": "Toon Secondewijzer"
-            },
-            "value": true
-        },
-        {
-            "id": "showDate",
-            "type": "checkbox",
-            "label": {
-                "en": "Show Date",
-                "nl": "Toon Datum"
-            },
-            "value": true
-        },
-        {
             "id": "horizontalAlignment",
             "type": "dropdown",
             "label": {
@@ -199,6 +96,15 @@
             ]
         },
         {
+            "id": "showDate",
+            "type": "checkbox",
+            "label": {
+                "en": "Show Date",
+                "nl": "Toon Datum"
+            },
+            "value": true
+        },
+        {
             "id": "showInCard",
             "type": "checkbox",
             "label": {
@@ -206,6 +112,107 @@
                 "nl": "Toon In Kaart"
             },
             "value": true
+        },
+        {
+            "id": "showSeconds",
+            "type": "checkbox",
+            "label": {
+                "en": "Show Second Hand",
+                "nl": "Toon Secondewijzer"
+            },
+            "value": true
+        },
+        {
+            "id": "size",
+            "type": "dropdown",
+            "label": {
+                "en": "Size",
+                "nl": "Grootte"
+            },
+            "value": "medium",
+            "values": [
+                {
+                    "id": "xsmall",
+                    "label": {
+                        "en": "Extra Small",
+                        "nl": "Extra Klein"
+                    }
+                },
+                {
+                    "id": "small",
+                    "label": {
+                        "en": "Small",
+                        "nl": "Klein"
+                    }
+                },
+                {
+                    "id": "medium",
+                    "label": {
+                        "en": "Medium",
+                        "nl": "Gemiddeld"
+                    }
+                },
+                {
+                    "id": "large",
+                    "label": {
+                        "en": "Large",
+                        "nl": "Groot"
+                    }
+                },
+                {
+                    "id": "xlarge",
+                    "label": {
+                        "en": "Extra Large",
+                        "nl": "Extra Groot"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "style",
+            "type": "dropdown",
+            "label": {
+                "en": "Style",
+                "nl": "Stijl"
+            },
+            "value": "modern",
+            "values": [
+                {
+                    "id": "minimal",
+                    "label": {
+                        "en": "Minimal (No Numbers)",
+                        "nl": "Minimalistisch (Geen Cijfers)"
+                    }
+                },
+                {
+                    "id": "modern",
+                    "label": {
+                        "en": "Modern (Markers)",
+                        "nl": "Modern (Markeringen)"
+                    }
+                },
+                {
+                    "id": "classic",
+                    "label": {
+                        "en": "Classic (Numbers)",
+                        "nl": "Klassiek (Cijfers)"
+                    }
+                },
+                {
+                    "id": "classic-no-numbers",
+                    "label": {
+                        "en": "Classic (No Numbers)",
+                        "nl": "Klassiek (Geen Cijfers)"
+                    }
+                },
+                {
+                    "id": "swiss",
+                    "label": {
+                        "en": "Swiss Railway",
+                        "nl": "Zwitserse Spoorwegen"
+                    }
+                }
+            ]
         }
     ]
 }

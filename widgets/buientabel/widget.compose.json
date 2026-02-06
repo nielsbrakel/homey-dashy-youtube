@@ -10,58 +10,47 @@
   "height": 250,
   "settings": [
     {
-      "id": "graphStyle",
+      "id": "aspectRatio",
       "type": "dropdown",
       "label": {
-        "en": "Graph Style",
-        "nl": "Grafieken Stijl"
+        "en": "Aspect Ratio",
+        "nl": "Beeldverhouding"
       },
-      "value": "bars",
+      "value": "16:9",
       "values": [
         {
-          "id": "bars",
+          "id": "1:1",
           "label": {
-            "en": "Bars",
-            "nl": "Staven"
+            "en": "Square (1:1)",
+            "nl": "Vierkant (1:1)"
           }
         },
         {
-          "id": "line",
+          "id": "4:3",
           "label": {
-            "en": "Line",
-            "nl": "Lijn"
+            "en": "4:3",
+            "nl": "4:3"
           }
         },
         {
-          "id": "smooth",
+          "id": "16:9",
           "label": {
-            "en": "Smooth Line",
-            "nl": "Vloeiende Lijn"
-          }
-        }
-      ]
-    },
-    {
-      "id": "dataSource",
-      "type": "dropdown",
-      "label": {
-        "en": "Data Source",
-        "nl": "Datavenster"
-      },
-      "value": "buienradar",
-      "values": [
-        {
-          "id": "buienradar",
-          "label": {
-            "en": "Buienradar (NL/BE)",
-            "nl": "Buienradar (NL/BE)"
+            "en": "16:9 (Default)",
+            "nl": "16:9 (Standaard)"
           }
         },
         {
-          "id": "openmeteo",
+          "id": "21:9",
           "label": {
-            "en": "Open-Meteo (Global)",
-            "nl": "Open-Meteo (Wereldwijd)"
+            "en": "Ultrawide (21:9)",
+            "nl": "Ultrabreed (21:9)"
+          }
+        },
+        {
+          "id": "3:1",
+          "label": {
+            "en": "Panoramic (3:1)",
+            "nl": "Panoramisch (3:1)"
           }
         }
       ]
@@ -120,50 +109,88 @@
       ]
     },
     {
-      "id": "aspectRatio",
+      "id": "dataSource",
       "type": "dropdown",
       "label": {
-        "en": "Aspect Ratio",
-        "nl": "Beeldverhouding"
+        "en": "Data Source",
+        "nl": "Datavenster"
       },
-      "value": "16:9",
+      "value": "buienradar",
       "values": [
         {
-          "id": "1:1",
+          "id": "buienradar",
           "label": {
-            "en": "Square (1:1)",
-            "nl": "Vierkant (1:1)"
+            "en": "Buienradar (NL/BE)",
+            "nl": "Buienradar (NL/BE)"
           }
         },
         {
-          "id": "4:3",
+          "id": "openmeteo",
           "label": {
-            "en": "4:3",
-            "nl": "4:3"
-          }
-        },
-        {
-          "id": "16:9",
-          "label": {
-            "en": "16:9 (Default)",
-            "nl": "16:9 (Standaard)"
-          }
-        },
-        {
-          "id": "21:9",
-          "label": {
-            "en": "Ultrawide (21:9)",
-            "nl": "Ultrabreed (21:9)"
-          }
-        },
-        {
-          "id": "3:1",
-          "label": {
-            "en": "Panoramic (3:1)",
-            "nl": "Panoramisch (3:1)"
+            "en": "Open-Meteo (Global)",
+            "nl": "Open-Meteo (Wereldwijd)"
           }
         }
       ]
+    },
+    {
+      "id": "debugMode",
+      "type": "checkbox",
+      "label": {
+        "en": "Debug Mode",
+        "nl": "Debug Modus"
+      },
+      "value": false
+    },
+    {
+      "id": "graphStyle",
+      "type": "dropdown",
+      "label": {
+        "en": "Graph Style",
+        "nl": "Grafieken Stijl"
+      },
+      "value": "bars",
+      "values": [
+        {
+          "id": "bars",
+          "label": {
+            "en": "Bars",
+            "nl": "Staven"
+          }
+        },
+        {
+          "id": "line",
+          "label": {
+            "en": "Line",
+            "nl": "Lijn"
+          }
+        },
+        {
+          "id": "smooth",
+          "label": {
+            "en": "Smooth Line",
+            "nl": "Vloeiende Lijn"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lat",
+      "type": "text",
+      "label": {
+        "en": "Latitude",
+        "nl": "Breedtegraad"
+      },
+      "value": "52.1326"
+    },
+    {
+      "id": "lon",
+      "type": "text",
+      "label": {
+        "en": "Longitude",
+        "nl": "Lengtegraad"
+      },
+      "value": "5.2913"
     },
     {
       "id": "refreshInterval",
@@ -210,33 +237,6 @@
           }
         }
       ]
-    },
-    {
-      "id": "lat",
-      "type": "text",
-      "label": {
-        "en": "Latitude",
-        "nl": "Breedtegraad"
-      },
-      "value": "52.1326"
-    },
-    {
-      "id": "lon",
-      "type": "text",
-      "label": {
-        "en": "Longitude",
-        "nl": "Lengtegraad"
-      },
-      "value": "5.2913"
-    },
-    {
-      "id": "debugMode",
-      "type": "checkbox",
-      "label": {
-        "en": "Debug Mode",
-        "nl": "Debug Modus"
-      },
-      "value": false
     }
   ]
 }

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../_shared/shared-styles.css">
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background-color: transparent;
+            overflow: hidden;
+        }
+
+        .widget-spacing-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .widget-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            height: auto;
+            background: var(--homey-background-color);
+            border-radius: var(--homey-border-radius, 12px);
+            box-shadow: var(--homey-box-shadow);
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .bg-transparent .widget-card {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .align-h-left {
+            align-items: flex-start;
+        }
+
+        .align-h-center {
+            align-items: center;
+        }
+
+        .align-h-right {
+            align-items: flex-end;
+        }
+
+        .word-matrix {
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+            line-height: 1.8;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 0;
+            aspect-ratio: 1;
+            width: fit-content;
+        }
+
+        .word-matrix span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--homey-text-color);
+            opacity: 0.15;
+            transition: opacity 0.3s, color 0.3s;
+        }
+
+        .word-matrix span.active {
+            opacity: 1;
+            font-weight: 600;
+        }
+
+        .size-xsmall .word-matrix {
+            font-size: 10px;
+        }
+
+        .size-xsmall .word-matrix span {
+            width: 14px;
+            height: 14px;
+        }
+
+        .size-small .word-matrix {
+            font-size: 14px;
+        }
+
+        .size-small .word-matrix span {
+            width: 20px;
+            height: 20px;
+        }
+
+        .size-medium .word-matrix {
+            font-size: 18px;
+        }
+
+        .size-medium .word-matrix span {
+            width: 26px;
+            height: 26px;
+        }
+
+        .size-large .word-matrix {
+            font-size: 24px;
+        }
+
+        .size-large .word-matrix span {
+            width: 34px;
+            height: 34px;
+        }
+
+        .size-xlarge .word-matrix {
+            font-size: 30px;
+        }
+
+        .size-xlarge .word-matrix span {
+            width: 42px;
+            height: 42px;
+        }
+
+        .color-default .word-matrix span.active {
+            color: var(--homey-text-color);
+        }
+
+        .color-blue .word-matrix span.active {
+            color: #3B82F6;
+        }
+
+        .color-green .word-matrix span.active {
+            color: #22C55E;
+        }
+
+        .color-orange .word-matrix span.active {
+            color: #F97316;
+        }
+
+        .color-red .word-matrix span.active {
+            color: #EF4444;
+        }
+
+        .color-purple .word-matrix span.active {
+            color: #A855F7;
+        }
+
+        .no-card {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="widget-spacing-wrapper" id="app-container">
+        <div class="widget-card" id="widget-card">
+            <div id="clock-display"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentSettings = {};
+
+        const matrixEN = [
+            ['I', 'T', 'L', 'I', 'S', 'H', 'A', 'L', 'F', 'M'],
+            ['T', 'E', 'N', 'Q', 'U', 'A', 'R', 'T', 'E', 'R'],
+            ['T', 'W', 'E', 'N', 'T', 'Y', 'F', 'I', 'V', 'E'],
+            ['M', 'I', 'N', 'U', 'T', 'E', 'S', 'T', 'O', 'R'],
+            ['P', 'A', 'S', 'T', 'O', 'N', 'E', 'T', 'W', 'O'],
+            ['T', 'H', 'R', 'E', 'E', 'F', 'O', 'U', 'R', 'K'],
+            ['F', 'I', 'V', 'E', 'S', 'I', 'X', 'T', 'E', 'N'],
+            ['S', 'E', 'V', 'E', 'N', 'E', 'I', 'G', 'H', 'T'],
+            ['N', 'I', 'N', 'E', 'L', 'E', 'V', 'E', 'N', 'R'],
+            ['T', 'W', 'E', 'L', 'V', 'E', 'O', 'C', 'L', 'K']
+        ];
+
+        const wordsEN = {
+            'IT': [0, 0, 1], 'IS': [0, 3, 4], 'HALF': [0, 5, 8],
+            'TEN_MIN': [1, 0, 2], 'QUARTER': [1, 3, 9],
+            'TWENTY': [2, 0, 5], 'FIVE_MIN': [2, 6, 9],
+            'MINUTES': [3, 0, 6], 'TO': [3, 7, 8],
+            'PAST': [4, 0, 3], 'ONE': [4, 4, 6], 'TWO': [4, 7, 9],
+            'THREE': [5, 0, 4], 'FOUR': [5, 5, 8],
+            'FIVE': [6, 0, 3], 'SIX': [6, 4, 6], 'TEN': [6, 7, 9],
+            'SEVEN': [7, 0, 4], 'EIGHT': [7, 5, 9],
+            'NINE': [8, 0, 3], 'ELEVEN': [8, 4, 9],
+            'TWELVE': [9, 0, 5], 'OCLOCK': [9, 6, 9]
+        };
+
+        const matrixNL = [
+            ['H', 'E', 'T', 'K', 'I', 'S', 'V', 'I', 'J', 'F'],
+            ['T', 'I', 'E', 'N', 'A', 'K', 'W', 'A', 'R', 'T'],
+            ['V', 'O', 'O', 'R', 'O', 'V', 'E', 'R', 'H', 'M'],
+            ['H', 'A', 'L', 'F', 'T', 'W', 'E', 'E', 'E', 'N'],
+            ['D', 'R', 'I', 'E', 'V', 'I', 'E', 'R', 'M', 'K'],
+            ['V', 'I', 'J', 'F', 'Z', 'E', 'S', 'R', 'T', 'U'],
+            ['Z', 'E', 'V', 'E', 'N', 'A', 'C', 'H', 'T', 'R'],
+            ['N', 'E', 'G', 'E', 'N', 'T', 'I', 'E', 'N', 'S'],
+            ['E', 'L', 'F', 'T', 'W', 'A', 'A', 'L', 'F', 'D'],
+            ['O', 'N', 'E', 'D', 'R', 'I', 'E', 'U', 'U', 'R']
+        ];
+
+        const wordsNL = {
+            'HET': [0, 0, 2], 'IS': [0, 4, 5], 'VIJF_MIN': [0, 6, 9],
+            'TIEN_MIN': [1, 0, 3], 'KWART': [1, 5, 9],
+            'VOOR': [2, 0, 3], 'OVER': [2, 4, 7],
+            'HALF': [3, 0, 3], 'TWEE': [3, 4, 7], 'EEN': [3, 7, 9],
+            'DRIE': [4, 0, 3], 'VIER': [4, 4, 7],
+            'VIJF': [5, 0, 3], 'ZES': [5, 4, 6],
+            'ZEVEN': [6, 0, 4], 'ACHT': [6, 5, 8],
+            'NEGEN': [7, 0, 4], 'TIEN': [7, 5, 8],
+            'ELF': [8, 0, 2], 'TWAALF': [8, 3, 8],
+            'UUR': [9, 7, 9]
+        };
+
+        const hourWordsEN = ['TWELVE', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE'];
+        const hourWordsNL = ['TWAALF', 'EEN', 'TWEE', 'DRIE', 'VIER', 'VIJF', 'ZES', 'ZEVEN', 'ACHT', 'NEGEN', 'TIEN', 'ELF', 'TWAALF'];
+
+        function getLanguage() {
+            return (navigator.language || 'en').startsWith('nl') ? 'nl' : 'en';
+        }
+
+        function getActiveWordsEN(hours, minutes) {
+            const h12 = hours % 12;
+            const nextHour = (h12 + 1) % 12 || 12;
+            const active = ['IT', 'IS'];
+            const m5 = Math.round(minutes / 5) * 5;
+
+            if (m5 === 0 || m5 === 60) active.push(hourWordsEN[m5 === 60 ? nextHour : h12 || 12], 'OCLOCK');
+            else if (m5 === 5) active.push('FIVE_MIN', 'MINUTES', 'PAST', hourWordsEN[h12 || 12]);
+            else if (m5 === 10) active.push('TEN_MIN', 'MINUTES', 'PAST', hourWordsEN[h12 || 12]);
+            else if (m5 === 15) active.push('QUARTER', 'PAST', hourWordsEN[h12 || 12]);
+            else if (m5 === 20) active.push('TWENTY', 'MINUTES', 'PAST', hourWordsEN[h12 || 12]);
+            else if (m5 === 25) active.push('TWENTY', 'FIVE_MIN', 'MINUTES', 'PAST', hourWordsEN[h12 || 12]);
+            else if (m5 === 30) active.push('HALF', 'PAST', hourWordsEN[h12 || 12]);
+            else if (m5 === 35) active.push('TWENTY', 'FIVE_MIN', 'MINUTES', 'TO', hourWordsEN[nextHour]);
+            else if (m5 === 40) active.push('TWENTY', 'MINUTES', 'TO', hourWordsEN[nextHour]);
+            else if (m5 === 45) active.push('QUARTER', 'TO', hourWordsEN[nextHour]);
+            else if (m5 === 50) active.push('TEN_MIN', 'MINUTES', 'TO', hourWordsEN[nextHour]);
+            else if (m5 === 55) active.push('FIVE_MIN', 'MINUTES', 'TO', hourWordsEN[nextHour]);
+            return active;
+        }
+
+        function getActiveWordsNL(hours, minutes) {
+            const h12 = hours % 12;
+            const nextHour = (h12 + 1) % 12 || 12;
+            const active = ['HET', 'IS'];
+            const m5 = Math.round(minutes / 5) * 5;
+
+            if (m5 === 0 || m5 === 60) active.push(hourWordsNL[m5 === 60 ? nextHour : h12 || 12], 'UUR');
+            else if (m5 === 5) active.push('VIJF_MIN', 'OVER', hourWordsNL[h12 || 12]);
+            else if (m5 === 10) active.push('TIEN_MIN', 'OVER', hourWordsNL[h12 || 12]);
+            else if (m5 === 15) active.push('KWART', 'OVER', hourWordsNL[h12 || 12]);
+            else if (m5 === 20) active.push('TIEN_MIN', 'VOOR', 'HALF', hourWordsNL[nextHour]);
+            else if (m5 === 25) active.push('VIJF_MIN', 'VOOR', 'HALF', hourWordsNL[nextHour]);
+            else if (m5 === 30) active.push('HALF', hourWordsNL[nextHour]);
+            else if (m5 === 35) active.push('VIJF_MIN', 'OVER', 'HALF', hourWordsNL[nextHour]);
+            else if (m5 === 40) active.push('TIEN_MIN', 'OVER', 'HALF', hourWordsNL[nextHour]);
+            else if (m5 === 45) active.push('KWART', 'VOOR', hourWordsNL[nextHour]);
+            else if (m5 === 50) active.push('TIEN_MIN', 'VOOR', hourWordsNL[nextHour]);
+            else if (m5 === 55) active.push('VIJF_MIN', 'VOOR', hourWordsNL[nextHour]);
+            return active;
+        }
+
+        function renderMatrix(matrix, words, activeWords) {
+            let html = '<div class="word-matrix">';
+            for (let r = 0; r < matrix.length; r++) {
+                for (let c = 0; c < matrix[r].length; c++) {
+                    let isActive = activeWords.some(word => {
+                        const pos = words[word];
+                        return pos && pos[0] === r && c >= pos[1] && c <= pos[2];
+                    });
+                    html += `<span class="${isActive ? 'active' : ''}">${matrix[r][c]}</span>`;
+                }
+            }
+            return html + '</div>';
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const lang = getLanguage();
+            const activeWords = lang === 'nl'
+                ? getActiveWordsNL(now.getHours(), now.getMinutes())
+                : getActiveWordsEN(now.getHours(), now.getMinutes());
+            const matrix = lang === 'nl' ? matrixNL : matrixEN;
+            const words = lang === 'nl' ? wordsNL : wordsEN;
+            document.getElementById('clock-display').innerHTML = renderMatrix(matrix, words, activeWords);
+        }
+
+        function updateStyles() {
+            const widgetCard = document.getElementById('widget-card');
+            widgetCard.className = 'widget-card';
+            widgetCard.classList.add(`size-${currentSettings.size || 'medium'}`);
+            widgetCard.classList.add(`align-h-${currentSettings.horizontalAlignment || 'center'}`);
+            widgetCard.classList.add(`color-${currentSettings.color || 'default'}`);
+            if (currentSettings.showInCard === false) {
+                document.body.classList.add('bg-transparent');
+                widgetCard.classList.add('no-card');
+            } else {
+                document.body.classList.remove('bg-transparent');
+            }
+        }
+
+        function onHomeyReady(Homey) {
+            currentSettings = Homey.getSettings();
+            Homey.on('settings.set', (key, value) => {
+                currentSettings[key] = value;
+                updateStyles();
+                updateClock();
+            });
+            updateStyles();
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            const updateHeight = () => {
+                const height = document.getElementById('app-container').offsetHeight;
+                Homey.ready({ height });
+                if (Homey.setHeight) Homey.setHeight(height);
+            };
+            new ResizeObserver(updateHeight).observe(document.body);
+            setTimeout(updateHeight, 0);
+        }
+    </script>
+</body>
+
+</html>

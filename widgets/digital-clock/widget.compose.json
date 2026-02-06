@@ -36,24 +36,6 @@
             ]
         },
         {
-            "id": "showSeconds",
-            "type": "checkbox",
-            "label": {
-                "en": "Show Seconds",
-                "nl": "Toon Seconden"
-            },
-            "value": false
-        },
-        {
-            "id": "showDate",
-            "type": "checkbox",
-            "label": {
-                "en": "Show Date",
-                "nl": "Toon Datum"
-            },
-            "value": true
-        },
-        {
             "id": "dateFormat",
             "type": "dropdown",
             "label": {
@@ -160,6 +142,65 @@
             ]
         },
         {
+            "id": "horizontalAlignment",
+            "type": "dropdown",
+            "label": {
+                "en": "Horizontal Alignment",
+                "nl": "Horizontale Uitlijning"
+            },
+            "value": "center",
+            "values": [
+                {
+                    "id": "left",
+                    "label": {
+                        "en": "Left",
+                        "nl": "Links"
+                    }
+                },
+                {
+                    "id": "center",
+                    "label": {
+                        "en": "Center",
+                        "nl": "Midden"
+                    }
+                },
+                {
+                    "id": "right",
+                    "label": {
+                        "en": "Right",
+                        "nl": "Rechts"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "showDate",
+            "type": "checkbox",
+            "label": {
+                "en": "Show Date",
+                "nl": "Toon Datum"
+            },
+            "value": true
+        },
+        {
+            "id": "showInCard",
+            "type": "checkbox",
+            "label": {
+                "en": "Show In Card",
+                "nl": "Toon In Kaart"
+            },
+            "value": true
+        },
+        {
+            "id": "showSeconds",
+            "type": "checkbox",
+            "label": {
+                "en": "Show Seconds",
+                "nl": "Toon Seconden"
+            },
+            "value": false
+        },
+        {
             "id": "size",
             "type": "dropdown",
             "label": {
@@ -204,47 +245,6 @@
                     }
                 }
             ]
-        },
-        {
-            "id": "horizontalAlignment",
-            "type": "dropdown",
-            "label": {
-                "en": "Horizontal Alignment",
-                "nl": "Horizontale Uitlijning"
-            },
-            "value": "center",
-            "values": [
-                {
-                    "id": "left",
-                    "label": {
-                        "en": "Left",
-                        "nl": "Links"
-                    }
-                },
-                {
-                    "id": "center",
-                    "label": {
-                        "en": "Center",
-                        "nl": "Midden"
-                    }
-                },
-                {
-                    "id": "right",
-                    "label": {
-                        "en": "Right",
-                        "nl": "Rechts"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "showInCard",
-            "type": "checkbox",
-            "label": {
-                "en": "Show In Card",
-                "nl": "Toon In Kaart"
-            },
-            "value": true
         }
     ]
 }

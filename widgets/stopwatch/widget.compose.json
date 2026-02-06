@@ -11,29 +11,20 @@
   "transparent": true,
   "settings": [
     {
-      "id": "showMilliseconds",
-      "type": "checkbox",
-      "label": {
-        "en": "Show milliseconds",
-        "nl": "Toon milliseconden"
-      },
-      "value": true
-    },
-    {
-      "id": "showLaps",
-      "type": "checkbox",
-      "label": {
-        "en": "Show lap times",
-        "nl": "Toon rondetijden"
-      },
-      "value": false
-    },
-    {
       "id": "allowAddingStopwatches",
       "type": "checkbox",
       "label": {
         "en": "Allow adding stopwatches",
         "nl": "Stopwatches toevoegen toestaan"
+      },
+      "value": false
+    },
+    {
+      "id": "debugMode",
+      "type": "checkbox",
+      "label": {
+        "en": "Debug Mode",
+        "nl": "Debug Modus"
       },
       "value": false
     },
@@ -49,13 +40,22 @@
       "value": 3
     },
     {
-      "id": "debugMode",
+      "id": "showLaps",
       "type": "checkbox",
       "label": {
-        "en": "Debug Mode",
-        "nl": "Debug Modus"
+        "en": "Show lap times",
+        "nl": "Toon rondetijden"
       },
       "value": false
+    },
+    {
+      "id": "showMilliseconds",
+      "type": "checkbox",
+      "label": {
+        "en": "Show milliseconds",
+        "nl": "Toon milliseconden"
+      },
+      "value": true
     }
   ]
 }

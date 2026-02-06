@@ -10,22 +10,59 @@
   "height": 250,
   "settings": [
     {
-      "id": "latitude",
-      "type": "text",
+      "id": "aspectRatio",
+      "type": "dropdown",
       "label": {
-        "en": "Latitude",
-        "nl": "Breedtegraad"
+        "en": "Aspect Ratio",
+        "nl": "Beeldverhouding"
       },
-      "value": "52.22"
+      "value": "16:9",
+      "values": [
+        {
+          "id": "1:1",
+          "label": {
+            "en": "Square (1:1)",
+            "nl": "Vierkant (1:1)"
+          }
+        },
+        {
+          "id": "4:3",
+          "label": {
+            "en": "4:3",
+            "nl": "4:3"
+          }
+        },
+        {
+          "id": "16:9",
+          "label": {
+            "en": "16:9 (Default)",
+            "nl": "16:9 (Standaard)"
+          }
+        },
+        {
+          "id": "21:9",
+          "label": {
+            "en": "Ultrawide (21:9)",
+            "nl": "Ultrabreed (21:9)"
+          }
+        },
+        {
+          "id": "3:1",
+          "label": {
+            "en": "Panoramic (3:1)",
+            "nl": "Panoramisch (3:1)"
+          }
+        }
+      ]
     },
     {
-      "id": "longitude",
-      "type": "text",
+      "id": "detail",
+      "type": "checkbox",
       "label": {
-        "en": "Longitude",
-        "nl": "Lengtegraad"
+        "en": "Show Detail View",
+        "nl": "Toon Detailweergave"
       },
-      "value": "6.01"
+      "value": false
     },
     {
       "id": "detailLatitude",
@@ -46,91 +83,13 @@
       "value": ""
     },
     {
-      "id": "zoom",
-      "type": "number",
+      "id": "latitude",
+      "type": "text",
       "label": {
-        "en": "Zoom Level",
-        "nl": "Zoomniveau"
+        "en": "Latitude",
+        "nl": "Breedtegraad"
       },
-      "value": 5
-    },
-    {
-      "id": "overlay",
-      "type": "dropdown",
-      "label": {
-        "en": "Overlay",
-        "nl": "Overlay"
-      },
-      "value": "wind",
-      "values": [
-        {
-          "id": "wind",
-          "label": {
-            "en": "Wind",
-            "nl": "Wind"
-          }
-        },
-        {
-          "id": "temp",
-          "label": {
-            "en": "Temperature",
-            "nl": "Temperatuur"
-          }
-        },
-        {
-          "id": "rain",
-          "label": {
-            "en": "Rain",
-            "nl": "Regen"
-          }
-        },
-        {
-          "id": "clouds",
-          "label": {
-            "en": "Clouds",
-            "nl": "Wolken"
-          }
-        },
-        {
-          "id": "pressure",
-          "label": {
-            "en": "Pressure",
-            "nl": "Luchtdruk"
-          }
-        }
-      ]
-    },
-    {
-      "id": "product",
-      "type": "dropdown",
-      "label": {
-        "en": "Forecast Model",
-        "nl": "Voorspellingsmodel"
-      },
-      "value": "ecmwf",
-      "values": [
-        {
-          "id": "ecmwf",
-          "label": {
-            "en": "ECMWF",
-            "nl": "ECMWF"
-          }
-        },
-        {
-          "id": "gfs",
-          "label": {
-            "en": "GFS",
-            "nl": "GFS"
-          }
-        },
-        {
-          "id": "nam",
-          "label": {
-            "en": "NAM",
-            "nl": "NAM"
-          }
-        }
-      ]
+      "value": "52.22"
     },
     {
       "id": "level",
@@ -163,6 +122,33 @@
           }
         }
       ]
+    },
+    {
+      "id": "longitude",
+      "type": "text",
+      "label": {
+        "en": "Longitude",
+        "nl": "Lengtegraad"
+      },
+      "value": "6.01"
+    },
+    {
+      "id": "marker",
+      "type": "checkbox",
+      "label": {
+        "en": "Show Location Marker",
+        "nl": "Toon Locatiemarkering"
+      },
+      "value": true
+    },
+    {
+      "id": "message",
+      "type": "checkbox",
+      "label": {
+        "en": "Hide promo message",
+        "nl": "Verberg promotie Bericht"
+      },
+      "value": true
     },
     {
       "id": "metricRain",
@@ -275,6 +261,52 @@
       ]
     },
     {
+      "id": "overlay",
+      "type": "dropdown",
+      "label": {
+        "en": "Overlay",
+        "nl": "Overlay"
+      },
+      "value": "wind",
+      "values": [
+        {
+          "id": "wind",
+          "label": {
+            "en": "Wind",
+            "nl": "Wind"
+          }
+        },
+        {
+          "id": "temp",
+          "label": {
+            "en": "Temperature",
+            "nl": "Temperatuur"
+          }
+        },
+        {
+          "id": "rain",
+          "label": {
+            "en": "Rain",
+            "nl": "Regen"
+          }
+        },
+        {
+          "id": "clouds",
+          "label": {
+            "en": "Clouds",
+            "nl": "Wolken"
+          }
+        },
+        {
+          "id": "pressure",
+          "label": {
+            "en": "Pressure",
+            "nl": "Luchtdruk"
+          }
+        }
+      ]
+    },
+    {
       "id": "pressure",
       "type": "checkbox",
       "label": {
@@ -284,77 +316,45 @@
       "value": false
     },
     {
-      "id": "marker",
-      "type": "checkbox",
-      "label": {
-        "en": "Show Location Marker",
-        "nl": "Toon Locatiemarkering"
-      },
-      "value": true
-    },
-    {
-      "id": "message",
-      "type": "checkbox",
-      "label": {
-        "en": "Hide promo message",
-        "nl": "Verberg promotie Bericht"
-      },
-      "value": true
-    },
-    {
-      "id": "detail",
-      "type": "checkbox",
-      "label": {
-        "en": "Show Detail View",
-        "nl": "Toon Detailweergave"
-      },
-      "value": false
-    },
-    {
-      "id": "aspectRatio",
+      "id": "product",
       "type": "dropdown",
       "label": {
-        "en": "Aspect Ratio",
-        "nl": "Beeldverhouding"
+        "en": "Forecast Model",
+        "nl": "Voorspellingsmodel"
       },
-      "value": "16:9",
+      "value": "ecmwf",
       "values": [
         {
-          "id": "1:1",
+          "id": "ecmwf",
           "label": {
-            "en": "Square (1:1)",
-            "nl": "Vierkant (1:1)"
+            "en": "ECMWF",
+            "nl": "ECMWF"
           }
         },
         {
-          "id": "4:3",
+          "id": "gfs",
           "label": {
-            "en": "4:3",
-            "nl": "4:3"
+            "en": "GFS",
+            "nl": "GFS"
           }
         },
         {
-          "id": "16:9",
+          "id": "nam",
           "label": {
-            "en": "16:9 (Default)",
-            "nl": "16:9 (Standaard)"
-          }
-        },
-        {
-          "id": "21:9",
-          "label": {
-            "en": "Ultrawide (21:9)",
-            "nl": "Ultrabreed (21:9)"
-          }
-        },
-        {
-          "id": "3:1",
-          "label": {
-            "en": "Panoramic (3:1)",
-            "nl": "Panoramisch (3:1)"
+            "en": "NAM",
+            "nl": "NAM"
           }
         }
       ]
+    },
+    {
+      "id": "zoom",
+      "type": "number",
+      "label": {
+        "en": "Zoom Level",
+        "nl": "Zoomniveau"
+      },
+      "value": 5
     }
   ]
 }

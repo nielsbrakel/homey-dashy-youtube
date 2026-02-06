@@ -10,69 +10,6 @@
   "height": 250,
   "settings": [
     {
-      "id": "videoId",
-      "type": "text",
-      "label": {
-        "en": "Video ID",
-        "nl": "Video ID"
-      },
-      "value": ""
-    },
-    {
-      "id": "playlistId",
-      "type": "text",
-      "label": {
-        "en": "Playlist ID (leave blank to use Video ID)",
-        "nl": "Afspeellijst ID (leeg laten om Video ID te gebruiken)"
-      },
-      "value": ""
-    },
-    {
-      "id": "autoplay",
-      "type": "checkbox",
-      "label": {
-        "en": "Autoplay",
-        "nl": "Automatisch Afspelen"
-      },
-      "value": true
-    },
-    {
-      "id": "mute",
-      "type": "checkbox",
-      "label": {
-        "en": "Muted",
-        "nl": "Gedempt"
-      },
-      "value": false
-    },
-    {
-      "id": "controls",
-      "type": "checkbox",
-      "label": {
-        "en": "Show Controls",
-        "nl": "Toon Bediening"
-      },
-      "value": false
-    },
-    {
-      "id": "loop",
-      "type": "checkbox",
-      "label": {
-        "en": "Loop",
-        "nl": "Herhalen"
-      },
-      "value": false
-    },
-    {
-      "id": "start",
-      "type": "number",
-      "label": {
-        "en": "Start at (seconds)",
-        "nl": "Start op (seconden)"
-      },
-      "value": 0
-    },
-    {
       "id": "aspectRatio",
       "type": "dropdown",
       "label": {
@@ -124,6 +61,69 @@
           }
         }
       ]
+    },
+    {
+      "id": "autoplay",
+      "type": "checkbox",
+      "label": {
+        "en": "Autoplay",
+        "nl": "Automatisch Afspelen"
+      },
+      "value": true
+    },
+    {
+      "id": "controls",
+      "type": "checkbox",
+      "label": {
+        "en": "Show Controls",
+        "nl": "Toon Bediening"
+      },
+      "value": false
+    },
+    {
+      "id": "loop",
+      "type": "checkbox",
+      "label": {
+        "en": "Loop",
+        "nl": "Herhalen"
+      },
+      "value": false
+    },
+    {
+      "id": "mute",
+      "type": "checkbox",
+      "label": {
+        "en": "Muted",
+        "nl": "Gedempt"
+      },
+      "value": false
+    },
+    {
+      "id": "playlistId",
+      "type": "text",
+      "label": {
+        "en": "Playlist ID (leave blank to use Video ID)",
+        "nl": "Afspeellijst ID (leeg laten om Video ID te gebruiken)"
+      },
+      "value": ""
+    },
+    {
+      "id": "start",
+      "type": "number",
+      "label": {
+        "en": "Start at (seconds)",
+        "nl": "Start op (seconden)"
+      },
+      "value": 0
+    },
+    {
+      "id": "videoId",
+      "type": "text",
+      "label": {
+        "en": "Video ID",
+        "nl": "Video ID"
+      },
+      "value": ""
     }
   ]
 }

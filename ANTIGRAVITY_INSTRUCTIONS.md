@@ -34,7 +34,12 @@ To ensure consistency across widgets, adhere to the following standards.
     *   **True (Default)**: Renders the widget inside a standard Homey card with background, shadow, and padding.
     *   **False**: Renders the widget transparently with **0px padding** and no shadow/background. Ideal for "floating" look.
 
-### 2. DOM Structure
+### 2. Settings Order
+
+> [!IMPORTANT]
+> **Settings must always be ordered alphabetically (A-Z) by their `id`** in `widget.compose.json` files. This ensures consistent UX across all widgets.
+
+### 3. DOM Structure
 
 Structure widgets to separate the "spacing" container from the "card" content. This prevents background colors from extending into the spacing area.
 
@@ -50,10 +55,33 @@ Structure widgets to separate the "spacing" container from the "card" content. T
 </body>
 ```
 
-### 3. Sizing & Height
+### 4. Sizing & Height
 
 *   **Dynamic Height**: Avoid fixed heights in code where possible. Use `document.body.scrollHeight` to report height to Homey.
 *   **Aspect Ratios**: If a widget requires a specific shape (e.g., analog clock), use CSS `aspect-ratio` or calculate height based on width, but always ensure the reported height encompasses the full container including the spacing wrapper.
+
+### 5. Standard Size Settings
+
+Widgets that do not follow a fixed aspect ratio should use the standardized size setting:
+
+| ID | Label (EN) | Label (NL) |
+|----|------------|------------|
+| `xsmall` | Extra Small | Extra Klein |
+| `small` | Small | Klein |
+| `medium` | Medium (default) | Gemiddeld |
+| `large` | Large | Groot |
+| `xlarge` | Extra Large | Extra Groot |
+
+**Widgets using this standard**:
+- Analog Clock
+- Digital Clock
+- Flip Clock
+- Binary Clock
+
+**CSS Implementation**: Each widget implements size classes like `.size-xsmall`, `.size-small`, `.size-medium`, `.size-large`, `.size-xlarge` that control the element scale via `font-size` (em-based), direct pixel dimensions, or other appropriate methods.
+
+> [!NOTE]
+> Widgets that use fixed aspect ratios (like map or video embeds) may not need a size setting as they scale to fill available width.
 
 ## Useful Documentation
 

@@ -19,40 +19,35 @@
             "value": "Amsterdam"
         },
         {
-            "id": "zoomLevel",
+            "id": "showName",
+            "type": "checkbox",
+            "label": {
+                "en": "Show Location Name",
+                "nl": "Toon Locatienaam"
+            },
+            "value": true
+        },
+        {
+            "id": "timePeriod",
             "type": "dropdown",
             "label": {
-                "en": "Zoom Level",
-                "nl": "Zoomniveau"
+                "en": "Time Period",
+                "nl": "Tijdsperiode"
             },
-            "value": "provincia",
+            "value": "0",
             "values": [
                 {
-                    "id": "land",
+                    "id": "0",
                     "label": {
-                        "en": "Country",
-                        "nl": "Land"
+                        "en": "Past Hour",
+                        "nl": "Afgelopen Uur"
                     }
                 },
                 {
-                    "id": "provincia",
+                    "id": "2",
                     "label": {
-                        "en": "Province",
-                        "nl": "Provincie"
-                    }
-                },
-                {
-                    "id": "regio",
-                    "label": {
-                        "en": "Region",
-                        "nl": "Regio"
-                    }
-                },
-                {
-                    "id": "stad",
-                    "label": {
-                        "en": "City/Municipality",
-                        "nl": "Stad/Gemeente"
+                        "en": "Coming 3 Hours",
+                        "nl": "Komende 3 Uur"
                     }
                 }
             ]
@@ -97,38 +92,43 @@
             ]
         },
         {
-            "id": "timePeriod",
+            "id": "zoomLevel",
             "type": "dropdown",
             "label": {
-                "en": "Time Period",
-                "nl": "Tijdsperiode"
+                "en": "Zoom Level",
+                "nl": "Zoomniveau"
             },
-            "value": "0",
+            "value": "provincia",
             "values": [
                 {
-                    "id": "0",
+                    "id": "land",
                     "label": {
-                        "en": "Past Hour",
-                        "nl": "Afgelopen Uur"
+                        "en": "Country",
+                        "nl": "Land"
                     }
                 },
                 {
-                    "id": "2",
+                    "id": "provincia",
                     "label": {
-                        "en": "Coming 3 Hours",
-                        "nl": "Komende 3 Uur"
+                        "en": "Province",
+                        "nl": "Provincie"
+                    }
+                },
+                {
+                    "id": "regio",
+                    "label": {
+                        "en": "Region",
+                        "nl": "Regio"
+                    }
+                },
+                {
+                    "id": "stad",
+                    "label": {
+                        "en": "City/Municipality",
+                        "nl": "Stad/Gemeente"
                     }
                 }
             ]
-        },
-        {
-            "id": "showName",
-            "type": "checkbox",
-            "label": {
-                "en": "Show Location Name",
-                "nl": "Toon Locatienaam"
-            },
-            "value": true
         }
     ]
 }

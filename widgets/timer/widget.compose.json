@@ -11,28 +11,6 @@
   "transparent": true,
   "settings": [
     {
-      "id": "initialTimers",
-      "type": "number",
-      "label": {
-        "en": "Number of timers to start with",
-        "nl": "Aantal timers bij starten"
-      },
-      "min": 1,
-      "max": 10,
-      "value": 1
-    },
-    {
-      "id": "maxTimers",
-      "type": "number",
-      "label": {
-        "en": "Maximum number of timers",
-        "nl": "Maximaal aantal timers"
-      },
-      "min": 1,
-      "max": 10,
-      "value": 5
-    },
-    {
       "id": "allowAddingTimers",
       "type": "checkbox",
       "label": {
@@ -40,6 +18,15 @@
         "nl": "Nieuwe timers toevoegen toestaan"
       },
       "value": true
+    },
+    {
+      "id": "debugMode",
+      "type": "checkbox",
+      "label": {
+        "en": "Debug Mode",
+        "nl": "Debug Modus"
+      },
+      "value": false
     },
     {
       "id": "defaultHours",
@@ -75,13 +62,26 @@
       "value": 0
     },
     {
-      "id": "debugMode",
-      "type": "checkbox",
+      "id": "initialTimers",
+      "type": "number",
       "label": {
-        "en": "Debug Mode",
-        "nl": "Debug Modus"
+        "en": "Number of timers to start with",
+        "nl": "Aantal timers bij starten"
       },
-      "value": false
+      "min": 1,
+      "max": 10,
+      "value": 1
+    },
+    {
+      "id": "maxTimers",
+      "type": "number",
+      "label": {
+        "en": "Maximum number of timers",
+        "nl": "Maximaal aantal timers"
+      },
+      "min": 1,
+      "max": 10,
+      "value": 5
     }
   ]
 }
